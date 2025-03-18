@@ -1,0 +1,35 @@
+# Exclude Python cache files
+__pycache__/
+*.pyc
+*.pyo
+
+# Exclude virtual environments
+venv_recipe/
+venv_recipe/bin/
+venv_recipe/include/
+venv_recipe/lib/
+venv_recipe/lib64/
+venv_recipe/pyvenv.cfg
+
+# Exclude local configuration files
+*.env
+
+# Exclude database files
+*.sqlite3
+
+# Exclude log files
+*.log
+
+# Exclude IDE/editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Exclude Docker-related files
+docker-compose.override.yml
+
+# Exclude local structure or helper files
+tree_struct.txt
+dummy_crud.txt
+dev_notes.txt
