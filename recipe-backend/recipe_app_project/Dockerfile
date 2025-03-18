@@ -4,7 +4,7 @@ FROM python:3.11-buster
 WORKDIR /src
 
 # Install netcat (required for database check)
-RUN apt-get update && apt-get install -y netcat-traditional
+#RUN apt-get update && apt-get install -y netcat-traditional
 
 # Copy and install requirements
 COPY ./requirements.txt .
