@@ -37,10 +37,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'accounts_app',
     #'user_app',
     'rest_framework',
     "rest_framework.authtoken",
     #"corsheaders"
+    
 ]
 
 MIDDLEWARE = [
@@ -156,3 +158,5 @@ CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:80",
 
 ]
+
+AUTH_USER_MODEL = "accounts_app.User"  # Tells Django to use this instead of the default User model
