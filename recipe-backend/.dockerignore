@@ -1,0 +1,52 @@
+# Exclude Python cache files and directories
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache
+.coverage
+
+# Exclude virtual environments
+venv_recipe/
+venv_recipe/bin/
+venv_recipe/include/
+venv_recipe/lib/
+venv_recipe/lib64/
+venv_recipe/pyvenv.cfg
+venv/
+
+# Exclude version control metadata
+.git/
+.gitignore
+
+# Exclude documentation and notes
+README.md
+dev_notes.txt
+
+# Exclude local editor/IDE files
+*.swp
+*.swo
+.vscode/
+.idea/
+
+# Added for macOS compatibility
+.DS_Store  
+
+# Exclude local test databases or logs
+db.sqlite3
+*.sqlite3
+*.log
+logs/
+*.env
+
+# Exclude Django migration files (handled dynamically)
+migrations/
+
+# Exclude static & media files (should be generated inside the container)
+#media/
+#staticfiles/
+
+
+# Exclude Docker-related files
+docker-compose.override.yml
+volumes/
+db_data/
