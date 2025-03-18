@@ -10,7 +10,11 @@ export default function Home() {
         {/* Will remove once we create a NavBar */}
         <button onClick={() => navigate('/login')}>
             Login
-            </button> 
+        </button> 
+
+        <button onClick={() => navigate('/signup')} style={{ marginLeft: "10px"  }}>
+            Sign Up
+        </button>
         </>
     )
 }
