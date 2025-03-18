@@ -1,4 +1,4 @@
-CURRENT: Endpoints must now be access via, http://127.0.0.1:8000/
+CURRENT: Endpoints must now be access via, http://127.0.0.1:8000/(backend only)
 
 User_signup
     - http://127.0.0.1:8000/user_accounts/signup
