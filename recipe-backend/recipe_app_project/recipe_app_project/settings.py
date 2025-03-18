@@ -37,7 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'user_app',
+    #'user_app',
     'rest_framework',
     "rest_framework.authtoken",
     #"corsheaders"
@@ -55,7 +55,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'pm_project.urls'
+ROOT_URLCONF = 'recipe_app_project.urls'
 
 TEMPLATES = [
     {
