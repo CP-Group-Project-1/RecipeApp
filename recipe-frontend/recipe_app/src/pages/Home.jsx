@@ -15,6 +15,21 @@ export default function Home() {
         <button onClick={() => navigate('/signup')} style={{ marginLeft: "10px"  }}>
             Sign Up
         </button>
+
+        <div>
+            <h2>Search Recipe by:</h2>
+            <button onClick={() => navigate('/bycat')}>
+                Category
+            </button> 
+
+            <button onClick={() => navigate('/byingredient')}>
+                Ingredient
+            </button> 
+
+            <button onClick={() => navigate('/bycuisine')}>
+                Cuisines
+            </button> 
+        </div>
         </>
     )
 }
