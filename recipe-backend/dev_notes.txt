@@ -1,0 +1,53 @@
+Setting up DRF framework
+    - project name = recipe_app
+
+    - WIP on saved_recipes_app
+    - WIP on crud for user model
+        - Created CRUD methods
+    - WIP on validation of:
+        - get-token
+            - using postman..
+                - sent only endpoint response received back is shwoing keys username/password, are required.
+                    - assigned email to value for key username, and assignied value to password 
+                        - token received
+        - Read(Get) for Users
+            - Get all users..validated..need to clean up data returned..too much info returned
+            - Get single user...validated
+        - Update(Put)
+            - Is for singleuser..will change peter_griffin@fox.com to pg@fox.com
+                - validated, Response returns msg for no updates being applied
+                - validated, email and password seperately
+                - validated email/password together
+        - Delete
+            - Is for single user,
+                - valiated
+                
+    - During validation, attempted to create a superuser and could not, due to 
+        not having a username, in the model..
+        - Follwoing instructions..https://testdriven.io/blog/django-custom-user-model/
+        - Validated cretion of superuser
+        - Login via admin endpoint, validated
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{
+    "email": "peter_griffin@fox.com",
+    "password": "birdistheword"
+}

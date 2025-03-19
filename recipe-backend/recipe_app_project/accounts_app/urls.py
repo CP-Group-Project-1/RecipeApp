@@ -16,12 +16,12 @@ Including another URLconf
 """
 from django.urls import path
 from rest_framework.authtoken.views import obtain_auth_token
-from .views import UserSignUp, SingleUser
+from .views import UserSignUp, SingleUser, AllUserProfiles
 
 urlpatterns = [
     path('get-token', obtain_auth_token),
     path('signup', UserSignUp.as_view()),
-    path('user/<str:id>/', SingleUser.as_view(), name='single_user')
+    path('user/<str:id>/', SingleUser.as_view(), name='single_user'),
+    path('', AllUserProfiles.as_view(), name='all_user_profiiles')
 
-   
 ]

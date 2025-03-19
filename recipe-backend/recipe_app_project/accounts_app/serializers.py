@@ -26,8 +26,23 @@ class SignUpSerializer(serializers.ModelSerializer):
         
         return user
     
+    
 class UsersSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = '__all__'  # Return all fields
+        #fields = '__all__'  # Return all fields
+        fields = ['id', 'email']
+
+
+    def update(self, usr_instance, validated_data):
+        """ Without this DRF will not allow update of email since its the Username """
+        
+        if "email" in validated_data:
+            usr_instance.email = validated_data['email']
+        
+        if "password" in validated_data:
+            usr_instance.set_password(validated_data['password'])
+
+        usr_instance.save()
+        return usr_instance
 
