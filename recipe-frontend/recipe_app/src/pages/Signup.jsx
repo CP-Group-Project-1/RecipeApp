@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { signup } from "../../api/AuthApi"; 
 
 export default function Signup() {
     const navigate = useNavigate();
@@ -41,7 +42,7 @@ export default function Signup() {
         return ""; // No errors
       };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         
         const errorMessage = validateForm();
@@ -49,7 +50,17 @@ export default function Signup() {
 
         console.log("Signup submitted", formData);
         setError("");
-        navigate("/login");
+
+        try {
+            const response = await signup(formData);
+            if (response.success) {
+                navigate("/login");
+            } else {
+                setError(response.error || "Signup failed. Please try again.");
+            }
+        } catch (err) {
+            setError("Signup failed. Please try again.");
+        }
     };
 
     return (
