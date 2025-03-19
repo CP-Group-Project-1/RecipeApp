@@ -37,9 +37,10 @@ class SingleUser(APIView):
     def delete(self, request, id):
         """ This method deletes a specific user profile """
 
-        user = User.objects.get(pk=id)  # get user by id  
+        user = User.objects.get(pk=id)  # get user by id
+        email = user.email
         user.delete()
-        return Response(f'User [{user.email}], with user id [{id}] has been removed ')
+        return Response(f'User [{email}], with user id [{id}] has been removed ')
     
     def put(self, request, id):
         """ This method updates a users information """
@@ -47,13 +48,51 @@ class SingleUser(APIView):
         user = User.objects.get(pk=id)  # get user by id 
         print(request.data)
 
-        user.full_clean()
-        user.save()
-        #serialize_user = UsersSerializer(user)
+        #user.full_clean()
+        #user.save()
+        """ 
+            By default, serializers must be passed values for all required fields or 
+            they will raise validation errors. You can use the partial argument in 
+            order to allow partial updates.
+            https://www.django-rest-framework.org/api-guide/serializers/
+        """
+        current_email = user.email
+        current_pw = user.password
+        serialize_user = UsersSerializer(instance=user, data=request.data, partial=True)
+
+        if serialize_user.is_valid():
+            serialize_user.save()
+            msg = ''
+            if serialize_user.data['email'] != current_email:
+                msg += f'UPDATED, account email to [{serialize_user.data["email"]}]\n'
+
+           
+            if 'password' in request.data:
+                if request.data['password'] != current_pw and msg != '':
+                    msg += "Password updated"
+                elif request.data['password'] != current_pw and msg == '':
+                    msg += f'UPDATED, User [{serialize_user.data["email"]}] password'
+
+            if msg == '':
+                msg += f'No updates to apply for user [{serialize_user.data["email"]}]'
+
+            return Response(msg)
+        else:
+            return Response(serialize_user.errors)
+
         
         #TODO: Maybe need a condition to render if nothing was changed
-        msg = f"Updated for User [{user.email}] whose User Id is [{id}]"
+        
         
         return Response(msg)
+    
+class AllUserProfiles(APIView):
+    def get(self, request):
+        """ This method returns all users """
+        users = User.objects.all()  # get all users from table
+        # Setting 'many=True' for nested representration
+        serialize_users = UsersSerializer(users, many=True)
+        print(serialize_users.data)
+        return Response(serialize_users.data)
 
 

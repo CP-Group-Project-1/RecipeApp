@@ -32,4 +32,3 @@ docker-compose.override.yml
 # Exclude local structure or helper files
 tree_struct.txt
 dummy_crud.txt
-dev_notes.txt
