@@ -1,5 +1,10 @@
 CURRENT: Endpoints must now be access via, http://127.0.0.1:8000/(backend only)
 
+Admin
+    - http://127.0.0.1:8000/admin/ 
+        - docker-compose exec api python manage.py createsuperuser
+            - NOTE: upon execution you will be prompted for an email, not a username
+
 User_signup
     - http://127.0.0.1:8000/user_accounts/signup
 

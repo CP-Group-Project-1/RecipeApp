@@ -19,10 +19,15 @@ class SignUpSerializer(serializers.ModelSerializer):
         
         # Create user account
         user = User.objects.create_user(
-            username = validated_data['email'],
+            #username = validated_data['email'],
             password = validated_data['password'],
             email = validated_data['email']
         )
         
         return user
+    
+class UsersSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = '__all__'  # Return all fields
 
