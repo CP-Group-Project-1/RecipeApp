@@ -21,12 +21,27 @@ Setting up DRF framework
         - Delete
             - Is for single user,
                 - valiated
-                
+
     - During validation, attempted to create a superuser and could not, due to 
         not having a username, in the model..
         - Follwoing instructions..https://testdriven.io/blog/django-custom-user-model/
         - Validated cretion of superuser
         - Login via admin endpoint, validated
+
+    - WIP on saved_recipes_app
+        - - recipe_id(will be provided by DRF..dont create this field)
+        - used_id fk to User        
+        - idMeal..this is coming api
+            - using api endpoint, www.themealdb.com/api/json/v1/1/list.php?i=list 
+            - field type will be SmallAutoField....https://docs.djangoproject.com/en/5.1/ref/models/fields/#smallintegerfield
+                - Like an AutoField, but only allows values under a certain (database-dependent) limit. Values from 1 to 32767 are safe in all databases supported by Django.
+        - recipe_title
+
+        - Created model
+        - Created serializer
+        - WIP on CRUD
+            - added Read, for all and specific user
+
 
 
 

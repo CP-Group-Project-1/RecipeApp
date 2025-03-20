@@ -19,3 +19,6 @@ Specific_user
     - User_signup
     - http://127.0.0.1:8000/user_accounts/user/<str:id>/
         - i.e http://127.0.0.1:8000/user_accounts/user/2/
+
+All_Saved_Recipes
+    - http://127.0.0.1:8000/user_accounts/saved_recipes/
