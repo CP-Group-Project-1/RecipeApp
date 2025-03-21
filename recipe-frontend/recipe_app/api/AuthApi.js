@@ -33,8 +33,11 @@ const payload = {
     headers: {
     "Content-Type": "application/json",
     },
-    body: JSON.stringify(context)
-}
+    body: JSON.stringify({
+      username: context.email,
+      password: context.password,
+    }),
+};
 try {
   const body = await basicFetch("http://127.0.0.1:8000/user_accounts/get-token", payload);
   if (body.token) {
