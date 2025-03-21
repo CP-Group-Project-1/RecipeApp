@@ -1,5 +1,9 @@
 CURRENT: Endpoints must now be access via, http://127.0.0.1:8000/(backend only)
 
+Enter container
+    docker exec -it recipe_app_project-api-1 bash
+    docker exec -it recipe_app_project-db-1 bash
+
 Admin
     - http://127.0.0.1:8000/admin/ 
         - docker-compose exec api python manage.py createsuperuser
@@ -18,7 +22,18 @@ All_Users
 Specific_user
     - User_signup
     - http://127.0.0.1:8000/user_accounts/user/<str:id>/
-        - i.e http://127.0.0.1:8000/user_accounts/user/2/
+        - i.e http://127.0.0.1:8000/user_accounts/user/2/ 
 
 All_Saved_Recipes
-    - http://127.0.0.1:8000/user_accounts/saved_recipes/
+    - http://127.0.0.1:8000/saved_recipes/
+
+User_Saved_Recipes
+    - http://127.0.0.1:8000/saved_recipes/user/<int:user_id>/
+        - i.e - http://127.0.0.1:8000/saved_recipes/user/2/
+
+User_Single_Recipe
+    - http://127.0.0.1:8000/saved_recipes/user/<int:user_id>/recipe/<int:recipe_id>/
+        - i.e - http://127.0.0.1:8000/saved_recipes/user/2/recipe/10/
+
+
+
