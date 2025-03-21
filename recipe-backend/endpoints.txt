@@ -37,3 +37,9 @@ User_Single_Recipe
 
 
 
+Shopping_List_Items
+    -  http://127.0.0.1:8000/shopping_list/
+
+Shopping_List_Item_Detail
+    -  http://127.0.0.1:8000/shopping_list/<int:id>
+        - i.e http://127.0.0.1:8000/shopping_list/1
