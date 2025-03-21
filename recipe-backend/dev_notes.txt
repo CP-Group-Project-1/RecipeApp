@@ -21,12 +21,57 @@ Setting up DRF framework
         - Delete
             - Is for single user,
                 - valiated
-                
+
     - During validation, attempted to create a superuser and could not, due to 
         not having a username, in the model..
         - Follwoing instructions..https://testdriven.io/blog/django-custom-user-model/
         - Validated cretion of superuser
         - Login via admin endpoint, validated
+
+    - WIP on saved_recipes_app
+        - - recipe_id(will be provided by DRF..dont create this field)
+        - used_id fk to User        
+        - idMeal..this is coming api
+            - using api endpoint, www.themealdb.com/api/json/v1/1/list.php?i=list 
+            - field type will be SmallAutoField....https://docs.djangoproject.com/en/5.1/ref/models/fields/#smallintegerfield
+                - Like an AutoField, but only allows values under a certain (database-dependent) limit. Values from 1 to 32767 are safe in all databases supported by Django.
+        - recipe_title
+
+        - Created model
+        - Created serializer
+        - WIP on CRUD
+            - added Read, for all and specific user
+
+
+        - use this endpoint s reference for idMeal and recipe_title
+            - www.themealdb.com/api/json/v1/1/lookup.php?i=52772
+                - json data ref
+                    "meals": [
+                                {
+                                    "idMeal": "52772",
+                                    "strMeal": "Teriyaki Chicken Casserole",
+            - CRUD ops are Read, Delete and Post
+        - Updating saved_recipes_app model, field idMeal, to use 5 integres
+            - added validators.py and updated model to use it
+            - udpated field idMeal to be a charField
+
+        - After building saved_recipes model and asking charGpt to make injection script,
+            the current unique assignments for idMeal and recipe_title are global and should
+            be for the user only.
+            - Discussed with team.. yes it should be for user, alllowing other to save same recipe if needed
+        - Discussed with chatGpt and reviewing DRF link, https://docs.djangoproject.com/en/5.1/ref/models/options/#unique-together
+            - updated model
+    - Injected dummy data
+        - Validating
+            - Read(Get) All recipes returned for all users
+            - Read(Get) All recipes for a single user
+            - Post
+                - Attempting to post same recipe for a user..Rejected..validation successfull
+                - Post unique recipe...validation successfull
+            - Delete recipe for single user...validation successfull
+
+    - Cleaned up serilizer data returned for saved_recipes_app
+
 
 
 
@@ -51,3 +96,9 @@ Setting up DRF framework
     "email": "peter_griffin@fox.com",
     "password": "birdistheword"
 }
+
+{
+        "idMeal": "99999",
+        "recipe_title": "Shepherd's Pie"
+       
+    }
