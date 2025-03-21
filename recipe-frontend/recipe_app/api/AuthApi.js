@@ -14,7 +14,7 @@ const payload = {
     body: JSON.stringify(context)
 }
   try {
-    const body = await basicFetch("http://127.0.0.1:8000/signup", payload);
+    const body = await basicFetch("http://127.0.0.1:8000/user_accounts/signup", payload);
     if (body.token) {
         localStorage.setItem("token", body.token);
         return { success: true, token: body.token };
@@ -36,13 +36,13 @@ const payload = {
     body: JSON.stringify(context)
 }
 try {
-  const body = await basicFetch("http://127.0.0.1:8000/get-token", payload);
+  const body = await basicFetch("http://127.0.0.1:8000/user_accounts/get-token", payload);
   if (body.token) {
       // Store the token in localStorage
       localStorage.setItem("token", body.token);
       return { success: true, token: body.token };
   } else {
-      return { success: false, error: body.error || "Login failed. Please try again." };
+      return { success: false, error: body.error || "Login failed. Invalid token." };
   }
 } catch (error) {
   return { success: false, error: error.message };

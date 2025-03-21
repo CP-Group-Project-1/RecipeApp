@@ -55,8 +55,8 @@ export default function Login() {
         try {
             const response = await login(formData);
             if (response.token) {
-                localStorage.setItem("token", response.token);
-                navigate("/");
+              localStorage.setItem("token", response.token);  
+              navigate("/");
             } else {
                 setError(response.error || "Login failed. Please try again.");
             }
