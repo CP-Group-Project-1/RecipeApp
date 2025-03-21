@@ -90,7 +90,8 @@ export default function Signup() {
 
         try {
             const response = await signup(formData);
-            if (response.success) {
+            if (response.token) {
+                localStorage.setItem("token", response.token);
                 navigate("/login");
             } else {
                 setError(response.error || "Signup failed. Please try again.");
