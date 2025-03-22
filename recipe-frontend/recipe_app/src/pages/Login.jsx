@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { login } from "../../api/AuthApi";
+import { login, basicFetch } from "../../api/AuthApi";
 
 export default function Login() {
+    //console.log('IN_Login_Page')
     const navigate = useNavigate();
 
     const [formData, setFormData] = useState({
@@ -53,9 +54,34 @@ export default function Login() {
         setIsLoading(true);
 
         try {
+            //console.log('Attempting to get user token')
             const response = await login(formData);
             if (response.token) {
-              localStorage.setItem("token", response.token);  
+              localStorage.setItem("token", response.token);
+              //console.log(response);
+              
+              //Getting user_id
+              //console.log('Getting user_id');
+
+              const token = response.token
+              //const singleUserEp = `${base_url}user_accounts/user/`
+              const singleUserEp = 'http://127.0.0.1:8000/user_accounts/user/single_user/';
+
+              const userPayload = {
+                method: "GET",
+                headers:{
+                "Content-Type": "application/json",
+                "Authorization": `Token ${token}`
+              }
+              //body: JSON.stringify(data)
+              }
+              //console.log(`Hitting Endpoint = [${singleUserEp}]`);
+              const userBody = await basicFetch(singleUserEp, userPayload);
+              //console.log(userBody);
+              //console.log(`user_id = [${userBody.id}]`);
+              localStorage.setItem("user_id", userBody.id);
+                
+              //
               navigate("/");
             } else {
                 setError(response.error || "Login failed. Please try again.");
