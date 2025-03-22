@@ -19,3 +19,14 @@ Specific_user
     - User_signup
     - http://127.0.0.1:8000/user_accounts/user/<str:id>/
         - i.e http://127.0.0.1:8000/user_accounts/user/2/
+
+Shopping_List
+   - /shopping_list/
+        POST - to add ingredients
+        GET - returns all ingredients
+        DELETE - clears shopping_list
+    
+    - /shopping_list/id/
+        GET - get item details (id, item, qty)
+        PATCH - update qty
+        DELETE - delete single item
