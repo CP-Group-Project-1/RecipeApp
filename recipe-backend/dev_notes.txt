@@ -76,11 +76,10 @@ Setting up DRF framework
             - Created new user thru sign up page
             - Loggin In
             - Selecting recipe
-            - Save Recipe..receive, User not logged in
+            - Save Recipe..receive, User not logged in(Input worng password)
                 - Going back home and logging in
                     - Created a new user
                     - Logged in 
-                    - Received duplicate response of user not logged in when saving recipe
                         - Debugging
                             - Save recipeBtn, is using localStorage to get 'user_id'
                             - Going to Login.jsx
@@ -117,6 +116,14 @@ Setting up DRF framework
                                                         - so the key will be the ingredient, value its respective measurement amount
 
                                                 - DOuble checked with team.. DO not need to save the ingredients
+
+                                - Rewviewing FrontEnd SavedRecipes.jsx,
+                                    - updating uweEffect to get saved recipes from database
+                                        - thinking the concept baed on code that expectation is to be array of nested dicts
+                                    - validated retriveing recipes for user from db..FrontEnd loading data
+                                        - updating backend saved_recipes model to support new feature for diplsying the image of the recipe
+                                            - validation successfull
+                                    
 
 
 

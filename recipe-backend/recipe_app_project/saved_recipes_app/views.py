@@ -33,6 +33,7 @@ class UserSavedRecipes(APIView):
             idMeal = request.data['idMeal'],
             user_id = User.objects.get(pk=user_id),
             recipe_title = request.data['recipe_title'],
+            meal_pic_img = request.data['meal_pic_img']
             #recipe_ingredients = request.data['recipe_ingredients']
         )
         

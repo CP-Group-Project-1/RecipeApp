@@ -30,6 +30,7 @@ export default function SaveRecipeBtn({ recipe }) {
         const response = await saveRecipe(userId, {
             idMeal: recipe.idMeal,
             recipe_title: recipe.strMeal,
+            meal_pic_img: recipe.strMealThumb
             //recipe_ingredients: ingredientsArr
         });
 
