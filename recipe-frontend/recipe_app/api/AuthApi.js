@@ -52,3 +52,27 @@ try {
 }
 }
 
+export async function saveRecipe(userId, context) {
+    const payload = {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(context),
+    };
+    try {
+        const body = await basicFetch(
+            `http://127.0.0.1:8000/saved_recipes/user/${userId}/`, 
+            payload
+        );
+        if (body) {
+            console.log("Recipe saved successfully:", body);
+            return { success: true, data: body };
+        } else {
+            return { success: false, error: body.error || "Failed to save recipe." };
+        }
+    } catch (error) {
+        console.error("Error saving recipe:", error);
+        return { success: false, error: error.message };
+    }
+}

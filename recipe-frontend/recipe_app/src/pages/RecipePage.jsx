@@ -1,9 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
+import SaveRecipeBtn from "../components/SaveRecipeBtn";
+import ShopListBtn from "../components/SaveIngredientsBtn";
+
 
 export default function RecipePage() {
     const { idMeal } = useParams();
     const [recipe, setRecipe] = useState(null);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const recipeUrl = `https://www.themealdb.com/api/json/v1/1/lookup.php?i=${idMeal}`;
@@ -18,6 +22,9 @@ export default function RecipePage() {
 
     return (
         <div>
+            <SaveRecipeBtn recipe={recipe} />
+            <ShopListBtn recipe={recipe} />
+        
             <h2>{recipe.strMeal}</h2>
             <img src={recipe.strMealThumb} alt={recipe.strMeal}/>
             <p>{recipe.strInstructions}</p>
