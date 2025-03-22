@@ -1,4 +1,4 @@
-async function basicFetch(url, payload) {
+export async function basicFetch(url, payload) {
     const res = await fetch(url, payload)
     const body = await res.json()
     return body
@@ -53,13 +53,19 @@ try {
 }
 
 export async function saveRecipe(userId, context) {
+    console.log('IN_saveRecipe')
+    console.log(`userId = ${userId}`)
+    console.log(`Getting token from local storage => [${localStorage.getItem('token')}]`)
+    console.log(`context = ${JSON.stringify(context)}`)
     const payload = {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
+            "Authorization": `Token ${localStorage.getItem('token')}`
         },
-        body: JSON.stringify(context),
+        body: JSON.stringify(context),  
     };
+    console.log(`payload = ${JSON.stringify(payload)}`)
     try {
         const body = await basicFetch(
             `http://127.0.0.1:8000/saved_recipes/user/${userId}/`, 

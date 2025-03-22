@@ -71,6 +71,36 @@ Setting up DRF framework
             - Delete recipe for single user...validation successfull
 
     - Cleaned up serilizer data returned for saved_recipes_app
+    - WIP on saving recipe to database from front-end
+        - Running front-end
+            - Created new user thru sign up page
+            - Loggin In
+            - Selecting recipe
+            - Save Recipe..receive, User not logged in
+                - Going back home and logging in
+                    - Created a new user
+                    - Logged in 
+                    - Received duplicate response of user not logged in when saving recipe
+                        - Debugging
+                            - Save recipeBtn, is using localStorage to get 'user_id'
+                            - Going to Login.jsx
+                                - If login is successfull, token is saved in localStorage..user_id is not being saved in localStorage.
+                                    - continue with code review..Discussing with team
+                                    - Updating Login.jsx to get user_id and will save in localStorage
+                                    - Updating view for Hey single user, for when neeing user from token
+                                    - Valiation of getting user_id from token, successfull
+                            - Back to saveing a recipe
+                                - received recipe saved message
+                                - validating recipe saved in database
+                                    - recipe not found
+                                        - debugging
+                                        - root cause..context does not have all required data being passed to saveRecipe
+                                            - changed key to use from receipt.title to receipe.strMeal in saveRecipe method
+                                                - validation of saved recipe to databsae..successfull
+                                - For the ingredimts to save, will put ingredients in an array
+                                - Realized the saved_recipe model needs a filed for ingredients
+                                    - WIP..GOING_TO_LUNCH..BACK_AT_13:30
+
 
 
 

@@ -28,8 +28,11 @@ class UserSignUp(CreateAPIView):
 class SingleUser(APIView):
     def get(self, request, id):
         """ This method returns a user instance """
+        if id == 'single_user':
+            user = User.objects.get(email=request.user.email) # For token request
+        else:
+            user = User.objects.get(pk=id)  # get user by id
 
-        user = User.objects.get(pk=id)  # get user by id
         serialize_user = UsersSerializer(user)
         print(serialize_user.data)
         return Response(serialize_user.data)
