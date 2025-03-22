@@ -53,10 +53,10 @@ try {
 }
 
 export async function saveRecipe(userId, context) {
-    console.log('IN_saveRecipe')
+    /*console.log('IN_saveRecipe')
     console.log(`userId = ${userId}`)
     console.log(`Getting token from local storage => [${localStorage.getItem('token')}]`)
-    console.log(`context = ${JSON.stringify(context)}`)
+    console.log(`context = ${JSON.stringify(context)}`)*/
     const payload = {
         method: "POST",
         headers: {
@@ -65,14 +65,14 @@ export async function saveRecipe(userId, context) {
         },
         body: JSON.stringify(context),  
     };
-    console.log(`payload = ${JSON.stringify(payload)}`)
+    //console.log(`payload = ${JSON.stringify(payload)}`)
     try {
         const body = await basicFetch(
             `http://127.0.0.1:8000/saved_recipes/user/${userId}/`, 
             payload
         );
         if (body) {
-            console.log("Recipe saved successfully:", body);
+            //console.log("Recipe saved successfully:", body);
             return { success: true, data: body };
         } else {
             return { success: false, error: body.error || "Failed to save recipe." };

@@ -3,11 +3,11 @@ import { saveRecipe } from "../../api/AuthApi";
 
 export default function SaveRecipeBtn({ recipe }) {
     const handleSave = async () => {
-        console.log('In_handleSave')
-        console.log(`recipe to save = ${JSON.stringify(recipe)}`)
-        console.log('Iterating thru recipe for ingerdient keys')
+        //console.log('In_handleSave')
+        //console.log(`recipe to save = ${JSON.stringify(recipe)}`)
+        //console.log('Iterating thru recipe for ingerdient keys')
 
-        const ingredientsArr = []  //Stores ingredients
+        /*const ingredientsArr = []  //Stores ingredients
         // Iterating thru recipe for strIngredient keys and saving data in array
         for(const tmpKey in recipe){
             if(tmpKey.includes('strIngredient')){
@@ -19,7 +19,7 @@ export default function SaveRecipeBtn({ recipe }) {
                 
             }  
         }
-        console.log(`ingredientsArr ${ingredientsArr}`)
+        console.log(`ingredientsArr ${ingredientsArr}`)*/
         const userId = localStorage.getItem("user_id");
 
         if (!userId) {
@@ -30,7 +30,7 @@ export default function SaveRecipeBtn({ recipe }) {
         const response = await saveRecipe(userId, {
             idMeal: recipe.idMeal,
             recipe_title: recipe.strMeal,
-            recipe_ingredients: ingredientsArr
+            //recipe_ingredients: ingredientsArr
         });
 
         if (response.success) {
