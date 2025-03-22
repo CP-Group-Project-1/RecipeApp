@@ -123,6 +123,12 @@ Setting up DRF framework
                                     - validated retriveing recipes for user from db..FrontEnd loading data
                                         - updating backend saved_recipes model to support new feature for diplsying the image of the recipe
                                             - validation successfull
+
+                                    - Checking delete button for SavedRecipes.jsx
+                                        - pressed delte button for a meal..removed from FrontEnd page..successfull
+                                            - did not remove from database..debugging
+                                                - Updating code to submit DELETE request
+                                                - validated deletion occurs in database
                                     
 
 

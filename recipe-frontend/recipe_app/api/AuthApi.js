@@ -112,3 +112,31 @@ export async function getRecipe(userId) {
     }
 }
 
+export async function deleteRecipe(userId, recipeId){
+
+    const payload = {
+        method: "DELETE",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Token ${localStorage.getItem('token')}`
+        },
+    };
+    try {
+        const body = await basicFetch(
+            `http://127.0.0.1:8000/saved_recipes/user/${userId}/recipe/${recipeId}/`,
+            payload
+        );
+        if (body) {
+            return { success: true, data: body };
+        } else {
+            return { success: false, error: body.error || "Failed to delete recipe." };
+        }
+    } catch (error) {
+        console.error("Error deleting recipe:", error);
+        return { success: false, error: error.message };
+    }
+
+    
+
+}
+
