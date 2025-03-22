@@ -4,7 +4,7 @@ from .models import ShoppingListItem
 class ShoppingListItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = ShoppingListItem
-        fields = ['id', 'user', 'item', 'qty']
+        fields = ['id', 'user', 'item', 'qty', 'measure']
 
 class RecipeSerializer(serializers.Serializer):
     meals = serializers.ListField()
