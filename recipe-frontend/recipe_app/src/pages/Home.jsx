@@ -5,16 +5,16 @@ export default function Home() {
     
     return (
         <>
-        <h2>Home Page</h2>
+            <h2>Home Page</h2>
+            
+            <button onClick={() => navigate('/login')}>
+                Login
+            </button> 
 
-        {/* Will remove once we create a NavBar */}
-        <button onClick={() => navigate('/login')}>
-            Login
-        </button> 
-
-        <button onClick={() => navigate('/signup')} style={{ marginLeft: "10px"  }}>
-            Sign Up
-        </button>
+            <button onClick={() => navigate('/signup')} style={{ marginLeft: "10px"  }}>
+                Sign Up
+            </button>
+    
         </>
     )
 }

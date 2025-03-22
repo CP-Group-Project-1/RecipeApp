@@ -112,3 +112,6 @@ export async function getRecipe(userId) {
     }
 }
 
+export function logout() {
+  localStorage.removeItem("token");
+}
