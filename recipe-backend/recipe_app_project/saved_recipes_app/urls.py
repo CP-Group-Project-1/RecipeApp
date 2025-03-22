@@ -1,5 +1,5 @@
 """
-URL configuration for recipe_app_project project.
+URL configuration for pm_project project.
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/5.1/topics/http/urls/
@@ -14,13 +14,13 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.contrib import admin
-from django.urls import path, include
+from django.urls import path
+from .views import AllSavedRecipes, UserSavedRecipes, UserSingleRecipe
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('user_accounts/', include('accounts_app.urls')),
-    path('saved_recipes/', include('saved_recipes_app.urls')),
-    path('shopping_list/', include('shopping_list_app.urls'))
+    path('', AllSavedRecipes.as_view(), name='all_saved_recipes'),
+    path('user/<int:user_id>/', UserSavedRecipes.as_view(), name='user_saved_recipes'),
+    path('user/<int:user_id>/recipe/<int:recipe_id>/', UserSingleRecipe.as_view(), name='user_saved_recipe')
+    
 
 ]

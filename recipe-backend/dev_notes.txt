@@ -21,12 +21,113 @@ Setting up DRF framework
         - Delete
             - Is for single user,
                 - valiated
-                
+
     - During validation, attempted to create a superuser and could not, due to 
         not having a username, in the model..
         - Follwoing instructions..https://testdriven.io/blog/django-custom-user-model/
         - Validated cretion of superuser
         - Login via admin endpoint, validated
+
+    - WIP on saved_recipes_app
+        - - recipe_id(will be provided by DRF..dont create this field)
+        - used_id fk to User        
+        - idMeal..this is coming api
+            - using api endpoint, www.themealdb.com/api/json/v1/1/list.php?i=list 
+            - field type will be SmallAutoField....https://docs.djangoproject.com/en/5.1/ref/models/fields/#smallintegerfield
+                - Like an AutoField, but only allows values under a certain (database-dependent) limit. Values from 1 to 32767 are safe in all databases supported by Django.
+        - recipe_title
+
+        - Created model
+        - Created serializer
+        - WIP on CRUD
+            - added Read, for all and specific user
+
+
+        - use this endpoint s reference for idMeal and recipe_title
+            - www.themealdb.com/api/json/v1/1/lookup.php?i=52772
+                - json data ref
+                    "meals": [
+                                {
+                                    "idMeal": "52772",
+                                    "strMeal": "Teriyaki Chicken Casserole",
+            - CRUD ops are Read, Delete and Post
+        - Updating saved_recipes_app model, field idMeal, to use 5 integres
+            - added validators.py and updated model to use it
+            - udpated field idMeal to be a charField
+
+        - After building saved_recipes model and asking charGpt to make injection script,
+            the current unique assignments for idMeal and recipe_title are global and should
+            be for the user only.
+            - Discussed with team.. yes it should be for user, alllowing other to save same recipe if needed
+        - Discussed with chatGpt and reviewing DRF link, https://docs.djangoproject.com/en/5.1/ref/models/options/#unique-together
+            - updated model
+    - Injected dummy data
+        - Validating
+            - Read(Get) All recipes returned for all users
+            - Read(Get) All recipes for a single user
+            - Post
+                - Attempting to post same recipe for a user..Rejected..validation successfull
+                - Post unique recipe...validation successfull
+            - Delete recipe for single user...validation successfull
+
+    - Cleaned up serilizer data returned for saved_recipes_app
+    - WIP on saving recipe to database from front-end
+        - Running front-end
+            - Created new user thru sign up page
+            - Loggin In
+            - Selecting recipe
+            - Save Recipe..receive, User not logged in(Input worng password)
+                - Going back home and logging in
+                    - Created a new user
+                    - Logged in 
+                        - Debugging
+                            - Save recipeBtn, is using localStorage to get 'user_id'
+                            - Going to Login.jsx
+                                - If login is successfull, token is saved in localStorage..user_id is not being saved in localStorage.
+                                    - continue with code review..Discussing with team
+                                    - Updating Login.jsx to get user_id and will save in localStorage
+                                    - Updating view for Hey single user, for when neeing user from token
+                                    - Valiation of getting user_id from token, successfull
+                            - Back to saveing a recipe
+                                - received recipe saved message
+                                - validating recipe saved in database
+                                    - recipe not found
+                                        - debugging
+                                        - root cause..context does not have all required data being passed to saveRecipe
+                                            - changed key to use from receipt.title to receipe.strMeal in saveRecipe method
+                                                - validation of saved recipe to databsae..successfull
+                                - For the ingredimts to save, will put ingredients in an array
+                                - Realized the saved_recipe model needs a filed for ingredients
+                                - Looking up how to save array in field for DRF
+                                    - reviewing DRF link, https://docs.djangoproject.com/en/5.1/ref/models/fields/#jsonfield
+                                        - reviewing JSONField(A field for storing JSON encoded data. In Python the data is represented in its Python 
+                                            native format: dictionaries, lists, strings, numbers, booleans and None.)
+                                            - Conitnuing to research, found
+                                                - 4. Considerations:
+                                                    Performance:
+                                                    JSONFields can impact performance, especially when querying based on nested keys. Consider normalizing 
+                                                    your data if you need to perform frequent queries on specific JSON keys.
+
+                                                - Asked Googile..does drf support saving an array into a field ?
+                                                    - Yes, Django REST Framework (DRF) supports saving arrays into fields, particularly when using 
+                                                        PostgreSQL's ArrayField or by encoding arrays as JSON and storing them in a JSONField or a standard field. 
+                                                - Reviewing DRF documention for ArrayField, https://docs.djangoproject.com/en/5.1/ref/contrib/postgres/fields/
+                                                    - Will need to possibly store a dictionary instead due to needing the Measurement data for each ingrdient
+                                                        - so the key will be the ingredient, value its respective measurement amount
+
+                                                - DOuble checked with team.. DO not need to save the ingredients
+
+                                - Rewviewing FrontEnd SavedRecipes.jsx,
+                                    - updating uweEffect to get saved recipes from database
+                                        - thinking the concept baed on code that expectation is to be array of nested dicts
+                                    - validated retriveing recipes for user from db..FrontEnd loading data
+                                        - updating backend saved_recipes model to support new feature for diplsying the image of the recipe
+                                            - validation successfull
+                                    
+
+
+
+
 
 
 
@@ -52,3 +153,9 @@ Setting up DRF framework
     "email": "peter_griffin@fox.com",
     "password": "birdistheword"
 }
+
+{
+        "idMeal": "99999",
+        "recipe_title": "Shepherd's Pie"
+       
+    }
