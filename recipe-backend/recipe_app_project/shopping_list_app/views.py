@@ -9,30 +9,59 @@ from .models import ShoppingListItem
 from .serializers import ShoppingListItemSerializer
 
 # get shopping list item by id
+IGNORE_UNITS = ["g", "ml", "tsp", "tbsp", "cup", "cups", "pint", "pints", "Grams", "Topping", "Pot", "oz", "can", "cans" ]
+
+KEEP_MEASURES = ["lb", "lbs", "kg", "kgs", "pound", "pounds", "oz"]
+
+SKIP_INGREDIENTS = ["water"]
+
 def get_item(id):
     try:
         return ShoppingListItem.objects.get(id=id)
     except:
         return None
 
+# determine if ingredient should be skipped
+def skip_ingredient(ingredient):
+    return ingredient.strip().lower() in SKIP_INGREDIENTS
+
+#determine if measure needed for shopping list
+def measure_needed(measure):
+    if not measure:
+        return False
+    for unit in KEEP_MEASURES:
+        if unit in measure.lower():
+            return unit
+    return None
+
 # get quantity from Json and handle fractions
 def parse_quantity(measure_str):
-    if not measure_str:
+    if any(unit in measure_str.lower() for unit in IGNORE_UNITS):
         return 1
-    
-    # match fractions and mixed fractions, or whole numbers
-    match = re.match(r"^\s*(\d+\s*\d+\/\d+|\d+\/\d+|\d+)",measure_str)
-    if match:
-        qty_str = match.group(1).strip()
-        try:
-            if ' ' in qty_str:
-                whole, fraction = qty_str.split()
-                qty = Fraction(int(whole)) + Fraction(fraction)
-            else:
-                qty = Fraction(qty_str)
-            
+    try:
+        #handle mixed fractions
+        match = re.match(r"^\s*(\d+)\s+(\d+)\/(\d+)", measure_str)
+        if match:
+            whole = int(match.group(1))
+            numerator = int(match.group(2))
+            denominator = int(match.group(3))
+            qty = whole + Fraction(numerator, denominator)
             return math.ceil(float(qty))
-        except (ValueError, ZeroDivisionError):
+        
+        # handle simple fraction
+        match = re.match(r"^\s*(\d+)\/(\d+)", measure_str)
+        if match:
+            numerator = int(match.group(2))
+            denominator = int(match.group(3))
+            qty = Fraction(numerator, denominator)
+            return math.ceil(float(qty))
+        
+        #handle whole numbers
+        match = re.match(r"^\s*(\d+)", measure_str)
+        if match:
+            return int(match.group(1))
+    
+    except (ValueError, ZeroDivisionError):
             return 1
     return 1
 
@@ -49,17 +78,36 @@ class ShoppingListItems(APIView):
         user = request.user
         items = []
 
+        # loop through ingredients
         for meal in meals_data:
             for i in range(1,21):
                 ingredient = meal.get(f"strIngredient{i}")
                 measure = meal.get(f"strMeasure{i}")
+
                 if ingredient and ingredient.strip():
                     ingredient = ingredient.strip()
-                    qty_to_add = parse_quantity(measure)
+
+                    # don't include ingredients like water
+                    if skip_ingredient(ingredient):
+                        continue
+                    
+                    # get measure description for weight
+                    unit = measure_needed(measure)
+
+                    if unit:
+                        qty_to_add = parse_quantity(measure)
+                        stored_measure = unit
+                    else:
+                        qty_to_add = parse_quantity(measure)
+                        stored_measure = None
+
+                    #create item in shopping list    
                     shopping_item, created = ShoppingListItem.objects.get_or_create(user=user, item=ingredient)
 
                     if created:
                         shopping_item.qty = qty_to_add
+                        if measure_needed(measure):
+                            shopping_item.measure = stored_measure
                     else:
                         shopping_item.qty += qty_to_add
                     shopping_item.save()
