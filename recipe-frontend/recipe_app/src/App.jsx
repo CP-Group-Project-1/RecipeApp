@@ -1,5 +1,6 @@
 import './App.css';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import ProtectedRoute from './components/ProtectedRoute';
 import Login from './pages/Login';
 import Home from './pages/Home';
 import Signup from './pages/Signup';
@@ -22,12 +23,14 @@ function App() {
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<Signup />} />
       <Route path="/" element={<Home />} />
-      <Route path="/bycat" element={<ByCat />} />
-      <Route path="/byingredient" element={<ByIngredient />} />
-      <Route path="/bycuisine" element={<ByCuisine />} />
-      <Route path="/recipe/:idMeal" element={<RecipePage />} />
-      <Route path="/saved" element={<SavedRecipes />} />
-      <Route path="/shoplist" element={<ShoppingList />} />
+      <Route element={<ProtectedRoute/>}>
+        <Route path="/bycat" element={<ByCat />} />
+        <Route path="/byingredient" element={<ByIngredient />} />
+        <Route path="/bycuisine" element={<ByCuisine />} />
+        <Route path="/recipe/:idMeal" element={<RecipePage />} />
+        <Route path="/saved" element={<SavedRecipes />} />
+        <Route path="/shoplist" element={<ShoppingList />} />
+      </Route>
     </Routes>
     </BrowserRouter>
     </>

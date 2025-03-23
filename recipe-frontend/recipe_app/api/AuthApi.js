@@ -140,3 +140,8 @@ export async function deleteRecipe(userId, recipeId){
 
 }
 
+
+export function logout() {
+  localStorage.removeItem("token");
+}
+
