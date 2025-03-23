@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { getRecipe } from "../../api/AuthApi";
+import { getRecipe, deleteRecipe } from "../../api/AuthApi";
 
 export default function SavedRecipes() {
     const [savedRecipes, setSavedRecipes] = useState([]);
@@ -45,10 +45,12 @@ export default function SavedRecipes() {
         return <p>No saved recipes yet!</p>;
     }
 
-    const handleDeleteRecipe = (idMeal) => {
+    const handleDeleteRecipe = async (idMeal, recipeId) => {
         const updatedRecipes = savedRecipes.filter(recipe => recipe.idMeal !== idMeal);
         setSavedRecipes(updatedRecipes);
         localStorage.setItem("savedRecipes", JSON.stringify(updatedRecipes));
+        //console.log(`recipe ID for deletion = ${recipeId}`)
+        deleteRecipe(userId, recipeId)
     };
 
     return (
@@ -68,7 +70,7 @@ export default function SavedRecipes() {
                             />
                             <span>{recipe.strMeal}</span>
                         </Link>
-                        <button onClick={() => handleDeleteRecipe(recipe.idMeal)}>Delete</button>
+                        <button onClick={() => handleDeleteRecipe(recipe.idMeal, recipe.id)}>Delete</button>
                     </li>
                 ))}
             </ul>
