@@ -1,0 +1,11 @@
+# Prevents macOS metadata files
+.DS_Store
+
+# Exclude build-related files
+node_modules/
+dist/
+build/
+
+# Environment
+.env
+

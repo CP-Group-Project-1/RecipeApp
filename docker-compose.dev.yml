@@ -1,0 +1,52 @@
+#########################################
+# The "development" compose file builds 
+# the images locally
+#########################################
+
+#version: "3"
+
+services:
+  api:
+    build: ./recipe-backend
+    restart: always
+    ports:
+      - "8000:8000"
+    environment:
+      - SECRET_KEY=$SECRET_KEY
+      - DEBUG=$DEBUG
+      - DB_NAME=$POSTGRES_DB
+      - DB_USER=$POSTGRES_USER
+      - DB_PASS=$POSTGRES_PASSWORD
+    depends_on:
+      #- db
+      db:
+        condition: service_healthy
+  nginx:
+    build: 
+      context: .
+      dockerfile: ./webserver/Dockerfile
+      args:
+        - VITE_BASE_URL=http://127.0.0.1:80
+    restart: always
+    ports:
+      - "80:80"
+    depends_on:
+      api:
+        condition: service_started
+  db:
+    image: postgres:15
+    restart: always  # Restart upom failure
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_DB=$POSTGRES_DB
+      - POSTGRES_USER=$POSTGRES_USER
+      - POSTGRES_PASSWORD=$POSTGRES_PASSWORD
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
