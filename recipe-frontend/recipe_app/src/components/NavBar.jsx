@@ -1,6 +1,7 @@
 import { useAuth } from "../../api/useAuth"
 import { logout } from "../../api/AuthApi"
 import { Link, useNavigate } from "react-router-dom";
+import AuthButton from "./AuthButton";
 
 export default function NavBar() {
     const isAuthenticated = useAuth();
@@ -13,6 +14,7 @@ export default function NavBar() {
 
     return (
         <>
+        <AuthButton />
         <button onClick={() => navigate('/')}>
                 Home
         </button> 
@@ -22,7 +24,7 @@ export default function NavBar() {
                 <Link to="/login">Login</Link>
             </>
         )}
-        {!isAuthenticated && (
+        {isAuthenticated && (
             <>
                 <button onClick={() => navigate('/saved')}>
                         Saved
