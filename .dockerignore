@@ -1,0 +1,31 @@
+# General OS files
+# Prevents macOS metadata files
+.DS_Store
+**/.DS_Store
+
+
+# Exclude version control metadata
+.git/
+.gitignore
+**/.git
+**/.gitignore
+
+# Exclude editor/IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+**/.vscode/
+**/.idea/
+**/*.swp
+**/*.swo
+
+# Exclude build-related files
+.env
+**/.env
+**/node_modules/
+**/dist/
+**/build/
+
+#Exclude directory and files
+recipe-back_end/proof/

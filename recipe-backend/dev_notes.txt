@@ -129,6 +129,21 @@ Setting up DRF framework
                                             - did not remove from database..debugging
                                                 - Updating code to submit DELETE request
                                                 - validated deletion occurs in database
+
+
+    - WIP on adding webserver and dockerizing
+        - added webserver directory, with Dockerfile, default.conf and dockerignore files
+        - adding Parent level files:
+            - build-and-push docker image script
+            - .dockerignore, .gitignore
+            - docker-compose.dev/prod.yml files
+            - run_nuild_dev.sh
+            - setup-ec2.sh
+            - stop_dev.sh
+
+        - Adding files to diretory receip-frontend
+            - .dockerignore, .gitignore
+
                                     
 
 
