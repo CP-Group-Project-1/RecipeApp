@@ -2,6 +2,7 @@ import { useAuth } from "../../api/useAuth"
 import { logout } from "../../api/AuthApi"
 import { Link, useNavigate } from "react-router-dom";
 import AuthButton from "./AuthButton";
+import Search from "./Search";
 
 export default function NavBar() {
     const isAuthenticated = useAuth();
@@ -24,35 +25,8 @@ export default function NavBar() {
                 <Link to="/login">Login</Link>
             </>
         )}
-        {isAuthenticated && (
-            <>
-                <button onClick={() => navigate('/saved')}>
-                        Saved
-                    </button> 
-
-                <button onClick={() => navigate('/shoplist')}>
-                    Shopping List
-                </button> 
-
-                <div>
-                <h2>Search Recipe by:</h2>
-                <button onClick={() => navigate('/bycat')}>
-                    Category
-                </button> 
-
-                <button onClick={() => navigate('/byingredient')}>
-                    Ingredient
-                </button> 
-
-                <button onClick={() => navigate('/bycuisine')}>
-                    Cuisines
-                </button> 
-
-                <button onClick={handleLogout}>Logout</button>
-
-                </div>
-            </>
-        )}
+        <Search />
+        <button onClick={handleLogout}>Logout</button>
         </>
     )
 }
