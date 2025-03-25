@@ -177,7 +177,19 @@ Setting up DRF framework
             - signing up a user..validation successfull
             - Loggin in
                 - stays on page..
-                    - debugging
+                    - debugging(didnt have latest chamges)
+                        - pulled latest changes
+                - Creating user(Signing up)...validation successfull
+                    -Peter Griffin(pg@fox.com)
+                    - Marge Simpson(ms@fox.com)
+                - Login..validation..successfull
+                - Selecting Category
+                    - Save recipe..Received Error saving recipe..debugging
+                        - Forgot to pass the baseurl prop to SaveRecipeBtn
+                    - Updated backend api calls for ngnix to use api/v1
+                    - Updated docker-compose.dev file
+                - Recipes saving..validation successfull
+
 
 
                                     

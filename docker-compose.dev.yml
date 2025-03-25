@@ -26,7 +26,8 @@ services:
       context: .
       dockerfile: ./webserver/Dockerfile
       args:
-        - VITE_BASE_URL=http://127.0.0.1:80
+        #- VITE_BASE_URL=http://127.0.0.1:80
+        - VITE_BASE_URL=/api/v1
     restart: always
     ports:
       - "80:80"
