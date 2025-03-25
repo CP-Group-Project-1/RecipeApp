@@ -4,7 +4,7 @@ import SaveRecipeBtn from "../components/SaveRecipeBtn";
 import ShopListBtn from "../components/SaveIngredientsBtn";
 
 
-export default function RecipePage() {
+export default function RecipePage({base_url}) {
     const { idMeal } = useParams();
     const [recipe, setRecipe] = useState(null);
     const navigate = useNavigate();

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { login, basicFetch } from "../../api/AuthApi";
 
-export default function Login() {
+export default function Login({base_url}) {
     //console.log('IN_Login_Page')
     const navigate = useNavigate();
 
@@ -55,7 +55,7 @@ export default function Login() {
 
         try {
             //console.log('Attempting to get user token')
-            const response = await login(formData);
+            const response = await login(formData, base_url);
             if (response.token) {
               localStorage.setItem("token", response.token);
               //console.log(response);
@@ -65,7 +65,7 @@ export default function Login() {
 
               const token = response.token
               //const singleUserEp = `${base_url}user_accounts/user/`
-              const singleUserEp = 'http://127.0.0.1:8000/user_accounts/user/single_user/';
+              const singleUserEp = `${base_url}/user_accounts/user/single_user/`;
 
               const userPayload = {
                 method: "GET",

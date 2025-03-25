@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { getRecipe, deleteRecipe } from "../../api/AuthApi";
 
-export default function SavedRecipes() {
+export default function SavedRecipes({base_url}) {
     const [savedRecipes, setSavedRecipes] = useState([]);
 
     const userId = localStorage.getItem("user_id");
@@ -18,7 +18,7 @@ export default function SavedRecipes() {
         
 
         async function retriveRecipe(){
-            const response = await getRecipe(userId);
+            const response = await getRecipe(base_url, userId);
     
             if (response.success) {
                 alert("Retrieved recipe successfully!");
