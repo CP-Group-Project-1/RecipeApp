@@ -1,9 +1,10 @@
 import './App.css';
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { useLayoutEffect } from 'react';
+import { useAuth } from "../api/useAuth";
 import ProtectedRoute from './components/ProtectedRoute';
-import Login from './pages/Login';
+import LoginSignup from './pages/LoginSignup';
 import Home from './pages/Home';
-import Signup from './pages/Signup';
 import ByCat from './pages/ByCat';
 import ByIngredient from './pages/ByIngredient';
 import ByCuisine from './pages/ByCuisine';
@@ -19,23 +20,28 @@ function App() {
   console.log('In_APP')
   console.log(`base_url = [${base_url}]`)
 
+  // adding useAuth and useLayoutEffect
+  const { isAuthenticated } = useAuth();
+
+  useLayoutEffect(() => {
+  }, [isAuthenticated]);
+
   return (
     <>
     <BrowserRouter>
-    <NavBar />
-    <Routes>
-      <Route path="/login" element={<Login base_url={base_url}/>} />
-      <Route path="/signup" element={<Signup base_url={base_url}/>} />
-      <Route path="/" element={<Home />} />
-      <Route element={<ProtectedRoute/>}>
-        <Route path="/bycat" element={<ByCat />} />
-        <Route path="/byingredient" element={<ByIngredient />} />
-        <Route path="/bycuisine" element={<ByCuisine />} />
-        <Route path="/recipe/:idMeal" element={<RecipePage base_url={base_url}/>} />
-        <Route path="/saved" element={<SavedRecipes base_url={base_url}/>} />
-        <Route path="/shoplist" element={<ShoppingList />} />
-      </Route>
-    </Routes>
+      {isAuthenticated && <NavBar />}
+      <Routes>
+        <Route path="/auth" element={!isAuthenticated ? <LoginSignup /> : <Navigate to="/" replace/>} />
+        <Route path="/" element={<Home isAuthenticated={isAuthenticated} />} />
+        <Route element={<ProtectedRoute/>}>
+          <Route path="/bycat" element={<ByCat />} />
+          <Route path="/byingredient" element={<ByIngredient />} />
+          <Route path="/bycuisine" element={<ByCuisine />} />
+          <Route path="/recipe/:idMeal" element={<RecipePage base_url={base_url}/>} />
+          <Route path="/saved" element={<SavedRecipes base_url={base_url}/>} />
+          <Route path="/shoplist" element={<ShoppingList />} />
+        </Route>
+      </Routes>
     </BrowserRouter>
     </>
   );

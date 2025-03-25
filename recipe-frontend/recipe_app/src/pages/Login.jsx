@@ -1,10 +1,14 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { login, basicFetch } from "../../api/AuthApi";
+import { useAuth } from "../../api/useAuth";
 
 export default function Login({base_url}) {
     //console.log('IN_Login_Page')
     const navigate = useNavigate();
+    
+    // adding setAuth
+    const { setAuth } = useAuth();
 
     const [formData, setFormData] = useState({
         email: "",
@@ -26,9 +30,13 @@ export default function Login({base_url}) {
             [name]: value,
         }));
 
-        if (name === "email" && error) {
-            setError("");
-        }
+        // if (name === "email" && error) {
+        //     setError("");
+        // }
+        
+        // Clear error when user types
+        if (error) setError("");
+
     };
 
     const handleBlur = (e) => {
@@ -37,8 +45,6 @@ export default function Login({base_url}) {
             setIsEmailTouched(true);
             if (!validateEmail(value)) {
                 setError("Invalid email format.");
-            } else {
-                setError("");
             }
         }
     };
@@ -52,6 +58,7 @@ export default function Login({base_url}) {
         }
 
         setIsLoading(true);
+        setError(""); // clear previous errors
 
         try {
             //console.log('Attempting to get user token')
@@ -81,7 +88,10 @@ export default function Login({base_url}) {
               //console.log(`user_id = [${userBody.id}]`);
               localStorage.setItem("user_id", userBody.id);
                 
-              navigate("/");
+              // adding setAuth
+              setAuth(true);
+              // edit navigate
+              navigate("/", { replace: true });
             } else {
                 setError(response.error || "Login failed. Please try again.");
             }
@@ -118,13 +128,10 @@ export default function Login({base_url}) {
                         required
                     />
                 </div>
-                {isEmailTouched && error && <p>{error}</p>}
+                {error && <p style={{color: 'red'}}>{error}</p>}
                 <div>
                     <button onClick={() => navigate('/')} type="submit" disabled={isLoading}>
                         {isLoading ? "Logging in..." : "Submit"}
-                    </button>
-                    <button onClick={() => navigate('/')}>
-                        Cancel
                     </button>
                 </div>
             </form>

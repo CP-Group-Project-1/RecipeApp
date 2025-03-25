@@ -17,6 +17,7 @@ const payload = {
     const body = await basicFetch(`${baseUrl}/user_accounts/signup`, payload);
     if (body.token) {
         localStorage.setItem("token", body.token);
+        window.dispatchEvent(new Event("auth-change"));
         return { success: true, token: body.token };
     } else {
         return { success: false, error: body.error || "Signup failed. Please try again." };
@@ -44,6 +45,7 @@ try {
   if (body.token) {
       // Store the token in localStorage
       localStorage.setItem("token", body.token);
+      window.dispatchEvent(new Event("auth-change"));
       return { success: true, token: body.token };
   } else {
       return { success: false, error: body.error || "Login failed. Invalid token." };
@@ -148,8 +150,12 @@ export async function deleteRecipe(baseUrl,userId, recipeId){
 }
 
 
-export function logout() {
+export const logout = (setAuth) => {
   localStorage.removeItem("token");
+  localStorage.removeItem("user_id");
+  setAuth(false);
+  // Trigger custom event
+  window.dispatchEvent(new Event("auth-change"));
 }
 
 
