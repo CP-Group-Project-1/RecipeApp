@@ -167,9 +167,17 @@ Setting up DRF framework
                 - components/ProtectedRoute.jsx(no update)
                 - components/SaveRecipeBtn(updated)
                 - components/SaveIngredientsBtn(no update)
+        - updated backend/settings.py
 
         - WIP on dockerizing
             - building dev containers
+            - containers built
+            - Able to hit endpoints..
+            - created suoer user..validation successfull
+            - signing up a user..validation successfull
+            - Loggin in
+                - stays on page..
+                    - debugging
 
 
                                     
