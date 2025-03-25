@@ -22,7 +22,7 @@ export default function RecipePage({base_url}) {
 
     return (
         <div>
-            <SaveRecipeBtn recipe={recipe} />
+            <SaveRecipeBtn recipe={recipe} base_url={base_url}/>
             <ShopListBtn recipe={recipe} />
         
             <h2>{recipe.strMeal}</h2>
