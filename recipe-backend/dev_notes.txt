@@ -168,6 +168,9 @@ Setting up DRF framework
                 - components/SaveRecipeBtn(updated)
                 - components/SaveIngredientsBtn(no update)
 
+        - WIP on dockerizing
+            - building dev containers
+
 
                                     
 
