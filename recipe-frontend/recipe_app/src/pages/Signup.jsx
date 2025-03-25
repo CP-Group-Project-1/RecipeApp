@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { signup } from "../../api/AuthApi"; 
 
-export default function Signup() {
+export default function Signup({base_url}) {
     const navigate = useNavigate();
 
     const [formData, setFormData] = useState({
@@ -89,7 +89,7 @@ export default function Signup() {
         setIsLoading(true);
 
         try {
-            const response = await signup(formData);
+            const response = await signup(base_url, formData);
             if (response.success) {
                 navigate("/login");
             } else {

@@ -43,3 +43,73 @@ Shopping_List_Items
 Shopping_List_Item_Detail
     -  http://127.0.0.1:8000/shopping_list/<int:id>
         - i.e http://127.0.0.1:8000/shopping_list/1
+
+-------------------------------------------
+Enter container
+    docker exec -it recipeapp-api-1 bash
+    docker exec -it recipeapp-db-1 bash
+    docker exec -it recipeapp-nginx-1 sh
+
+ENTER_CONTAINER_AND_EXECUTE
+    - docker-compose -f docker-compose.dev.yml exec api python recipe_app_project/manage.py createsuperuser
+
+CONTAINER_LOGS:
+    - docker logs recipeapp-api-1 --tail 50
+    - docker logs recipeapp-db-1 --tail 50
+    - docker logs recipeapp-nginx-1 --tail 50
+
+
+
+🧩 Full-Stack Container
+
+vite/React/Nginx
+• Base URL: http://127.0.0.1:80
+
+⸻
+
+📌 Admin Endpoint
+	•	Admin Dashboard:
+http://127.0.0.1:80/admin/
+    Note: If logged in as admin, a user will not be able to sign up.
+
+⸻
+
+📌 User Endpoints
+	•	User Signup:
+http://127.0.0.1:80/user_accounts/signup
+	•	User Login (Get Token):
+http://127.0.0.1:80/user_accounts/get-token
+	•	Get All Users:
+http://127.0.0.1:80/user_accounts/
+	•	Get Specific User:
+http://127.0.0.1:80/user_accounts/user/<int:id>/
+e.g. http://127.0.0.1:80/user_accounts/user/2/
+
+⸻
+
+📌 Saved Recipes Endpoints
+	•	Get All Saved Recipes:
+http://127.0.0.1:80/saved_recipes/
+	•	Get Saved Recipes for a User:
+http://127.0.0.1:80/saved_recipes/user/<int:user_id>/
+e.g. http://127.0.0.1:80/saved_recipes/user/2/
+	•	Get a Specific Saved Recipe for a User:
+http://127.0.0.1:80/saved_recipes/user/<int:user_id>/recipe/<int:recipe_id>/
+e.g. http://127.0.0.1:80/saved_recipes/user/2/recipe/10/
+
+⸻
+
+📌 Shopping List Endpoints
+	•	Get/Post All Shopping List Items:
+http://127.0.0.1:80/shopping_list/
+	•	Get/Delete a Specific Shopping List Item:
+http://127.0.0.1:80/shopping_list/<int:id>/
+e.g. http://127.0.0.1:80/shopping_list/1/
+
+⸻
+
+Let me know if you’d like the endpoint list exported as a document or markdown file!
+
+
+
+

@@ -5,7 +5,7 @@ export async function basicFetch(url, payload) {
   }
 
 
-export async function signup(context) {
+export async function signup(baseUrl, context) {
 const payload = {
     method: "POST",
     headers: {
@@ -14,7 +14,7 @@ const payload = {
     body: JSON.stringify(context)
 }
   try {
-    const body = await basicFetch("http://127.0.0.1:8000/user_accounts/signup", payload);
+    const body = await basicFetch(`${baseUrl}/user_accounts/signup`, payload);
     if (body.token) {
         localStorage.setItem("token", body.token);
         return { success: true, token: body.token };
@@ -27,7 +27,7 @@ const payload = {
 }
 
 
-export async function login(context) {
+export async function login(context, baseUrl) {
 const payload = {
     method: "POST",
     headers: {
@@ -39,7 +39,8 @@ const payload = {
     }),
 };
 try {
-  const body = await basicFetch("http://127.0.0.1:8000/user_accounts/get-token", payload);
+  //const body = await basicFetch("http://127.0.0.1:8000/user_accounts/get-token", payload);
+  const body = await basicFetch(`${baseUrl}/user_accounts/get-token`, payload);
   if (body.token) {
       // Store the token in localStorage
       localStorage.setItem("token", body.token);
@@ -52,7 +53,7 @@ try {
 }
 }
 
-export async function saveRecipe(userId, context) {
+export async function saveRecipe(userId, context, baseUrl) {
     /*console.log('IN_saveRecipe')
     console.log(`userId = ${userId}`)
     console.log(`Getting token from local storage => [${localStorage.getItem('token')}]`)
@@ -68,7 +69,8 @@ export async function saveRecipe(userId, context) {
     //console.log(`payload = ${JSON.stringify(payload)}`)
     try {
         const body = await basicFetch(
-            `http://127.0.0.1:8000/saved_recipes/user/${userId}/`, 
+            //`http://127.0.0.1:8000/saved_recipes/user/${userId}/`, 
+            `${baseUrl}/saved_recipes/user/${userId}/`,
             payload
         );
         if (body) {
@@ -83,7 +85,7 @@ export async function saveRecipe(userId, context) {
     }
 }
 
-export async function getRecipe(userId) {
+export async function getRecipe(baseUrl, userId) {
     //console.log('IN_getRecipe')
     //console.log(`userId = ${userId}`)
     //console.log(`Getting token from local storage => [${localStorage.getItem('token')}]`)
@@ -98,7 +100,8 @@ export async function getRecipe(userId) {
     //console.log(`payload = ${JSON.stringify(payload)}`)
     try {
         const body = await basicFetch(
-            `http://127.0.0.1:8000/saved_recipes/user/${userId}/`, 
+            //`http://127.0.0.1:8000/saved_recipes/user/${userId}/`, 
+            `${baseUrl}/saved_recipes/user/${userId}/`,
             payload
         );
         if (body) {
@@ -112,7 +115,7 @@ export async function getRecipe(userId) {
     }
 }
 
-export async function deleteRecipe(userId, recipeId){
+export async function deleteRecipe(baseUrl,userId, recipeId){
 
     const payload = {
         method: "DELETE",
@@ -123,7 +126,8 @@ export async function deleteRecipe(userId, recipeId){
     };
     try {
         const body = await basicFetch(
-            `http://127.0.0.1:8000/saved_recipes/user/${userId}/recipe/${recipeId}/`,
+            //`http://127.0.0.1:8000/saved_recipes/user/${userId}/recipe/${recipeId}/`,
+            `${baseUrl}/saved_recipes/user/${userId}/recipe/${recipeId}/`,
             payload
         );
         if (body) {

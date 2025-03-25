@@ -14,6 +14,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy entire backend into container
 COPY . .
 
+ENV PYTHONPATH="${PYTHONPATH}:/src/recipe_app_project"
+
 # Run DRF with Gunicorn
-#CMD gunicorn --bind 0.0.0.0:8000 --workers 3 pm_project.wsgi:application
-CMD ["gunicorn", "--bind", "0.0.0.0:8000", "--workers", "3", "pm_project.wsgi:application"]
+#CMD gunicorn --bind 0.0.0.0:8000 --workers 3 recipe_app_project.wsgi:application
+CMD ["gunicorn", "--bind", "0.0.0.0:8000", "--workers", "3", "recipe_app_project.wsgi:application"]

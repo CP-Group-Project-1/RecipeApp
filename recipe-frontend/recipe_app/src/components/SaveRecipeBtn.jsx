@@ -1,7 +1,7 @@
 import React from "react";
 import { saveRecipe } from "../../api/AuthApi";
 
-export default function SaveRecipeBtn({ recipe }) {
+export default function SaveRecipeBtn({ recipe, base_url }) {
     const handleSave = async () => {
         const userId = localStorage.getItem("user_id");
 
@@ -15,7 +15,7 @@ export default function SaveRecipeBtn({ recipe }) {
             recipe_title: recipe.strMeal,
             meal_pic_img: recipe.strMealThumb
             //recipe_ingredients: ingredientsArr
-        });
+        }, base_url);
 
         if (response.success) {
             alert("Recipe saved successfully!");

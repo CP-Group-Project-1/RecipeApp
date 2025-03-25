@@ -144,6 +144,42 @@ Setting up DRF framework
         - Adding files to diretory receip-frontend
             - .dockerignore, .gitignore
 
+        - Starting update front-end to geting the base_url
+            - updating the following files: 
+                - api/AuthApi.js(DONT_FORGET_THIS_FILE_FOR_UPDATTING)
+                    - function signup(updated)
+                    - function getRecipe(updated)
+                    - function deleteRecipe(udpated)
+                    - function saveRecipe(updated)
+                    - function login(updated)
+                - App.jsx(updated) 
+                - pages/Login.jsx(updated)
+                - pages/Signup.jsx(updated)
+                - pages/Home.jsx(no update)
+                - pages/ByCat.jsx(no update)
+                - pages/ByIngredient.jsx(no update)
+                - pages/ByCuisine.jsx(no update)
+                - pages/RecipePage.jsx(updated)
+                    - Uses component SaveRecipeBtn
+                    - Uses compnent ShopListBtn
+                - pages/SavedRecipes(updated)
+                - pages/ShoppingList.jsx(no update)
+                - components/ProtectedRoute.jsx(no update)
+                - components/SaveRecipeBtn(updated)
+                - components/SaveIngredientsBtn(no update)
+        - updated backend/settings.py
+
+        - WIP on dockerizing
+            - building dev containers
+            - containers built
+            - Able to hit endpoints..
+            - created suoer user..validation successfull
+            - signing up a user..validation successfull
+            - Loggin in
+                - stays on page..
+                    - debugging
+
+
                                     
 
 
