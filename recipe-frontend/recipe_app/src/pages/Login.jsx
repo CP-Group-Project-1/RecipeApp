@@ -121,7 +121,7 @@ export default function Login({base_url}) {
                 </div>
                 {isEmailTouched && error && <p>{error}</p>}
                 <div>
-                    <button type="submit" disabled={isLoading}>
+                    <button onClick={() => navigate('/')} type="submit" disabled={isLoading}>
                         {isLoading ? "Logging in..." : "Submit"}
                     </button>
                     <button onClick={() => navigate('/')}>

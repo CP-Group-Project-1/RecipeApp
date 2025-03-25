@@ -6,7 +6,6 @@ export default function Home() {
     return (
         <>
             <h2>Home Page</h2>
-            
             <button onClick={() => navigate('/login')}>
                 Login
             </button> 

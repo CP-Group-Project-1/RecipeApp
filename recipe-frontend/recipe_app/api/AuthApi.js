@@ -149,3 +149,31 @@ export function logout() {
   localStorage.removeItem("token");
 }
 
+
+
+export async function saveShoppingList(token, meals) {
+  const payload = {
+      method: "POST",
+      headers: {
+          "Content-Type": "application/json",  // Ensure the correct content type
+          "Authorization": `Token ${token}`,  // Pass the auth token for authentication
+      },
+      body: JSON.stringify({ meals }),  // Send meals data as a JSON object
+  };
+
+  try {
+      const response = await fetch("http://127.0.0.1:8000/shopping_list/", payload);
+      const textResponse = await response.text();
+      console.log("Response Text:", textResponse);
+
+      if (response.ok) {
+          const data = JSON.parse(textResponse);  // Parse the response JSON
+          return { success: true, data };
+      } else {
+          return { success: false, error: textResponse || "Failed to save ingredients." };
+      }
+  } catch (error) {
+      console.error("Error saving ingredients:", error);
+      return { success: false, error: error.message };
+  }
+}
