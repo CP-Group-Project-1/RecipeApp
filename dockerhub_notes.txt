@@ -1,0 +1,8 @@
+Pull images:
+    - docker pull <username>/recipe_backend:latest
+    - docker pull <username>/recipe_frontend:latest
+- Run file run_build.sh
+
+- Create superuser
+    - docker exec -it <dir>_recipe_app-api-1 python recipe_app_project/manage.py createsuperuser
+        i.e - docker exec -it team_project_recipe_app-api-1 python recipe_app_project/manage.py createsuperuser

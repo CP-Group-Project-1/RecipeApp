@@ -190,6 +190,11 @@ Setting up DRF framework
                     - Updated docker-compose.dev file
                 - Recipes saving..validation successfull
 
+    - Pushing images to DH..validation..successfull
+        - Downloading images from DH..validation successfull
+            - Bringing images online..validation successfull
+                - Signup, Login, Saving Recipes successfull
+
 
 
                                     

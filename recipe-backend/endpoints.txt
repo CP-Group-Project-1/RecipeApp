@@ -100,7 +100,7 @@ http://127.0.0.1:80/api/v1/user_accounts/user/<int:id>/
 http://127.0.0.1:80/api/v1/saved_recipes/
 	•	Get Saved Recipes for a User
 http://127.0.0.1:80/api/v1/saved_recipes/user/<int:user_id>/
-	Example: http://127.0.0.1:80/api/v1/saved_recipes/user/2/
+	Example: http://127.0.0.1:80/api/v1/saved_recipes/user/1/
 	•	Get a Specific Saved Recipe for a User
 http://127.0.0.1:80/api/v1/saved_recipes/user/<int:user_id>/recipe/<int:recipe_id>/
 	Example: http://127.0.0.1:80/api/v1/saved_recipes/user/2/recipe/10/
