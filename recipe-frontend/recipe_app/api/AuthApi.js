@@ -11,8 +11,8 @@ const payload = {
     headers: {
     "Content-Type": "application/json",
     },
-    body: JSON.stringify(context)
-}
+    body: JSON.stringify(context),
+};
   try {
     const body = await basicFetch(`${baseUrl}/user_accounts/signup`, payload);
     if (body.token) {

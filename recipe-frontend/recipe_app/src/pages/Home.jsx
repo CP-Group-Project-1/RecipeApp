@@ -3,7 +3,7 @@ import { useAuth } from "../../api/useAuth";
 
 export default function Home() {
     const navigate = useNavigate();
-    const isAuthenticated = useAuth();
+    const { isAuthenticated } = useAuth();
 
     return (
         <div style={{ padding: "20px" }}>
