@@ -1,0 +1,5 @@
+- To run docker-compose.dev , execute 'run_build_dev.sh'
+
+- To build and push images to docker hub, exececute 'build-and-push-images.sh'
+
+- Full stack containers endpoints, find section 'Full-Stack Container', in endpoints.txt
