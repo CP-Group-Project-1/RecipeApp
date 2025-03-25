@@ -36,10 +36,17 @@
 # If no arguments are provided, default values will be used.
 ##############################
 
+# Require DOCKERHUB_USERNAME as the first argument
+if [ -z "$1" ]; then
+  echo "ERROR: You must provide your DockerHub username as the first argument."
+  echo "Usage: ./build-and-push-images.sh <DOCKERHUB_USERNAME>"
+  exit 1
+fi
+
 # Default values if no arguments are passed
-DEFAULT_DOCKERHUB_USERNAME="mmccla1n"
+DEFAULT_DOCKERHUB_USERNAME="$1"
 DEFAULT_VERSION="latest"
-DEFAULT_BASE_URL="http://127.0.0.1:8000"
+DEFAULT_BASE_URL="/api/v1"
 
 # Assign arguments or use defaults
 DOCKERHUB_USERNAME=${1:-$DEFAULT_DOCKERHUB_USERNAME}
@@ -52,16 +59,16 @@ echo "Backend API Base URL: $BASE_URL"
 
 # Build and Push Backend (Django API)
 echo "Building Backend Image..."
-docker buildx build --platform linux/amd64,linux/arm64 -t $DOCKERHUB_USERNAME/pm_backend:$VERSION -f back_end/Dockerfile ./back_end --push --no-cache
+docker buildx build --platform linux/amd64,linux/arm64 -t $DOCKERHUB_USERNAME/recipe_backend:$VERSION -f recipe-backend/Dockerfile ./recipe-backend --push --no-cache
 
 echo "Pushing Backend Image to DockerHub..."
-docker push $DOCKERHUB_USERNAME/pm_backend:$VERSION
+docker push $DOCKERHUB_USERNAME/recipe_backend:$VERSION
 
 # Build and Push Frontend (React + Nginx)
 echo "Building Frontend Image..."
-docker buildx build --platform linux/amd64,linux/arm64 --build-arg VITE_BASE_URL=$BASE_URL -t $DOCKERHUB_USERNAME/pm_frontend:$VERSION -f webserver/Dockerfile . --push --no-cache
+docker buildx build --platform linux/amd64,linux/arm64 --build-arg VITE_BASE_URL=$BASE_URL -t $DOCKERHUB_USERNAME/recipe_frontend:$VERSION -f webserver/Dockerfile . --push --no-cache
 
 echo "Pushing Frontend Image to DockerHub..."
-docker push $DOCKERHUB_USERNAME/pm_frontend:$VERSION
+docker push $DOCKERHUB_USERNAME/recipe_frontend:$VERSION
 
 echo "Build and Push Completed Successfully!"
