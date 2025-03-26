@@ -197,6 +197,12 @@ Setting up DRF framework
 
     - Updating code to allow for running Front/Back seperately
 
+    - WIP on getting things ready for production and deployment to AWS
+    - Updated docker-compose.prod
+    - Added run_build_prod.sh
+    - Validated that it pulls the images
+    - App running 
+
 
 
                                     
