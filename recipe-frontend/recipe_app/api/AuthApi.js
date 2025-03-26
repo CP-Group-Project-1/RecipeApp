@@ -1,4 +1,6 @@
 export async function basicFetch(url, payload) {
+    // console.log(`in basic fetch`)
+    // console.log(`url = ${url} \n payload = ${JSON.stringify(payload)}`)
     const res = await fetch(url, payload)
     const body = await res.json()
     return body
@@ -14,6 +16,8 @@ const payload = {
     body: JSON.stringify(context),
 };
   try {
+    // console.log(`in sign up`)
+    // console.log(`baseUrl = ${baseUrl} \n payload = ${JSON.stringify(payload)}`)
     const body = await basicFetch(`${baseUrl}/user_accounts/signup`, payload);
     if (body.token) {
         localStorage.setItem("token", body.token);
@@ -29,6 +33,7 @@ const payload = {
 
 
 export async function login(context, baseUrl) {
+    // console.log(`in login`)
 const payload = {
     method: "POST",
     headers: {
@@ -41,7 +46,9 @@ const payload = {
 };
 try {
   //const body = await basicFetch("http://127.0.0.1:8000/user_accounts/get-token", payload);
+//   console.log(`baseUrl = ${baseUrl} \n payload = ${JSON.stringify(payload)}`)
   const body = await basicFetch(`${baseUrl}/user_accounts/get-token`, payload);
+  
   if (body.token) {
       // Store the token in localStorage
       localStorage.setItem("token", body.token);

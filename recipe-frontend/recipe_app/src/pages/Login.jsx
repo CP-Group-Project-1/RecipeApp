@@ -73,7 +73,7 @@ export default function Login({base_url}) {
               const token = response.token
               //const singleUserEp = `${base_url}user_accounts/user/`
               const singleUserEp = `${base_url}/user_accounts/user/single_user/`;
-
+                // console.log(`singleuserEp = ${singleUserEp}`);
               const userPayload = {
                 method: "GET",
                 headers:{

@@ -2,7 +2,7 @@ import { useState } from "react";
 import Login from "./Login";
 import Signup from "./Signup";
 
-export default function LoginSignup() {
+export default function LoginSignup({base_url}) {
     const [isLogin, setIsLogin] = useState(true);
 
 
@@ -45,7 +45,7 @@ export default function LoginSignup() {
                 </button>
             </div>
 
-            {isLogin ? <Login /> : <Signup />}
+            {isLogin ? <Login base_url={base_url}/> : <Signup base_url={base_url}/>}
 
         </div>
     );

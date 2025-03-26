@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { signup } from "../../api/AuthApi"; 
 
 export default function Signup({base_url}) {
+    // console.log(`in signup.jsx`)
+    // console.log(`baseUrl = ${base_url}`)
     const navigate = useNavigate();
 
     const [formData, setFormData] = useState({
