@@ -16,7 +16,9 @@ import ShoppingList from './pages/ShoppingList';
 function App() {
 
   // vite_url used if set else it uses api
-  const base_url = import.meta.env.VITE_BASE_URL || "/api/v1"
+  // UNCOMMENT BELOW WHEN READY TO RUN AS FULL-STACK CONTAINER
+  //const base_url = import.meta.env.VITE_BASE_URL || "/api/v1"
+  const base_url = "http://127.0.0.1:8000/api/v1"  //COMMENT OUT WHEN DONE RUNNING SEPERATELY
   console.log('In_APP')
   console.log(`base_url = [${base_url}]`)
 

@@ -10,7 +10,7 @@ Admin
             - NOTE: upon execution you will be prompted for an email, not a username
 
 User_signup
-    - http://127.0.0.1:8000/user_accounts/signup
+    - http://127.0.0.1:8000/api/v1/user_accounts/signup
 
 User_Login(get token)
     - http://127.0.0.1:8000/user_accounts/get-token

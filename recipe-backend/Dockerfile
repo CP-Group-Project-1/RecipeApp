@@ -14,6 +14,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy entire backend into container
 COPY . .
 
+# Needed for fullstack conatiners with Ngnix
 ENV PYTHONPATH="${PYTHONPATH}:/src/recipe_app_project"
 
 # Run DRF with Gunicorn
