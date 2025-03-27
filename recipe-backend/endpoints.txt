@@ -1,4 +1,4 @@
-CURRENT: Endpoints must now be access via, http://127.0.0.1:8000/(backend only)
+CURRENT: Endpoints must now be access via, http://127.0.0.1:8000/  (backend only)
 
 Enter container
     docker exec -it recipe_app_project-api-1 bash
