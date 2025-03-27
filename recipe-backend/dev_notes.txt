@@ -203,6 +203,28 @@ Setting up DRF framework
     - Validated that it pulls the images
     - App running 
 
+    - Creating AWS ec2 instance(Recipe_App_Server)
+        - Connect your EC2 instance securely via SSH, using the private key file (<file_name>.pem) for authentication
+            - ssh -i "golf.pem" ec2-user@ec2-3-135-234-111.us-east-2.compute.amazonaws.com
+        - Transfer your SSH key pair (id_rsa and id_rsa.pub) to the .ssh directory on the remote EC2 instance
+            - scp -i "golf.pem" id_rsa id_rsa.pub ec2-user@ec2-3-135-234-111.us-east-2.compute.amazonaws.com:~/.ssh
+        - Updating allowed host in settings.py with ec2 instance..no need have '*'(wildcard)
+        - Copying setup-ec2.sh script to ec2 instance:
+            - scp -i ~/.ssh/"golf.pem" setup-ec2.sh ec2-user@ec2-3-135-234-111.us-east-2.compute.amazonaws.com:~/
+        - Running setup-ec2.sh script
+            - docker and docker compose installed
+        - Creating Secrets in AWS Secrets Manager, for database
+        - Creating IAM Role & Attach to EC2
+        - Copying pull_images.sh script to ec2
+            - scp -i ~/.ssh/"golf.pem" pull_images.sh ec2-user@ec2-3-135-234-111.us-east-2.compute.amazonaws.com:~/
+        - Copying docker-compose.prod.yml to ec2
+            - scp -i ~/.ssh/"golf.pem" docker-compose.prod.yml ec2-user@ec2-3-135-234-111.us-east-2.compute.amazonaws.com:~/ 
+        - Running pull_images.sh...images downloaded successfully
+        - Executing docker-compose.prod.yml
+            - App up and running
+                - validated, user signup, login and saving a recipe 
+        
+
 
 
                                     

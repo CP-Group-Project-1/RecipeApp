@@ -1,5 +1,7 @@
 #!/bin/sh
 
+# THis script is to be ran in the ec2 instance
+
 # Install docker and docker compose
 sudo yum install docker -y && \
 sudo service docker start && \

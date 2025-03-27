@@ -10,7 +10,7 @@ services:
       #Map port inside container to port 8000 on host
       - "8000:8000"
     command: python manage.py runserver 0.0.0.0:8000 # Run the server
-    working_dir: /src/recipe_app_project  # FOr running locally. REMOVE WHEN READY FOR FULL-STACK CONTAINER
+    working_dir: /src/recipe_app_project  # Needed to run BackEnd seperately for DRF webserver.
     volumes:
       # Allows for syncing files for updating during development
       - .:/src
