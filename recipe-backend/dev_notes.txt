@@ -223,6 +223,20 @@ Setting up DRF framework
         - Executing docker-compose.prod.yml
             - App up and running
                 - validated, user signup, login and saving a recipe 
+
+
+    - Stepping thru App, starting at endpoint/port...http://127.0.0.1:80
+        - Saving ingredients
+            - received error..[Error] Failed to load resource: the server responded with a status of 404 (Not Found) (shopping_list, line 0)
+                - its hiting this endpoint..http://127.0.0.1:8000/shopping_list/...whihc is incorrect
+                    - debugging
+                        - missing '/api/v1/'
+                    - saveShoppingList endpoint needs to be updated
+                        - saveShoppingList..updated
+                            - called by SaveIngredientsBtn..this need to receive the base_url prop
+                                - RecipePage uses SaveIngredientsBtn
+                                    - RecipPage aleady receives base_url prop
+
         
 
 
