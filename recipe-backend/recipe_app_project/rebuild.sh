@@ -6,4 +6,4 @@ docker-compose exec api python manage.py migrate
 #docker exec -it back_end-api-1 bash
 
 
-
+# docker-compose exec api python manage.py createsuperuser

@@ -8,28 +8,74 @@ export async function basicFetch(url, payload) {
 
 
 export async function signup(baseUrl, context) {
-const payload = {
-    method: "POST",
-    headers: {
-    "Content-Type": "application/json",
-    },
-    body: JSON.stringify(context),
-};
-  try {
+    const payload = {
+        method: "POST",
+        headers: {
+        "Content-Type": "application/json",
+        },
+        body: JSON.stringify(context),
+    };
+    try {
     // console.log(`in sign up`)
     // console.log(`baseUrl = ${baseUrl} \n payload = ${JSON.stringify(payload)}`)
-    const body = await basicFetch(`${baseUrl}/user_accounts/signup`, payload);
-    if (body.token) {
-        localStorage.setItem("token", body.token);
-        window.dispatchEvent(new Event("auth-change"));
-        return { success: true, token: body.token };
-    } else {
-        return { success: false, error: body.error || "Signup failed. Please try again." };
-    }
-  } catch (error) {
-    return { success: false, error: error.message };
-  }
+//     const body = await basicFetch(`${baseUrl}/user_accounts/signup`, payload);
+//     if (body.token) {
+//         localStorage.setItem("token", body.token);
+//         window.dispatchEvent(new Event("auth-change"));
+        
+//         return { success: true, token: body.token, userId: body.user_id };
+//     } else {
+//         return { success: false, error: body.error || "Signup failed. Please try again." };
+//     }
+//   } catch (error) {
+//     return { success: false, error: error.message };
+//  }
+        const signupResponse = await basicFetch(`${baseUrl}/user_accounts/signup`, payload);
+            
+        if (!signupResponse.token) {
+            return { success: false, error: signupResponse.error || "Signup failed" };
+        }
+
+        // Auto-login with new credentials
+        const loginPayload = {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                username: context.email,
+                password: context.password
+            }),
+        };
+
+        const loginResponse = await basicFetch(`${baseUrl}/user_accounts/get-token`, loginPayload);
+
+        if (loginResponse.token) {
+        // Get user ID through existing login flow
+            const userResponse = await basicFetch(`${baseUrl}/user_accounts/user/single_user/`, {
+                method: "GET",
+                headers: {
+                    "Authorization": `Token ${loginResponse.token}`,
+                    "Content-Type": "application/json"
+                }
+            });
+
+            // Store all auth data
+            localStorage.setItem("token", loginResponse.token);
+            localStorage.setItem("user_id", userResponse.id);
+            window.dispatchEvent(new Event("auth-change"));
+
+            return { 
+                success: true, 
+                token: loginResponse.token,
+                userId: userResponse.id
+            };
+        }
+
+        return { success: false, error: "Auto-login failed after signup" };
+
+        } catch (error) {
+        return { success: false, error: error.message };
 }
+    }
 
 
 export async function login(context, baseUrl) {

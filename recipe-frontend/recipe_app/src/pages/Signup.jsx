@@ -93,14 +93,12 @@ export default function Signup({base_url}) {
         try {
             const response = await signup(base_url, formData);
             if (response.success) {
-                navigate("/login");
+                navigate("/", { replace: true });
             } else {
-                setError(response.error || "Signup failed. Please try again.");
+                setError(response.error);
             }
         } catch (err) {
             setError("Signup failed. Please try again.");
-        } finally {
-            setIsLoading(false);
         }
     };
 
