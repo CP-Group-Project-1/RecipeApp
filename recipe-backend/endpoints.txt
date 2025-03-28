@@ -13,36 +13,36 @@ User_signup
     - http://127.0.0.1:8000/api/v1/user_accounts/signup
 
 User_Login(get token)
-    - http://127.0.0.1:8000/user_accounts/get-token
+    - http://127.0.0.1:8000/api/v1//user_accounts/get-token
 
 
 All_Users
-    - http://127.0.0.1:8000/user_accounts
+    - http://127.0.0.1:8000/api/v1//user_accounts
 
 Specific_user
     - User_signup
-    - http://127.0.0.1:8000/user_accounts/user/<str:id>/
-    - i.e http://127.0.0.1:8000/user_accounts/user/2/
+    - http://127.0.0.1:8000/api/v1//user_accounts/user/<str:id>/
+    - i.e http://127.0.0.1:8000/api/v1//user_accounts/user/2/
 
 All_Saved_Recipes
-    - http://127.0.0.1:8000/saved_recipes/
+    - http://127.0.0.1:8000/api/v1//saved_recipes/
 
 User_Saved_Recipes
-    - http://127.0.0.1:8000/saved_recipes/user/<int:user_id>/
-        - i.e - http://127.0.0.1:8000/saved_recipes/user/2/
+    - http://127.0.0.1:8000/api/v1//saved_recipes/user/<int:user_id>/
+        - i.e - http://127.0.0.1:8000/api/v1//saved_recipes/user/2/
 
 User_Single_Recipe
-    - http://127.0.0.1:8000/saved_recipes/user/<int:user_id>/recipe/<int:recipe_id>/
-        - i.e - http://127.0.0.1:8000/saved_recipes/user/2/recipe/10/
+    - http://127.0.0.1:8000/api/v1//saved_recipes/user/<int:user_id>/recipe/<int:recipe_id>/
+        - i.e - http://127.0.0.1:8000/api/v1//saved_recipes/user/2/recipe/10/
 
 
 
 Shopping_List_Items
-    -  http://127.0.0.1:8000/shopping_list/
+    -  http://127.0.0.1:8000/api/v1//shopping_list/
 
 Shopping_List_Item_Detail
-    -  http://127.0.0.1:8000/shopping_list/<int:id>
-        - i.e http://127.0.0.1:8000/shopping_list/1
+    -  http://127.0.0.1:8000/api/v1//shopping_list/<int:id>
+        - i.e http://127.0.0.1:8000/api/v1//shopping_list/1
 
 -------------------------------------------
 Enter container
