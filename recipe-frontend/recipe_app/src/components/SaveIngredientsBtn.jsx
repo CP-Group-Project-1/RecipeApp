@@ -2,7 +2,8 @@ import React from "react";
 import { saveShoppingList } from "../../api/AuthApi";
 import { useAuth } from "../../api/useAuth";
 
-export default function SaveIngredientsBtn({ recipe }) {
+export default function SaveIngredientsBtn({ recipe, base_url }) {
+    console.log('In_SaveIngredientsBtn')
     const isAuthenticated = useAuth();
 
     const handleSave = async () => {
@@ -30,7 +31,7 @@ export default function SaveIngredientsBtn({ recipe }) {
             }];
 
             // Send the data to the API
-            const response = await saveShoppingList(token, { meals });
+            const response = await saveShoppingList(token, { meals }, base_url);
 
             if (response.success) {
                 alert("Ingredients saved successfully!");

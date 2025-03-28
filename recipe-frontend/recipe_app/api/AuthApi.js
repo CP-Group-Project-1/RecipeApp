@@ -213,7 +213,8 @@ export const logout = (setAuth) => {
 
 
 
-export async function saveShoppingList(token, meals) {
+export async function saveShoppingList(token, meals, baseUrl) {
+    console.log('IN_saveShoppingList')
   const payload = {
       method: "POST",
       headers: {
@@ -224,7 +225,10 @@ export async function saveShoppingList(token, meals) {
   };
 
   try {
-      const response = await fetch("http://127.0.0.1:8000/shopping_list/", payload);
+      // COmmented out to support dynamically getting the 'api/v1', if not each time would need to remember to
+      // update the string
+      //const response = await fetch("http://127.0.0.1:8000/shopping_list/", payload);
+      const response = await fetch(`${baseUrl}/shopping_list/`, payload)
       const textResponse = await response.text();
       console.log("Response Text:", textResponse);
 
