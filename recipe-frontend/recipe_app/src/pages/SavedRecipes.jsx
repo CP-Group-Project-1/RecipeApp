@@ -25,7 +25,7 @@ export default function SavedRecipes({base_url}) {
     }, [userId]);
 
     const handleDeleteRecipe = async (idMeal, recipeId) => {
-        const response = await deleteRecipe(userId, recipeId);
+        const response = await deleteRecipe(base_url, userId, recipeId);
         if (response.success) {
             setSavedRecipes((prevRecipes) => prevRecipes.filter(recipe => recipe.idMeal !== idMeal));
         } else {
