@@ -23,7 +23,7 @@ export default function RecipePage({base_url}) {
     return (
         <div>
             <SaveRecipeBtn recipe={recipe} base_url={base_url}/>
-            <ShopListBtn recipe={recipe} />
+            <ShopListBtn recipe={recipe} base_url={base_url}/>
         
             <h2>{recipe.strMeal}</h2>
             <img src={recipe.strMealThumb} alt={recipe.strMeal}/>
