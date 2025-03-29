@@ -68,6 +68,7 @@ def parse_quantity(measure_str):
             return 1
     return 1
 
+
 class ShoppingListItems(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -163,7 +164,7 @@ class ShoppingListItemDetail(APIView):
             item.delete()
             return Response({"message": "Item removed from shopping list."}, status=status.HTTP_200_OK)
     
-@method_decorator(csrf_exempt, name='dispatch')
+#
 class SendShoppingListEmailView(APIView):
     permission_classes = [IsAuthenticated]
 
