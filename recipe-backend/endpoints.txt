@@ -44,6 +44,9 @@ Shopping_List_Item_Detail
     -  http://127.0.0.1:8000/api/v1/shopping_list/<int:id>
         - i.e http://127.0.0.1:8000/api/v1/shopping_list/1
 
+Shopping_List_Email
+    - http://127.0.0.1:8000/api/v1/shopping_list/send-email/
+
 -------------------------------------------
 Enter container
     docker exec -it recipeapp-api-1 bash
@@ -113,6 +116,8 @@ http://127.0.0.1:80/api/v1/shopping_list/
 	•	Get/Delete a Specific Shopping List Item
 http://127.0.0.1:80/api/v1/shopping_list/<int:id>/
 	Example: http://127.0.0.1:80/api/v1/shopping_list/1/
+    •	Email Shopping List 
+http://127.0.0.1:80/api/v1/shopping_list/send-email/
 
 
 
