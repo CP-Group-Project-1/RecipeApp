@@ -13,14 +13,6 @@ export default function SaveIngredientsBtn({ recipe, base_url }) {
 
             // Prepare the meals data from the recipe
             const meals = [{
-                idMeal: recipe.idMeal,
-                strMeal: recipe.strMeal,
-                strCategory: recipe.strCategory,
-                strArea: recipe.strArea,
-                strInstructions: recipe.strInstructions,
-                strMealThumb: recipe.strMealThumb,
-                strTags: recipe.strTags,
-                strYoutube: recipe.strYoutube,
                 // Loop through all ingredients and measures
                 ...Array.from({ length: 20 }, (_, index) => {
                     return {
@@ -31,7 +23,7 @@ export default function SaveIngredientsBtn({ recipe, base_url }) {
             }];
 
             // Send the data to the API
-            const response = await saveShoppingList(token, { meals }, base_url);
+            const response = await saveShoppingList(token, meals, base_url);
 
             if (response.success) {
                 alert("Ingredients saved successfully!");
@@ -40,6 +32,7 @@ export default function SaveIngredientsBtn({ recipe, base_url }) {
             }
         } else {
             alert("User is not authenticated.");
+
         }
     };
 
@@ -47,6 +40,8 @@ export default function SaveIngredientsBtn({ recipe, base_url }) {
         <button onClick={handleSave}>Save Ingredients</button>
     );
 }
+
+
 
 
 // import React from "react";

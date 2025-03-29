@@ -41,7 +41,7 @@ function App() {
           <Route path="/bycuisine" element={<ByCuisine />} />
           <Route path="/recipe/:idMeal" element={<RecipePage base_url={base_url}/>} />
           <Route path="/saved" element={<SavedRecipes base_url={base_url}/>} />
-          <Route path="/shoplist" element={<ShoppingList />} />
+          <Route path="/shoplist" element={<ShoppingList base_url={base_url}/>} />
         </Route>
       </Routes>
     </BrowserRouter>
