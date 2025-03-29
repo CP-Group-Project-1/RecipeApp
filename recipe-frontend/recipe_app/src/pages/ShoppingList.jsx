@@ -1,75 +1,77 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from 'react';
+import { fetchShoppingList, deleteShoppingListItem, updateShoppingListItem } from '../../api/AuthApi';
 
-export default function ShoppingList() {
+const ShoppingList = ({ base_url }) => {
     const [shoppingList, setShoppingList] = useState([]);
-    const [editedList, setEditedList] = useState([]);
+    const [error, setError] = useState(null);
+    const [newQty, setNewQty] = useState({}); 
 
     useEffect(() => {
-        const list = JSON.parse(localStorage.getItem("shoppingList")) || [];
-        setShoppingList(list);
-        setEditedList(list);
-    }, []);
+        async function fetchData() {
+            const response = await fetchShoppingList(base_url);
+            if (response.success) {
+                setShoppingList(response.data);
+            } else {
+                setError(response.error);
+            }
+        }
+        fetchData();
+    }, [base_url]);
 
-
-    const handleMeasureChange = (index, newMeasure) => {
-        const updatedList = [...editedList];
-        updatedList[index].measure = newMeasure;
-        setEditedList(updatedList);
+    const handleDelete = async (itemId) => {
+        const response = await deleteShoppingListItem(base_url, itemId);
+        if (response.success) {
+            setShoppingList((prevList) => prevList.filter(item => item.id !== itemId));
+        } else {
+            alert("Error deleting item: " + response.error);
+        }
     };
 
-    const handleCheckItem = (index) => {
-        const updatedList = [...editedList];
-        updatedList[index].checked = !updatedList[index].checked;
-        setEditedList(updatedList);
+    const handleQtyChange = (itemId, value) => {
+        setNewQty((prev) => ({ ...prev, [itemId]: value }));
     };
 
-    const handleDeleteItem = (index) => {
-        const updatedList = editedList.filter((_, i) => i !== index);
-        setEditedList(updatedList);
+    const handleSaveChanges = async () => {
+        for (const item of shoppingList) {
+            if (newQty[item.id] && newQty[item.id] !== item.qty) {
+                const response = await updateShoppingListItem(base_url, item.id, newQty[item.id]);
+                if (!response.success) {
+                    alert(`Error updating item: ${item.item}`);
+                    return;
+                }
+            }
+        }
+        alert("List has been Updated");
     };
 
-    const handleSaveChanges = () => {
-        localStorage.setItem("shoppingList", JSON.stringify(editedList));
-        alert("List saved");
-    };
+    // Sort alphabetically
+    const sortedShoppingList = shoppingList.sort((a, b) => {
+        return a.item.localeCompare(b.item);
+    });
 
     return (
         <div>
-            <h2>Shopping List</h2>
-            {editedList.length === 0 ? (
-                <p>Your shopping list is empty.</p>
-            ) : (
-                <ul>
-                    {editedList.map((item, index) => (
-                        <li key={index} style={{ listStyle:"none" }}>
+            <h1>Shopping List</h1>
+            {error && <p>{error}</p>}
+            <ul style={{ listStyleType: "none" }}>
+                {sortedShoppingList.map(item => (
+                    <li key={item.id}>
+                        <div>
                             <input
-                                type="checkbox"
-                                checked={item.checked}
-                                onChange={() => handleCheckItem(index)}
+                                type="number"
+                                value={newQty[item.id] || item.qty}  
+                                onChange={(e) => handleQtyChange(item.id, e.target.value)}
+                                min="1"
                             />
-                            <input
-                                type="text"
-                                value={item.measure}
-                                onChange={(e) => handleMeasureChange(index, e.target.value)}
-                                style={{ width: "100px", marginRight: "10px" }}
-                            />
-                            <span
-                                style={{
-                                    textDecoration: item.checked ? "line-through" : "none",
-                                    marginRight: "10px",
-                                }}
-                            >
-                                {item.ingredient}
-                            </span>
-                            <button onClick={() => handleDeleteItem(index)}>x</button>
-                        </li>
-                    ))}
-                </ul>
-            )}
-
-            <button onClick={handleSaveChanges} style={{ marginTop: "20px" }}>
-                Save Changes
-            </button>
+                            {item.item} {item.measure || ''}
+                            <button onClick={() => handleDelete(item.id)}>x</button>
+                        </div>
+                    </li>
+                ))}
+            </ul>
+            <button onClick={handleSaveChanges}>Save Changes</button>
         </div>
     );
-}
+};
+
+export default ShoppingList;

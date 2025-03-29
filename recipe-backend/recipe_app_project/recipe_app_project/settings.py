@@ -45,14 +45,18 @@ INSTALLED_APPS = [
     'saved_recipes_app',
     'rest_framework',
     "rest_framework.authtoken",
-    #"corsheaders"
+    # Tizz added
+    "corsheaders",
     'shopping_list_app',
     
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    #"corsheaders.middleware.CorsMiddleware",
+    # Tizz added
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
+    # 
     'django.contrib.sessions.middleware.SessionMiddleware',
     "recipe_app_project.middleware.CorsMiddleware",
     'django.middleware.common.CommonMiddleware',
@@ -161,7 +165,28 @@ CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1",
     "http://localhost",
     "http://127.0.0.1:80",
+    # Tizz added
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
 
+]
+
+# Tizz added
+CORS_ALLOW_ALL_ORIGINS = True
+
+# Tizz added
+CORS_ALLOW_METHODS = [
+    'GET',
+    'POST',
+    'PUT',
+    'PATCH',
+    'DELETE',
+    'OPTIONS',
+]
+# Tizz added
+CORS_ALLOW_HEADERS = [
+    'authorization',
+    'content-type',
 ]
 
 AUTH_USER_MODEL = "accounts_app.User"  # Tells Django to use this instead of the default User model
