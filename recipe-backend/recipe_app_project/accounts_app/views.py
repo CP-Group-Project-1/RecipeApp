@@ -83,6 +83,11 @@ class SingleUser(APIView):
         else:
             return Response(serialize_user.errors)
 
+        
+        #TODO: Maybe need a condition to render if nothing was changed
+        
+        
+        return Response(msg)
     
 class AllUserProfiles(APIView):
     def get(self, request):

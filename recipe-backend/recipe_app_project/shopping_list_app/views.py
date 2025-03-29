@@ -7,11 +7,14 @@ from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from .models import ShoppingListItem
 from .serializers import ShoppingListItemSerializer
+from django.core.mail import send_mail
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
 
 # get shopping list item by id
 IGNORE_UNITS = ["g", "ml", "tsp", "tbsp", "cup", "cups", "pint", "pints", "Grams", "Topping", "Pot", "oz", "can", "cans" ]
 
-KEEP_MEASURES = ["lb", "lbs", "kg", "kgs", "pound", "pounds", "oz"]
+KEEP_MEASURES = ["lb", "lbs", "kg", "kgs", "pound", "pounds", "oz", "cloves"]
 
 SKIP_INGREDIENTS = ["water"]
 
@@ -160,4 +163,22 @@ class ShoppingListItemDetail(APIView):
             item.delete()
             return Response({"message": "Item removed from shopping list."}, status=status.HTTP_200_OK)
     
+@method_decorator(csrf_exempt, name='dispatch')
+class SendShoppingListEmailView(APIView):
+    permission_classes = [IsAuthenticated]
 
+    def post(self, request):
+        user = request.user
+        items = ShoppingListItem.objects.filter(user=user)
+        shopping_list = "\n".join(f"-{item.qty} {item.measure or ''} {item.item}".strip() for item in items)
+        subject = "Your Shopping List"
+        message = f"Hello, \n\nHere is your shopping list:\n\n{shopping_list}"
+
+        send_mail(
+            subject=subject,
+            message=message,
+            from_email=None,
+            recipient_list=[user.email],
+            fail_silently=False,
+        )
+        return Response({"message": "Shopping list sent."})
