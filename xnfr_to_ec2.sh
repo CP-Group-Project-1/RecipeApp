@@ -8,14 +8,14 @@
 # Require EC2 instance name as the first argument
 if [ -z "$1" ]; then
   echo "ERROR: You must provide your .pem file name."
-  echo "Usage: ./xnfr_to_ec2.sh.sh <PEM_FILE_NAME> <EC2_NAME>"
+  echo "Usage: ./xnfr_to_ec2.sh <PEM_FILE_NAME> <EC2_NAME>"
   exit 1
 fi
 
 # Require EC2 instance name as the first argument
 if [ -z "$2" ]; then
   echo "ERROR: You must provide your ec2 instance name"
-  echo "Usage: ./xnfr_to_ec2.sh.sh <PEM_FILE_NAME> <EC2_NAME>"
+  echo "Usage: ./xnfr_to_ec2.sh <PEM_FILE_NAME> <EC2_NAME>"
   exit 1
 fi
 
@@ -34,4 +34,4 @@ echo "Xnfring docker-compose.prod.yml"
 scp -i ~/.ssh/"$PEM_FILE_NAME.pem" docker-compose.prod.yml ec2-user@$EC2_NAME:~/
 
 echo "Xnfring run_ec2.sh"
-scp -i ~/.ssh/"$PEM_FILE_NAME.pem" docker-compose.prod.yml ec2-user@$EC2_NAME:~/
+scp -i ~/.ssh/"$PEM_FILE_NAME.pem" run_ec2.sh ec2-user@$EC2_NAME:~/
