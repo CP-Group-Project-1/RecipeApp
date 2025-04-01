@@ -54,8 +54,8 @@ def parse_quantity(measure_str):
         # handle simple fraction
         match = re.match(r"^\s*(\d+)\/(\d+)", measure_str)
         if match:
-            numerator = int(match.group(2))
-            denominator = int(match.group(3))
+            numerator = int(match.group(1))
+            denominator = int(match.group(2))
             qty = Fraction(numerator, denominator)
             return math.ceil(float(qty))
         
@@ -68,7 +68,7 @@ def parse_quantity(measure_str):
             return 1
     return 1
 
-
+@method_decorator(csrf_exempt, name='dispatch')
 class ShoppingListItems(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -164,7 +164,7 @@ class ShoppingListItemDetail(APIView):
             item.delete()
             return Response({"message": "Item removed from shopping list."}, status=status.HTTP_200_OK)
     
-#
+@method_decorator(csrf_exempt, name='dispatch')
 class SendShoppingListEmailView(APIView):
     permission_classes = [IsAuthenticated]
 

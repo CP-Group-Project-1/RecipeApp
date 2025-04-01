@@ -113,6 +113,8 @@ http://127.0.0.1:80/api/v1/shopping_list/
 	•	Get/Delete a Specific Shopping List Item
 http://127.0.0.1:80/api/v1/shopping_list/<int:id>/
 	Example: http://127.0.0.1:80/api/v1/shopping_list/1/
+	•	Email shopping list to user's email
+http://127.0.0.1:80/api/v1/shopping_list/send-email
 
 
 
