@@ -159,7 +159,7 @@ class ShoppingListItemDetail(APIView):
     def delete(self, request, id):
         item = get_item(id)
         if item is None:
-            return Response(f'Item does not exist.', status=status.HTTP_404_NOT_FOUNT)
+            return Response(f'Item does not exist.', status=status.HTTP_404_NOT_FOUND)
         else:
             item.delete()
             return Response({"message": "Item removed from shopping list."}, status=status.HTTP_200_OK)

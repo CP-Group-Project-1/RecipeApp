@@ -197,9 +197,6 @@ export async function deleteRecipe(baseUrl,userId, recipeId){
         console.error("Error deleting recipe:", error);
         return { success: false, error: error.message };
     }
-
-    
-
 }
 
 
@@ -214,32 +211,153 @@ export const logout = (setAuth) => {
 
 
 export async function saveShoppingList(token, meals, baseUrl) {
-    console.log('IN_saveShoppingList')
-  const payload = {
-      method: "POST",
-      headers: {
-          "Content-Type": "application/json",  // Ensure the correct content type
-          "Authorization": `Token ${token}`,  // Pass the auth token for authentication
-      },
-      body: JSON.stringify({ meals }),  // Send meals data as a JSON object
-  };
+    // console.log("IN_saveShoppingList");
+    const apiUrl = `${baseUrl}/shopping_list/`;
 
-  try {
-      // COmmented out to support dynamically getting the 'api/v1', if not each time would need to remember to
-      // update the string
-      //const response = await fetch("http://127.0.0.1:8000/shopping_list/", payload);
-      const response = await fetch(`${baseUrl}/shopping_list/`, payload)
-      const textResponse = await response.text();
-      console.log("Response Text:", textResponse);
+    // console.log("Final API URL:", apiUrl);
 
-      if (response.ok) {
-          const data = JSON.parse(textResponse);  // Parse the response JSON
-          return { success: true, data };
-      } else {
-          return { success: false, error: textResponse || "Failed to save ingredients." };
-      }
-  } catch (error) {
-      console.error("Error saving ingredients:", error);
-      return { success: false, error: error.message };
-  }
+    try {
+        const response = await fetch(apiUrl, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Token ${token}`,
+            },
+            body: JSON.stringify({ meals }),
+        });
+
+        const data = await response.json();
+        // console.log("Response Data:", data);
+        return response.ok ? { success: true } : { success: false, error: data.message || "Unknown error" };
+    } catch (error) {
+        console.error("Error in saveShoppingList:", error);
+        return { success: false, error: "Network error" };
+    }
+}
+
+
+export async function fetchShoppingList(baseUrl) {
+    const payload = {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Token ${localStorage.getItem('token')}`
+        },
+    };
+    try {
+        const body = await basicFetch(
+            `${baseUrl}/shopping_list/`,
+            payload
+        );
+        // console.log("Response Data:", body);
+        if (body) {
+            return { success: true, data: body };
+        } else {
+            return { success: false, error: body.error || "Failed to get list." };
+        }
+    } catch (error) {
+        console.error("Error getting list:", error);
+        return { success: false, error: error.message };
+    }
+}
+
+
+
+export const deleteShoppingListItem = async (base_url, itemId) => {
+    const url = `${base_url}/shopping_list/${itemId}`;
+    // console.log("URL:", url);
+
+    try {
+        const response = await fetch(url, {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Token ${localStorage.getItem('token')}`
+            },
+        });
+
+        if (!response.ok) {
+            const errorData = await response.text();
+            throw new Error(errorData || "Error deleting item.");
+        }
+
+        const data = await response.json();
+        return { success: true, data };
+    } catch (error) {
+        console.error("Error deleting shopping list item:", error);
+        return { success: false, error: error.message || "Failed to delete item." };
+    }
+};
+
+
+export const updateShoppingListItem = async (base_url, itemId, updatedQty) => {
+    const url = `${base_url}/shopping_list/${itemId}`;
+    // console.log("URL:", url);
+
+    try {
+        const response = await fetch(url, {
+            method: "PATCH",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Token ${localStorage.getItem('token')}`
+            },
+            body: JSON.stringify({
+                qty: updatedQty
+            }),
+        });
+
+        if (!response.ok) {
+            const errorData = await response.text();
+            throw new Error(errorData || "Error updating item.");
+        }
+
+        const data = await response.json();
+        return { success: true, data };
+    } catch (error) {
+        console.error("Error updating shopping list item:", error);
+        return { success: false, error: error.message || "Failed to update item." };
+    }
+};
+
+
+export async function postEmail(token, baseUrl) {
+
+    if (!token) {
+        token = localStorage.getItem('token');
+        if (!token) {
+            console.error("No token found in localStorage");
+            return { success: false, error: "No token found" };
+        }
+    }
+
+    console.log("Sending email with token:", token);  // Log token
+    console.log("Base URL:", baseUrl);  // Log baseUrl
+
+    const apiUrl = `${baseUrl}/shopping_list/send-email/`;
+    console.log("API URL:", apiUrl);  // Log API URL
+
+    try {
+        const response = await fetch(apiUrl, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Token ${token}`,
+            },
+        });
+
+        const contentType = response.headers.get("Content-Type");
+        if (contentType && contentType.includes("application/json")) {
+            const data = await response.json();
+            console.log("API response data:", data);  // Log response data
+
+            return response.ok ? { success: true } : { success: false, error: data.message || "Unknown error" };
+        } else {
+            const errorText = await response.text();
+            console.log("Non-JSON response received:", errorText);
+            return { success: false, error: "Unexpected response format" };
+        }
+    } catch (error) {
+        console.error("Error sending email:", error);
+        return { success: false, error: "Network error" };
+    }
 }

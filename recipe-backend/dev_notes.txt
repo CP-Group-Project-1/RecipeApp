@@ -237,6 +237,13 @@ Setting up DRF framework
                                 - RecipePage uses SaveIngredientsBtn
                                     - RecipPage aleady receives base_url prop
 
+    - Researching measurement tools for App(nice to have)
+        - https://pint.readthedocs.io/en/stable/
+            - https://pypi.org/project/Pint/
+
+        - https://github.com/justinmklam/recipe-converter
+        - https://python-measurement.readthedocs.io/en/latest/
+
         
 
 
