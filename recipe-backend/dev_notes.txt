@@ -247,6 +247,10 @@ Setting up DRF framework
 
     - Added automation support for transfering files to ec2 instanace and execution of app on ec2 instance
     - Updated navbar to import logo
+        - validation successfull locally and on ec2
+        - Attempting to send email..validation unsuccessfull
+            - updating docker-compose.prod with SENDGRID_API_KEY variable
+                - valiated in ec2 successfull..email sent and received
 
         
 
