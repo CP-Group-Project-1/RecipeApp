@@ -246,6 +246,7 @@ Setting up DRF framework
 
 
     - Added automation support for transfering files to ec2 instanace and execution of app on ec2 instance
+    - Updated navbar to import logo
 
         
 

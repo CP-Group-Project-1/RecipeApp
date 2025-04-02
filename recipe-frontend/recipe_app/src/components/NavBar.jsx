@@ -11,6 +11,7 @@ import {
   useMediaQuery
 } from '@mui/material';
 import { ExitToApp, Bookmark, ShoppingBasket } from '@mui/icons-material';
+import Logo from '../assets/logo.png'
 
 export default function NavBar() {
   const navigate = useNavigate();
@@ -56,7 +57,8 @@ export default function NavBar() {
               }}>
                 <Box 
                   component="img"
-                  src="/src/assets/logo.png"
+                  /*src="/src/assets/logo.png"*/
+                  src={Logo}
                   alt="Cook n Cart Logo"
                   sx={{ 
                     height: 40,
@@ -191,7 +193,8 @@ export default function NavBar() {
             }}>
               <Box 
                 component="img"
-                src="/src/assets/logo.png"
+                /*src="/src/assets/logo.png"*/
+                src={Logo}
                 alt="Cook n Cart Logo"
                 sx={{ 
                   height: 50,
