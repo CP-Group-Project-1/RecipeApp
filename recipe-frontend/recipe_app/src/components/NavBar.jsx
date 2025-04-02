@@ -8,16 +8,35 @@ import {
   Button,
   Box,
   Stack,
-  useMediaQuery
+  useMediaQuery,
+  IconButton,
+  Menu,
+  MenuItem,
+  Typography,
+  Divider
 } from '@mui/material';
-import { ExitToApp, Bookmark, ShoppingBasket } from '@mui/icons-material';
+import { ExitToApp, Bookmark, ShoppingBasket, AccountCircle } from '@mui/icons-material';
 import Logo from '../assets/logo.png'
 
 export default function NavBar() {
   const navigate = useNavigate();
   const { isAuthenticated, setAuth } = useAuth();
   const [searchQuery, setSearchQuery] = useState('');
+  const [anchorEl, setAnchorEl] = useState(null);
   const isMobile = useMediaQuery((theme) => theme.breakpoints.down('md'));
+  
+  const handleMenuOpen = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleProfileClick = () => {
+    handleMenuClose();
+    navigate('/profile');
+  };
 
   const handleSearch = () => {
     if (searchQuery.trim()) {
@@ -158,7 +177,7 @@ export default function NavBar() {
                   Cuisine
                 </Button>
               </Stack>
-              <Button
+              {/* <Button
                 color="inherit"
                 startIcon={<ExitToApp />}
                 onClick={handleLogout}
@@ -169,7 +188,34 @@ export default function NavBar() {
                 }}
               >
                 Logout
-              </Button>
+              </Button> */}
+              <IconButton
+                color="inherit"
+                onClick={handleMenuOpen}
+                sx={{ 
+                  fontSize: '0.75rem',
+                  minWidth: 'auto',
+                  p: 0.5
+                }}
+              >
+                <AccountCircle />
+              </IconButton>
+              <Menu
+                anchorEl={anchorEl}
+                open={Boolean(anchorEl)}
+                onClose={handleMenuClose}
+              >
+                <MenuItem onClick={handleProfileClick}>
+                  <Typography variant="body2">Account Settings</Typography>
+                </MenuItem>
+                <Divider />
+                <MenuItem onClick={handleLogout}>
+                  <Stack direction="row" spacing={1} alignItems="center">
+                    <ExitToApp fontSize="small" />
+                    <Typography variant="body2">Logout</Typography>
+                  </Stack>
+                </MenuItem>
+              </Menu>
             </Toolbar>
           </AppBar>
         </>
@@ -239,14 +285,47 @@ export default function NavBar() {
                 </Button>
               </Stack>
 
-              <Button
+              {/* <Button
                 color="inherit"
                 startIcon={<ExitToApp />}
                 onClick={handleLogout}
                 sx={{ ml: 'auto !important' }}
               >
                 Logout
-              </Button>
+              </Button> */}
+              <Box sx={{ ml: 'auto !important' }}>
+                <IconButton
+                  color="inherit"
+                  onClick={handleMenuOpen}
+                  size="large"
+                >
+                  <AccountCircle />
+                </IconButton>
+                <Menu
+                  anchorEl={anchorEl}
+                  open={Boolean(anchorEl)}
+                  onClose={handleMenuClose}
+                  anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'right',
+                  }}
+                  transformOrigin={{
+                    vertical: 'top',
+                    horizontal: 'right',
+                  }}
+                >
+                  <MenuItem onClick={handleProfileClick}>
+                    <Typography variant="body1">Account Settings</Typography>
+                  </MenuItem>
+                  <Divider />
+                  <MenuItem onClick={handleLogout}>
+                    <Stack direction="row" spacing={1} alignItems="center">
+                      <ExitToApp fontSize="small" />
+                      <Typography variant="body1">Logout</Typography>
+                    </Stack>
+                  </MenuItem>
+                </Menu>
+              </Box>
             </Toolbar>
           </AppBar>
 

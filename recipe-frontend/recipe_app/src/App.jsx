@@ -12,6 +12,7 @@ import RecipePage from './pages/RecipePage';
 import SavedRecipes from './pages/SavedRecipes';
 import NavBar from './components/NavBar';
 import ShoppingList from './pages/ShoppingList';
+import Profile from './pages/Profile';
 
 function App() {
 
@@ -42,6 +43,7 @@ function App() {
           <Route path="/recipe/:idMeal" element={<RecipePage base_url={base_url}/>} />
           <Route path="/saved" element={<SavedRecipes base_url={base_url}/>} />
           <Route path="/shoplist" element={<ShoppingList base_url={base_url}/>} />
+          <Route path="/profile" element={<Profile base_url={base_url}/>} />
         </Route>
       </Routes>
     </BrowserRouter>
