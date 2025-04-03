@@ -120,7 +120,7 @@ export default function Profile({ base_url }) {
                 localStorage.removeItem('token');
                 localStorage.removeItem('user_id');
                 setAuth(false);
-                //setTimeout(()=> window.location.href = '/auth', 1500);
+                setTimeout(()=> window.location.href = '/auth', 1500);
             } else {
                 throw new Error('Password update failed. Please try again.');
             }
