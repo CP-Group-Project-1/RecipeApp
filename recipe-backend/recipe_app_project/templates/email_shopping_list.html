@@ -1,0 +1,19 @@
+{% load static %}
+<!DOCTYPE html> <!-- Define document type -->
+<!-- Root of document, specifing language content -->
+<html lang="en">
+    <!-- Head of document-->
+    <head>
+        <meta charset="UTF-8"> <!--lan processing, allowing the document to understand chaacters-->
+        <meta name="viewport"> <!-- name of metadata to be targeted for content display -->
+        <!--Match wifth of device and set intital zoom level-->
+        <meta content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        <div>
+            <!--img src="{% static 'logo.png' %}" alt="Cook n Cart Logo"-->
+            <img src="data:image/png;base64,{{logo_b64}}" alt="Cook n Cart Logo"/>
+            <p>{{message}}</p>
+        </div>
+    </body>
+</html>

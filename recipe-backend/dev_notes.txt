@@ -263,6 +263,31 @@ Setting up DRF framework
 
 
     - WIP on updating the email message to be html format with logo
+        - Reviewing DRF documention, https://docs.djangoproject.com/en/5.1/topics/email/
+        - Reviwing https://medium.com/@arifcse21/send-and-email-with-html-template-and-context-data-from-a-django-project-e9606644185c
+        - Reviewing https://mailtrap.io/blog/python-send-html-email/
+        - Reviewing https://medium.com/@akshatgadodia/simplifying-email-sending-in-django-a-step-by-step-guide-7dc90079738b
+        - Reviewing https://medium.com/dajngo/email-configuration-in-django-3c7d9e149445
+        - Reviewing https://learndjango.com/tutorials/template-structure
+        - Reviewing https://docs.djangoproject.com/en/5.1/topics/templates/
+        - Reviewing https://medium.com/@KaziMushfiq1234/add-image-or-file-to-drf-project-a0b0f8c3bd7d
+        - Reviewing https://docs.djangoproject.com/en/5.1/howto/static-files/
+        - Reviewing https://www.w3schools.com/django/django_add_static_files.php
+        - Reviewing https://blog.idrsolutions.com/how-to-display-base64-images-in-html/
+        - Reviewing https://medium.com/@mdmarjanhossain0/upload-base64-images-to-the-django-rest-framework-67b58a779b63
+        - Reviewing https://sentry.io/answers/how-do-i-display-a-base64-image-in-html/
+
+        - Updating TEMPLATES 'DIRS' list object with BASE_DIR / "templates"
+            - the Django template loader will look for a project-level templates directory
+        - Created 'templates' directory
+            - Created file email_shopping_list.html in templates diretory
+        - Added static directory, placed image inside directory
+        - Email sent..validation..unsuccessfull
+            - the email is unable to access the image location..
+                - need to include the domain url or conver the image to base64 encoding
+                    - researching base64 concept
+            - Using site http://base64online.org/encode/ to convert image to Base64
+            - Succesfully embedded image into email, however gmail does not support display of base64 encoded images
 
         
 
