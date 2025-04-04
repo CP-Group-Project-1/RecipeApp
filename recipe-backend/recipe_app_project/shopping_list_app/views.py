@@ -7,16 +7,9 @@ from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from .models import ShoppingListItem
 from .serializers import ShoppingListItemSerializer
+from .units import parse_measure, best_unit, Q_
 from django.core.mail import send_mail
-from django.utils.decorators import method_decorator
-from django.views.decorators.csrf import csrf_exempt
 
-# get shopping list item by id
-IGNORE_UNITS = ["g", "ml", "tsp", "tbsp", "cup", "cups", "pint", "pints", "Grams", "Topping", "Pot", "oz", "can", "cans" ]
-
-KEEP_MEASURES = ["lb", "lbs", "kg", "kgs", "pound", "pounds", "oz", "cloves"]
-
-SKIP_INGREDIENTS = ["water"]
 
 def get_item(id):
     try:
@@ -25,50 +18,10 @@ def get_item(id):
         return None
 
 # determine if ingredient should be skipped
+SKIP_INGREDIENTS = ["water"]
 def skip_ingredient(ingredient):
     return ingredient.strip().lower() in SKIP_INGREDIENTS
 
-#determine if measure needed for shopping list
-def measure_needed(measure):
-    if not measure:
-        return False
-    for unit in KEEP_MEASURES:
-        if unit in measure.lower():
-            return unit
-    return None
-
-# get quantity from Json and handle fractions
-def parse_quantity(measure_str):
-    if any(unit in measure_str.lower() for unit in IGNORE_UNITS):
-        return 1
-    try:
-        #handle mixed fractions
-        match = re.match(r"^\s*(\d+)\s+(\d+)\/(\d+)", measure_str)
-        if match:
-            whole = int(match.group(1))
-            numerator = int(match.group(2))
-            denominator = int(match.group(3))
-            qty = whole + Fraction(numerator, denominator)
-            return math.ceil(float(qty))
-        
-        # handle simple fraction
-        match = re.match(r"^\s*(\d+)\/(\d+)", measure_str)
-        if match:
-            numerator = int(match.group(1))
-            denominator = int(match.group(2))
-            qty = Fraction(numerator, denominator)
-            return math.ceil(float(qty))
-        
-        #handle whole numbers
-        match = re.match(r"^\s*(\d+)", measure_str)
-        if match:
-            return int(match.group(1))
-    
-    except (ValueError, ZeroDivisionError):
-            return 1
-    return 1
-
-@method_decorator(csrf_exempt, name='dispatch')
 class ShoppingListItems(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -78,50 +31,85 @@ class ShoppingListItems(APIView):
         return Response(serializer.data)
     
     def post(self, request):
-        meals_data = request.data.get("meals",[])
+        meals_data = request.data.get("meals", [])
         user = request.user
         items = []
 
-        # loop through ingredients
         for meal in meals_data:
-            for i in range(1,21):
+            for i in range(1, 21):
                 ingredient = meal.get(f"strIngredient{i}")
                 measure = meal.get(f"strMeasure{i}")
 
-                if ingredient and ingredient.strip():
-                    ingredient = ingredient.strip()
+                if not ingredient or not ingredient.strip():
+                    continue
 
-                    # don't include ingredients like water
-                    if skip_ingredient(ingredient):
-                        continue
-                    
-                    # get measure description for weight
-                    unit = measure_needed(measure)
+                ingredient = ingredient.strip().lower()
 
-                    if unit:
-                        qty_to_add = parse_quantity(measure)
-                        stored_measure = unit
+                if skip_ingredient(ingredient):
+                    continue
+
+                qty = parse_measure(measure)
+                if qty is None:
+                    continue
+
+                # Handle items without a measuring unit
+                if str(qty.units) == "[dimensionless]":
+                    existing = ShoppingListItem.objects.filter(
+                        user=user,
+                        item=ingredient,
+                        measure__isnull=True
+                    ).first()
+
+                    if existing:
+                        existing.qty += float(qty.magnitude)
+                        existing.save()
+                        items.append(existing)
                     else:
-                        qty_to_add = parse_quantity(measure)
-                        stored_measure = None
+                        new = ShoppingListItem(user=user, item=ingredient, qty=float(qty.magnitude))
+                        new.save()
+                        items.append(new)
+                    continue
 
-                    #create item in shopping list    
-                    shopping_item, created = ShoppingListItem.objects.get_or_create(user=user, item=ingredient)
+                compact_qty = qty.to_compact()
+                unit = f"{compact_qty.units:~}".strip().lower()
 
-                    if created:
-                        shopping_item.qty = qty_to_add
-                        if measure_needed(measure):
-                            shopping_item.measure = stored_measure
-                    else:
-                        shopping_item.qty += qty_to_add
-                    shopping_item.save()
+                # Search for existing ingredient
+                existing_items = ShoppingListItem.objects.filter(user=user, item=ingredient)
 
-                    items.append(shopping_item)
-        
+                matched = None
+                for entry in existing_items:
+                    if entry.measure:
+                        try:
+                            existing_qty = Q_(float(entry.qty), entry.measure)
+                            if qty.check(existing_qty):  # same dimensionality
+                                matched = entry
+                                break
+                        except Exception as e:
+                            print("Check failed:", e)
+                            continue
+
+                if matched:
+                    try:
+                        total_qty = Q_(float(matched.qty), matched.measure) + qty.to(matched.measure)
+                        compact_total = best_unit(total_qty)
+                        matched.qty = compact_total.magnitude
+                        matched.measure = f"{compact_total.units:~}"
+                        matched.save()
+                        items.append(matched)
+                    except Exception as e:
+                        print("Unit conversion failed:", e)
+                        new = ShoppingListItem(user=user, item=ingredient, qty=compact_qty.magnitude, measure=unit)
+                        new.save()
+                        items.append(new)
+                else:
+                    new = ShoppingListItem(user=user, item=ingredient, qty=compact_qty.magnitude, measure=unit)
+                    new.save()
+                    items.append(new)
+
         if items:
-            return Response({"message": "Ingredients added to shopping list."}, status=status.HTTP_201_CREATED)
+            return Response({"message": "Ingredients have been added to your shopping list."}, status=status.HTTP_201_CREATED)
         return Response({"message": "No ingredients to add."}, status=status.HTTP_400_BAD_REQUEST)
-    
+        
     def delete(self, request):
         ShoppingListItem.objects.filter(user=request.user).delete()
         return Response({"message": "Shopping list cleared."}, status=status.HTTP_200_OK)
@@ -163,17 +151,29 @@ class ShoppingListItemDetail(APIView):
         else:
             item.delete()
             return Response({"message": "Item removed from shopping list."}, status=status.HTTP_200_OK)
-    
-@method_decorator(csrf_exempt, name='dispatch')
+
 class SendShoppingListEmailView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
         user = request.user
         items = ShoppingListItem.objects.filter(user=user)
-        shopping_list = "\n".join(f"-{item.qty} {item.measure or ''} {item.item}".strip() for item in items)
+        shopping_list_items = []
+        for item in items:
+            if item.measure:
+                try:
+                    qty = Q_(item.qty, item.measure)
+                    display = best_unit(qty)
+                    qty_str = f"{display.magnitude:.2f} {display.units:~}"
+                except:
+                    qty_str = f"{item.qty:.2f} {item.measure}"
+            else:
+                qty_str = str(item.qty)
+            
+            shopping_list_items.append(f"-{qty_str} {item.item}".strip())
+
         subject = "Your Shopping List"
-        message = f"Hello, \n\nHere is your shopping list:\n\n{shopping_list}"
+        message = f"Hello, \n\nHere is your shopping list:\n\n" + "\n".join(shopping_list_items) + "\n\nBest regards,\nYour Cook-N-Cart Team"
 
         send_mail(
             subject=subject,
