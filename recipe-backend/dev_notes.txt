@@ -244,6 +244,26 @@ Setting up DRF framework
         - https://github.com/justinmklam/recipe-converter
         - https://python-measurement.readthedocs.io/en/latest/
 
+
+    - Added automation support for transfering files to ec2 instanace and execution of app on ec2 instance
+    - Updated navbar to import logo
+        - validation successfull locally and on ec2
+        - Attempting to send email..validation unsuccessfull
+            - updating docker-compose.prod with SENDGRID_API_KEY variable
+                - valiated in ec2 successfull..email sent and received
+
+
+    
+    - Debugging why password not updating even though it accepts the request and saves
+        - Did not name the vaiable correctly in the UsersSerializer for instance
+         and needed to include the passowrd in the fields..without this the serialzer ignores the field.
+         - Did not incldue password in fields because did not want the password being returned in the response
+         also needed to add password = serializers.CharField(write_only=True, required=False)
+         - validation successfull of password change 
+
+
+    - WIP on updating the email message to be html format with logo
+
         
 
 
@@ -287,26 +307,4 @@ Setting up DRF framework
 
 
 
-
-keep:
-!/bin/bash
-
-#THis file runs the docker-compose.dev.yml file, building the container
-
-# These environment variables are consumed by the docker-compose file.
-# We can supply explicit defaults that are checked in with source code 
-# since they are only used for local development.
-clear
-export SECRET_KEY=birdistheword
-export DEBUG=True
-export POSTGRES_DB=recipe_app_db
-export POSTGRES_USER=postgres
-export POSTGRES_PASSWORD=postgres
-
-# Stop and remove all containers, networks, and volumes from the previous run
-docker-compose -f docker-compose.dev.yml down -v --remove-orphans
-docker-compose -f docker-compose.dev.yml up -d --build
-
-
-docker exec recipeapp-api-1  python /src/recipe_app_project/manage.py makemigrations 
-docker exec recipeapp-api-1  python /src/recipe_app_project/manage.py migrate
+377aef1c4ef431245d421ae2ec5162a255cd8a70	

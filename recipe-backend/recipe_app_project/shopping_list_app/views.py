@@ -11,8 +11,6 @@ from .units import parse_measure, best_unit, Q_
 from django.core.mail import send_mail
 
 
-
-
 def get_item(id):
     try:
         return ShoppingListItem.objects.get(id=id)
@@ -23,7 +21,6 @@ def get_item(id):
 SKIP_INGREDIENTS = ["water"]
 def skip_ingredient(ingredient):
     return ingredient.strip().lower() in SKIP_INGREDIENTS
-
 
 class ShoppingListItems(APIView):
     permission_classes = [IsAuthenticated]
@@ -154,8 +151,7 @@ class ShoppingListItemDetail(APIView):
         else:
             item.delete()
             return Response({"message": "Item removed from shopping list."}, status=status.HTTP_200_OK)
-    
-#
+
 class SendShoppingListEmailView(APIView):
     permission_classes = [IsAuthenticated]
 
