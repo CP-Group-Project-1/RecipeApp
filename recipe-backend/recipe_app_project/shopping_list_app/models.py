@@ -10,5 +10,5 @@ class ShoppingListItem(models.Model):
     measure = models.CharField(max_length=100, null=True, blank=True)
 
     def __str__(self):
-        return f"{self.item} - {self.qty} ({self.measure})"
+        return f"{self.qty:.2f} {self.unit or ''} {self.item}"
 
