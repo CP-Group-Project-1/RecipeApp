@@ -21,26 +21,51 @@ export default function RecipePage({base_url}) {
     }
 
     return (
-        <div>
-            <SaveRecipeBtn recipe={recipe} base_url={base_url}/>
-            <ShopListBtn recipe={recipe} base_url={base_url}/>
-        
+        <div className="recipe-container">
+            <div className="recipe-buttons">
+                <SaveRecipeBtn recipe={recipe} base_url={base_url}/>
+                <ShopListBtn recipe={recipe} base_url={base_url}/>
+            </div>
             <h2>{recipe.strMeal}</h2>
-            <img src={recipe.strMealThumb} alt={recipe.strMeal}/>
-            <p>{recipe.strInstructions}</p>
-            <ul>
-                {Array.from({ length: 20 }, (_, i) => i + 1).map((num) => {
-                    const ingredient = recipe[`strIngredient${num}`];
-                    const measure = recipe[`strMeasure${num}`];
-                    return (
-                        ingredient && (
-                            <li key={num}>
-                                {measure} {ingredient}
-                            </li>
-                        )
-                    );
-                })}
-            </ul>
+                <img 
+                    className="recipe-page-img"
+                    src={recipe.strMealThumb} 
+                    alt={recipe.strMeal} 
+                    />
+
+            <div className="recipe-ingr-inst">
+                <div className="ingredients-container">
+                    <h3>Ingredients:</h3>
+                    <ul>
+                        {Array.from({ length: 20 }, (_, i) => i + 1).map((num) => {
+                            const ingredient = recipe[`strIngredient${num}`];
+                            const measure = recipe[`strMeasure${num}`];
+                            return (
+                                ingredient && (
+                                    <li key={num}>
+                                        {measure} {ingredient}
+                                    </li>
+                                )
+                            );
+                        })}
+                    </ul>
+                </div>
+
+                <div className="instructions-container">
+                    <h3>Instructions:</h3>
+                    {recipe.strInstructions
+                        .replace(/STEP \d+\r\n\r\n/g, "")
+                        .split(/\r\n+/)
+                        .filter(step => step.trim() !== "")
+                        .map((step, index) => (
+                            <p key={index}>
+                                <strong>STEP {index + 1}: </strong>{step}
+                            </p>
+                        ))}
+                </div>
+            </div>
         </div>
     );
 }
+
+

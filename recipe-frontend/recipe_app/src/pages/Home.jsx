@@ -9,7 +9,7 @@ export default function Home() {
         <div style={{ padding: "20px" }}>
             <h2>Welcome to Cook n Cart</h2>
             
-            {!isAuthenticated ? (
+            {/* {!isAuthenticated ? (
                 <div style={{ textAlign: "center", marginTop: "40px" }}>
                     <p>Please login or sign up to access all features</p>
                     <button 
@@ -36,27 +36,7 @@ export default function Home() {
                         </div>
                     </div>
                 </div>
-            )}
+            )} */}
         </div>
     )
 }
-
-// import { useNavigate } from "react-router-dom";
-
-// export default function Home() {
-//     const navigate = useNavigate();
-    
-//     return (
-//         <>
-//             <h2>Home Page</h2>
-//             <button onClick={() => navigate('/login')}>
-//                 Login
-//             </button> 
-
-//             <button onClick={() => navigate('/signup')} style={{ marginLeft: "10px"  }}>
-//                 Sign Up
-//             </button>
-    
-//         </>
-//     )
-// }
