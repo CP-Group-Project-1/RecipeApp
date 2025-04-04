@@ -9,6 +9,8 @@ from .models import ShoppingListItem
 from .serializers import ShoppingListItemSerializer
 from .units import parse_measure, best_unit, Q_
 from django.core.mail import send_mail
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
 
 
 
@@ -155,7 +157,7 @@ class ShoppingListItemDetail(APIView):
             item.delete()
             return Response({"message": "Item removed from shopping list."}, status=status.HTTP_200_OK)
     
-#
+@method_decorator(csrf_exempt, name='dispatch')
 class SendShoppingListEmailView(APIView):
     permission_classes = [IsAuthenticated]
 
