@@ -1,8 +1,9 @@
 export async function basicFetch(url, payload) {
-    // console.log(`in basic fetch`)
-    // console.log(`url = ${url} \n payload = ${JSON.stringify(payload)}`)
+    console.log(`in basic fetch`)
+    console.log(`url = ${url} \n payload = ${JSON.stringify(payload)}`)
     const res = await fetch(url, payload)
     const body = await res.json()
+    console.log(body)
     return body
   }
 
@@ -101,10 +102,10 @@ try {
       window.dispatchEvent(new Event("auth-change"));
       return { success: true, token: body.token };
   } else {
-      return { success: false, error: body.error || "Login failed. Invalid token." };
+      return { success: false, error: body.error || "Invalid Username or Password" };
   }
 } catch (error) {
-  return { success: false, error: error.message };
+  return { error: "Network error. Please try"};
 }
 }
 

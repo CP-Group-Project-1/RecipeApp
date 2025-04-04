@@ -29,10 +29,6 @@ export default function Login({base_url}) {
             ...prevState,
             [name]: value,
         }));
-
-        // if (name === "email" && error) {
-        //     setError("");
-        // }
         
         // Clear error when user types
         if (error) setError("");
@@ -63,7 +59,7 @@ export default function Login({base_url}) {
         try {
             //console.log('Attempting to get user token')
             const response = await login(formData, base_url);
-            if (response.token) {
+            if (response.token && response.success) {
               localStorage.setItem("token", response.token);
               //console.log(response);
               
@@ -93,10 +89,12 @@ export default function Login({base_url}) {
               // edit navigate
               navigate("/", { replace: true });
             } else {
-                setError(response.error || "Login failed. Please try again.");
+                // Handle specific error cases
+                setError(response.error );
             }
         } catch (err) {
-            setError("Login failed. Please try again.");
+            setError("Login failed. Please check your connection and try again.");
+            console.error("Login error:", err);
         } finally {
             setIsLoading(false);
         }
@@ -110,12 +108,13 @@ export default function Login({base_url}) {
                 <div>
                     <label>Username</label>
                     <input
-                        type="text"
+                        type="email"
                         name="email"
                         value={formData.email}
                         onChange={handleChange}
                         onBlur={handleBlur}
                         required
+                        className={error && !validateEmail(formData.email) ? "error" : ""}
                     />
                 </div>
                 <div>
@@ -128,10 +127,23 @@ export default function Login({base_url}) {
                         required
                     />
                 </div>
-                {error && <p style={{color: 'red'}}>{error}</p>}
-                <div>
-                    <button onClick={() => navigate('/')} type="submit" disabled={isLoading}>
-                        {isLoading ? "Logging in..." : "Submit"}
+                {error && (
+                    <div className="error-message">
+                        {error}
+                    </div>
+                )}
+                <div className="form-actions">
+                    <button 
+                        type="submit" 
+                        disabled={isLoading}
+                        className="submit-button"
+                    >
+                        {isLoading ? (
+                            <>
+                                <span className="spinner"></span>
+                                Logging in...
+                            </>
+                        ) : "Login"}
                     </button>
                 </div>
             </form>
