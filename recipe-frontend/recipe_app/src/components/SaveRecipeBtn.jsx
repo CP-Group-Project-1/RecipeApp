@@ -1,12 +1,14 @@
 import React from "react";
 import { saveRecipe } from "../../api/AuthApi";
+import { toast } from 'react-toastify';
+
 
 export default function SaveRecipeBtn({ recipe, base_url }) {
     const handleSave = async () => {
         const userId = localStorage.getItem("user_id");
 
         if (!userId) {
-            alert("User not logged in");
+            toast.error("User not logged in");
             return;
         }
 
@@ -14,19 +16,19 @@ export default function SaveRecipeBtn({ recipe, base_url }) {
             idMeal: recipe.idMeal,
             recipe_title: recipe.strMeal,
             meal_pic_img: recipe.strMealThumb
-            //recipe_ingredients: ingredientsArr
         }, base_url);
 
         if (response.success) {
-            alert("Recipe saved successfully!");
+            toast.success("Recipe saved successfully!");
         } else {
-            alert("Error saving recipe: " + response.error);
+            toast.error("Error saving recipe: " + response.error);
         }
     };
 
     return (
-        <button onClick={handleSave}>
-            Save Recipe
-        </button>
+        <>
+            <button onClick={handleSave}>Save Recipe</button>
+        </>
     );
 }
+

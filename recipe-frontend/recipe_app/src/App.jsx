@@ -12,6 +12,7 @@ import RecipePage from './pages/RecipePage';
 import SavedRecipes from './pages/SavedRecipes';
 import NavBar from './components/NavBar';
 import ShoppingList from './pages/ShoppingList';
+import { ToastContainer } from "react-toastify";
 import Profile from './pages/Profile';
 
 function App() {
@@ -46,6 +47,14 @@ function App() {
           <Route path="/profile" element={<Profile base_url={base_url}/>} />
         </Route>
       </Routes>
+
+      <ToastContainer 
+        position="top-right"
+        autoClose={1000} // Adjust autoClose time
+        hideProgressBar={true}
+        theme="dark"
+        toastStyle={{ backgroundColor: "#FFDE6D", color: "#05324D" }}
+      />
     </BrowserRouter>
     </>
   );

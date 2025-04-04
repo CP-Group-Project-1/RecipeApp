@@ -7,7 +7,7 @@
 
 .main-content {
   padding: 2rem;
-  margin-top: 128px; /* Height of your navbars */
+  margin-top: 128px; /
 }
 
 .logo {
@@ -44,4 +44,359 @@
 
 .read-the-docs {
   color: #888;
+}
+
+
+
+
+li {
+  display: flex;
+  align-items: center;
+  margin: 10px 0;
+ }
+
+button {
+  background-color: #FE8427;
+  border-radius: 5px;
+  border: none;
+  padding: 10px 15px;
+  font-size: 16px;
+  color: white;
+  font-weight: bold;
+  letter-spacing: .2px;
+}
+
+
+/* recipe list format */
+.recipe-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border: 1px solid #ddd;
+  padding: 10px;
+  border-radius: 10px;
+  background-color: #f9f9f9;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.recipe-list {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
+  justify-content: center;
+  margin-top: 20px;
+  padding: 0 10px; 
+  max-width: 100%;
+  width: 100%;
+}
+
+@media (max-width: 768px) {
+  .recipe-list {
+    grid-template-columns: 1fr;
+  }
+}
+
+.recipe-format {
+  font-size: 20px;
+  background-color: #f9f9f9;
+  color: rgb(96, 96, 96);
+  border: none;
+  border-radius: 5px;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+.recipe-format:hover {
+  background-color: #e88d43;
+}
+
+.recipe-img {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+
+
+
+
+/* Dropdown button styling */
+select {
+  margin-top: 40px;
+  margin-bottom: 20px;
+  padding: 10px 15px;
+  font-size: 16px;
+  border: 2px solid #FE8427;
+  border-radius: 5px;
+  background-color: #fff;
+  color: #333;
+  width: 200px;
+  display: block;
+  margin-left: 0;
+}
+
+select:focus {
+  outline: none;
+}
+
+
+
+.selected-title {
+  font-size: 50px;
+  color: #333;
+  font-weight: bold;
+  margin-bottom: 30px;
+  margin-top: -50px;
+  display: block;
+}
+
+
+
+
+.recipe-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-bottom: 30px;
+  margin-top: 20px;
+}
+
+.recipe-page-img {
+  width: 35%;
+  height: auto;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+
+.instructions-container {
+  margin-top: 20px;
+  padding: 15px;
+  background-color: #f9f9f9;
+  border-radius: 10px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.instructions-container p {
+  font-size: 18px;
+  line-height: 1.6;
+  margin-bottom: 10px;
+}
+
+.instructions-container strong {
+  color: #FE8427;
+}
+
+
+.recipe-ingr-inst {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+  margin-top: 20px;
+}
+
+
+.ingredients-container {
+  width: 100%;
+  max-width: 350px;
+  background-color: #f9f9f9;
+  border-radius: 12px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.15); 
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: left;
+  line-height: .5;
+  padding-top: 5px;
+}
+
+.ingredients-container ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+}
+
+.ingredients-container li {
+  padding: 8px 12px;
+  width: 100%;
+}
+
+
+
+
+.instructions-container {
+  margin-top: 0px;
+  padding: 15px;
+  padding-top: 0px;
+  background-color: #f9f9f9;
+  border-radius: 12px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.15); 
+}
+
+
+.instructions-container p {
+  display: flex;
+  align-items: baseline;
+  font-size: 18px;
+  line-height: 1.6;
+  text-align: left;
+}
+
+
+.instructions-container strong {
+  color: #FE8427;
+  flex: 0 0 auto;
+  margin-right: 10px;
+  text-align: left;
+}
+
+
+
+
+
+
+.recipe-container1 {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border: 1px solid #ddd;
+  padding: 10px;
+  border-radius: 10px;
+  background-color: #f9f9f9;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.recipe-list1 {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  justify-content: center;
+  margin-top: 20px;
+  padding: 0 10px; 
+  max-width: 100%;
+  width: 100%;
+}
+
+.recipe-title-format {
+  font-size: 24px;
+  background-color: #f9f9f9;
+  color: rgb(96, 96, 96);
+  border: none;
+  border-radius: 5px;
+  padding: 10px;
+  margin-bottom: 10px;
+  /* margin-top: -10px; */
+  text-align: left;
+}
+
+.recipe-title-format:hover {
+  background-color: none !important;
+}
+
+.selected-title1 {
+  font-size: 50px;
+  color: #333;
+  font-weight: bold;
+  margin-bottom: 30px;
+  display: block;
+}
+
+/* Shopping List Container */
+.shopping-list-container {
+  max-width: 600px;
+  margin: 40px auto;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 10px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+/* Heading */
+.shopping-list-container h1 {
+  font-size: 30px;
+  color: #05324D;
+  margin-bottom: 15px;
+  margin-top: 0;
+}
+
+/* Email Button */
+.email-button {
+  background-color: #3EA79D;
+  color: white;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.3s ease-in-out;
+}
+
+.email-button:hover {
+  background-color: #FE8427;
+}
+
+/* Shopping List */
+.shopping-list {
+  list-style-type: none;
+  padding: 0;
+  color: #333;
+}
+
+/* Shopping List Item */
+.shopping-list li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: white;
+  padding: 10px 15px;
+  margin: 8px 0;
+  border-radius: 8px;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Quantity Input */
+.qty-input {
+  width: 50px;
+  padding: 5px;
+  border: 1px solid #ccc;
+  color: #333;
+  border-radius: 5px;
+  text-align: center;
+  font-size: 16px;
+  margin-right: 15px;
+}
+
+/* Ingredient Name */
+.ingredient-name {
+  flex-grow: 1; 
+  text-align: left; 
+  font-size: 20px;
+  font-weight: 500;
+}
+
+
+/* Save Changes Button */
+.save-button {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  background-color: #FFD23A;
+  color: black;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  margin-top: 15px;
+  transition: background 0.3s ease-in-out;
+}
+
+.save-button:hover {
+  background-color: #FE8427;
+}
+
+.save-button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
 }
