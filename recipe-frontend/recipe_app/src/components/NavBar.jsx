@@ -16,7 +16,7 @@ import {
   Divider
 } from '@mui/material';
 import { ExitToApp, Bookmark, ShoppingBasket, AccountCircle } from '@mui/icons-material';
-import Logo from '../assets/logo.png'
+import Logo from '../assets/logo.png';
 
 export default function NavBar() {
   const navigate = useNavigate();
