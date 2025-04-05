@@ -12,7 +12,6 @@ export POSTGRES_DB=recipe_app_db
 export POSTGRES_USER=postgres
 export POSTGRES_PASSWORD=postgres
 
-
 # Stop and remove all containers, networks, and volumes from the previous run
 docker-compose -f docker-compose.dev.yml down -v --remove-orphans
 docker-compose -f docker-compose.dev.yml up -d --build

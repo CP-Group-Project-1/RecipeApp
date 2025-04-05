@@ -276,6 +276,8 @@ Setting up DRF framework
         - Reviewing https://blog.idrsolutions.com/how-to-display-base64-images-in-html/
         - Reviewing https://medium.com/@mdmarjanhossain0/upload-base64-images-to-the-django-rest-framework-67b58a779b63
         - Reviewing https://sentry.io/answers/how-do-i-display-a-base64-image-in-html/
+        - Reviewing https://ahmedyasin487.medium.com/attaching-multiple-images-or-files-to-email-in-django-from-filefield-or-imagefield-9f8421ac2f8c
+      
 
         - Updating TEMPLATES 'DIRS' list object with BASE_DIR / "templates"
             - the Django template loader will look for a project-level templates directory
@@ -288,6 +290,41 @@ Setting up DRF framework
                     - researching base64 concept
             - Using site http://base64online.org/encode/ to convert image to Base64
             - Succesfully embedded image into email, however gmail does not support display of base64 encoded images
+                - reviewing link, https://stackoverflow.com/questions/46783599/base64-encoded-image-is-not-showing-in-gmail
+            - Researching what CIDs are for image embedding
+                - Some web mail clients do not render CIDs, consider it spam, so not always consistent across clients
+                    - continuing to research
+                        - reviewing topic about svg
+            - Reviewing https://stackoverflow.com/questions/3787755/django-how-to-send-html-emails-with-embedded-images
+            - Reviewing https://www.reddit.com/r/django/comments/mlq730/embedding_images_in_emails_best_practices/
+            - Reviewing https://www.pipedrive.com/en/blog/embedding-images-in-emails
+            - Discussing with chatgpt
+                - ok gmail does not accept base64 we already know that and CID may not work for this case as well so we can rule those out right ?
+                    ❌ Base64 embedding
+                        •	Gmail does not render base64 images in email body (<img src="data:image/...">).
+                        •	Even if the image is small, Gmail will treat it as potentially unsafe or just ignore it.
+
+                    ❌ CID (Content-ID) embedding
+                        •	Inconsistent support.
+                        •	Gmail and other web-based clients often don’t render images referenced via CID.
+                        •	It also requires complex MIME setup, and is better suited for internal systems or Outlook-heavy environments.
+
+                - Creating an ec2 instance jsut to get a logo is overkill of resource..
+                - THe image can be sourced from a Public image hosting service and even from GitHub as long as repo is public
+                    - SOme email clients will still block this as well ..researching
+                        - The safest option for rendering in email is using a Content Delivery Network
+                        - Creating account on Cloudinary
+                        - Uploaded logo
+                            - image url = https://res.cloudinary.com/djpwhgkd0/image/upload/v1743823939/logo_small_pcqrrh.png
+                        - Updated html template..valiation succesfull
+
+                    
+
+                    
+
+
+                
+            
 
         
 

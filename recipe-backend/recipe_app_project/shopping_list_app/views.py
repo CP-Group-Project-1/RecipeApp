@@ -11,8 +11,7 @@ from django.core.mail import send_mail
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.template.loader import render_to_string
-from django.conf import settings
-from pathlib import Path
+
 
 # get shopping list item by id
 IGNORE_UNITS = ["g", "ml", "tsp", "tbsp", "cup", "cups", "pint", "pints", "Grams", "Topping", "Pot", "oz", "can", "cans" ]
@@ -20,15 +19,6 @@ IGNORE_UNITS = ["g", "ml", "tsp", "tbsp", "cup", "cups", "pint", "pints", "Grams
 KEEP_MEASURES = ["lb", "lbs", "kg", "kgs", "pound", "pounds", "oz", "cloves"]
 
 SKIP_INGREDIENTS = ["water"]
-
-# Get path and file to read in for logo
-base64_path_n_file = Path(settings.BASE_DIR) / "static" / "logo_b64.txt"
-base64_logo = ''
-
-with base64_path_n_file.open("r") as read_file:
-    base64_logo = read_file.read()
-
-
 
 
 
@@ -190,10 +180,9 @@ class SendShoppingListEmailView(APIView):
         message = f"Hello, \n\nHere is your shopping list:\n\n{shopping_list}"
         html_template = 'email_shopping_list.html'
         
-        logo_b64 = base64_logo
         convert_to_html = render_to_string(
             template_name = html_template,
-            context = {"message": message, "logo_b64": logo_b64}
+            context = {"message": message}
         )
 
         send_mail(
