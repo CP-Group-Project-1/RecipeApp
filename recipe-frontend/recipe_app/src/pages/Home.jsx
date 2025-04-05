@@ -8,8 +8,8 @@ export default function Home() {
     return (
         <div style={{ padding: "20px" }}>
             <h2>Welcome to Cook n Cart</h2>
-            
-            {/* {!isAuthenticated ? (
+            {/* The following is needed for to see login/signup */}
+            {!isAuthenticated ? (
                 <div style={{ textAlign: "center", marginTop: "40px" }}>
                     <p>Please login or sign up to access all features</p>
                     <button 
@@ -36,7 +36,7 @@ export default function Home() {
                         </div>
                     </div>
                 </div>
-            )} */}
+            )}
         </div>
     )
 }
