@@ -174,7 +174,7 @@ class SendShoppingListEmailView(APIView):
             else:
                 qty_str = str(item.qty)
             
-            shopping_list_items.append(f"-{qty_str} {item.item}".strip())
+            shopping_list_items.append(f"\u2022{qty_str} {item.item}".strip() + '\n')
 
         subject = "Your Shopping List"
         html_template = 'email_shopping_list.html'

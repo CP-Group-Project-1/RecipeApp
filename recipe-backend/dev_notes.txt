@@ -318,6 +318,11 @@ Setting up DRF framework
                             - image url = https://res.cloudinary.com/djpwhgkd0/image/upload/v1743823939/logo_small_pcqrrh.png
                         - Updated html template..valiation succesfull
 
+            - Updated to html template to  replace line breaks with <br>.
+                - Added unicode for bullet points
+                - validation succesfull
+
+
                     
 
                     
