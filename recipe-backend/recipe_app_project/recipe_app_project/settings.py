@@ -71,7 +71,7 @@ ROOT_URLCONF = 'recipe_app_project.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / "templates"],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -198,6 +198,10 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = "apikey"
 EMAIL_HOST_PASSWORD = os.getenv("SENDGRID_API_KEY")
 DEFAULT_FROM_EMAIL = "CookNCart25@gmail.com"
+
+STATICFILES_DIRS = [
+    BASE_DIR / "static"
+]
 
 
 

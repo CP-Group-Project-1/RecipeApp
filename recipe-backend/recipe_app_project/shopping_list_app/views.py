@@ -9,6 +9,10 @@ from .models import ShoppingListItem
 from .serializers import ShoppingListItemSerializer
 from .units import parse_measure, best_unit, Q_
 from django.core.mail import send_mail
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
+from django.template.loader import render_to_string
+
 
 
 def get_item(id):
@@ -173,7 +177,15 @@ class SendShoppingListEmailView(APIView):
             shopping_list_items.append(f"-{qty_str} {item.item}".strip())
 
         subject = "Your Shopping List"
+        html_template = 'email_shopping_list.html'
+        
         message = f"Hello, \n\nHere is your shopping list:\n\n" + "\n".join(shopping_list_items) + "\n\nBest regards,\nYour Cook-N-Cart Team"
+        
+        convert_to_html = render_to_string(
+            template_name = html_template,
+            context = {"message": message}
+        )
+
 
         send_mail(
             subject=subject,
@@ -181,5 +193,6 @@ class SendShoppingListEmailView(APIView):
             from_email=None,
             recipient_list=[user.email],
             fail_silently=False,
+            html_message=convert_to_html
         )
         return Response({"message": "Shopping list sent."})
