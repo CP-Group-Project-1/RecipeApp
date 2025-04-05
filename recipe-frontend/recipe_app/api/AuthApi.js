@@ -353,3 +353,27 @@ export async function postEmail(token, baseUrl) {
         return { success: false, error: "Network error" };
     }
 }
+
+export const clearShoppingList = async (base_url) => {
+    const url = `${base_url}/shopping_list/`;
+
+    try {
+        const response = await fetch(url, {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Token ${localStorage.getItem('token')}`
+            },
+        });
+
+        if (!response.ok) {
+            const errorData = await response.text();
+            throw new Error(errorData || "Error clearing list.");
+        }
+
+        return { success: true };
+    } catch (error) {
+        console.error("Error clearing shopping list:", error);
+        return { success: false, error: error.message || "Failed to clear list." };
+    }
+};

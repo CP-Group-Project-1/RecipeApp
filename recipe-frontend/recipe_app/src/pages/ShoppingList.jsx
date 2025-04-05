@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { fetchShoppingList, deleteShoppingListItem, updateShoppingListItem } from '../../api/AuthApi';
+import { fetchShoppingList, deleteShoppingListItem, updateShoppingListItem, clearShoppingList } from '../../api/AuthApi';
 import EmailShoppingListButton from '../components/EmailShoppingListButton';
 import { toast } from 'react-toastify';
 
@@ -64,40 +64,71 @@ const ShoppingList = ({ base_url, token }) => {
         }
     };
 
+    const handleClearAll = async () => {
+        setLoading(true);
+        const response = await clearShoppingList(base_url);
+        if (response.success) {
+            setShoppingList([]);
+            toast.success("All items cleared!", { autoClose: 2000 });
+        } else {
+            toast.error("Error clearing shopping list: " + response.error, { autoClose: 2000 });
+        }
+        setLoading(false);
+    };
+    
     // Sort alphabetically without mutating state
     const sortedShoppingList = [...shoppingList].sort((a, b) => a.item.localeCompare(b.item));
 
+    if (loading) {
+        return <p>Loading...</p>;  // Show "Loading..." while fetching
+    }
+
     return (
         <div className="shopping-list-container">
-    <h1>Shopping List</h1>
-    <EmailShoppingListButton className="email-button" token={token} baseUrl={base_url} />
-    {error && <p>{error}</p>}
-    {loading && <p>Loading...</p>}
-    <ul className="shopping-list">
-    {sortedShoppingList.map(item => (
-        <li key={item.id}>
-            <input
-                className="qty-input"
-                type="number"
-                value={newQty[item.id] || Math.round(item.qty)}  
-                onChange={(e) => handleQtyChange(item.id, e.target.value)}
-                min="1"
-            />
-            <span className="ingredient-name">{item.item} {item.measure || ''}</span>
-            <button onClick={() => handleDelete(item.id)}>x</button>
-        </li>
-        ))}
-    </ul>
+            <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                <button 
+                    className="clear-button"
+                    onClick={handleClearAll}
+                    disabled={loading || shoppingList.length === 0}
+                >
+                    {loading ? 'Clearing...' : 'Clear List'}
+                </button>
+            </div>
 
-    <button 
-        className="save-button"
-        onClick={handleSaveChanges} 
-        disabled={loading || Object.keys(newQty).length === 0}
-    >
-        {loading ? 'Saving...' : 'Save Changes'}
-    </button>
-</div>
+            <h1>Shopping List</h1>
 
+            {/* Only show the Email button if there are items in the list */}
+            {shoppingList.length > 0 && (
+                <EmailShoppingListButton className="email-button" token={token} baseUrl={base_url} />
+            )}
+
+            {error && <p>{error}</p>}
+            <ul className="shopping-list">
+                {sortedShoppingList.map(item => (
+                    <li key={item.id}>
+                        <input
+                            className="qty-input"
+                            type="number"
+                            value={newQty[item.id] || Math.round(item.qty)}  
+                            onChange={(e) => handleQtyChange(item.id, e.target.value)}
+                            min="1"
+                        />
+                        <span className="ingredient-name">{item.item} {item.measure || ''}</span>
+                        <button onClick={() => handleDelete(item.id)}>
+                            x
+                        </button>
+                    </li>
+                ))}
+            </ul>
+
+            <button 
+                className="save-button"
+                onClick={handleSaveChanges} 
+                disabled={loading || Object.keys(newQty).length === 0}
+            >
+                {loading ? 'Saving...' : 'Save Changes'}
+            </button>
+        </div>
     );
 };
 
