@@ -17,6 +17,11 @@ export default function Profile({ base_url }) {
     const navigate = useNavigate();
     const { isAuthenticated, setAuth } = useAuth();
     const [userData, setUserData] = useState(null);
+    const [editMode, setEditMode] = useState(false);
+    const [emailData, setEmailData] = useState({
+        email: '',
+        password: ''
+    })
     const [passwordData, setPasswordData] = useState({
         oldPassword: '',
         newPassword: '',
@@ -26,6 +31,7 @@ export default function Profile({ base_url }) {
     const [success, setSuccess] = useState('');
     const [loading, setLoading] = useState({
         profile: false,
+        email: false,
         password: false,
         delete: false
     });
@@ -50,6 +56,7 @@ export default function Profile({ base_url }) {
                 );
                 if (response.email) {
                     setUserData(response);
+                    setEmailData(prev => ({...prev, email: response.email}));
                 } else {
                     throw new Error('Failed to fetch user data');
                 }
@@ -61,6 +68,72 @@ export default function Profile({ base_url }) {
         };
         fetchUserData();
     }, [base_url]);
+
+    const handleEmailChange = async (e) => {
+        e.preventDefault();
+        
+        if (!emailData.password) {
+            setError('Please enter your password to confirm email change');
+            return;
+        }
+
+        try {
+            setLoading(prev => ({ ...prev, email: true }));
+            setError('');
+            setSuccess('');
+            
+            const token = localStorage.getItem('token');
+            const userId = localStorage.getItem('user_id');
+
+            // First verify password by making a login request
+            try {
+                const verifyResponse = await basicFetch(`${base_url}/user_accounts/get-token`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        username: userData.email,
+                        password: emailData.password
+                    })
+                });
+
+                if (!verifyResponse.token) {
+                    throw new Error('Password is incorrect');
+                }
+            } catch (verifyErr) {
+                throw new Error('Password is incorrect');
+            }
+
+            // If password is correct, update email
+            const updateResponse = await basicFetch(`${base_url}/user_accounts/user/${userId}/`, {
+                method: "PUT",
+                headers: {
+                    "Authorization": `Token ${token}`,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    email: emailData.email
+                })
+            });
+
+            if (typeof updateResponse === 'string' && updateResponse.includes('UPDATED')) {
+                setSuccess('Email updated successfully. Please login again.');
+                // Clear auth state and force reload
+                localStorage.removeItem('token');
+                localStorage.removeItem('user_id');
+                setAuth(false);
+                setTimeout(() => window.location.href = '/auth', 1500);
+            } else {
+                throw new Error('Email update failed. Please try again.');
+            }
+        } catch (err) {
+            setError(err.message || 'An error occurred while changing email');
+        } finally {
+            setLoading(prev => ({ ...prev, email: false }));
+            setEditMode(false);
+        }
+    };
 
     const handlePasswordChange = async (e) => {
         e.preventDefault();
@@ -175,88 +248,141 @@ export default function Profile({ base_url }) {
         );
       }
 
-    return (
-        <Container maxWidth="md" sx={{ mt: 4, mb: 4 }}>
-        <Typography variant="h4" gutterBottom>
-            Account Settings
-        </Typography>
+        return (
+            <Container maxWidth="md" sx={{ mt: 4, mb: 4 }}>
+                <Typography variant="h4" gutterBottom>
+                    Account Settings
+                </Typography>
 
-        {userData && (
-            <Box mb={4}>
-                <Typography variant="h7">Username: {userData.email}</Typography>
-            </Box>
-        )}
+                <Box mb={4}>
+                    <Typography variant="h6" gutterBottom>
+                        Email Address
+                    </Typography>
+                    
+                    {editMode ? (
+                        <Box component="form" onSubmit={handleEmailChange} sx={{ mb: 2 }}>
+                            <TextField
+                                label="New Email"
+                                type="email"
+                                fullWidth
+                                margin="normal"
+                                value={emailData.email}
+                                onChange={(e) => setEmailData({...emailData, email: e.target.value})}
+                                required
+                            />
+                            <TextField
+                                label="Confirm Password"
+                                type="password"
+                                fullWidth
+                                margin="normal"
+                                value={emailData.password}
+                                onChange={(e) => setEmailData({...emailData, password: e.target.value})}
+                                required
+                            />
+                            <Box sx={{ display: 'flex', gap: 2, mt: 2 }}>
+                                <Button 
+                                    type="submit" 
+                                    variant="contained" 
+                                    color="primary"
+                                    disabled={loading.email}
+                                >
+                                    {loading.email ? <CircularProgress size={24} /> : 'Save Email'}
+                                </Button>
+                                <Button 
+                                    variant="outlined" 
+                                    onClick={() => {
+                                        setEditMode(false);
+                                        setError('');
+                                        setEmailData({...emailData, email: userData.email, password: ''});
+                                    }}
+                                >
+                                    Cancel
+                                </Button>
+                            </Box>
+                        </Box>
+                    ) : (
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                            <Typography>{userData?.email}</Typography>
+                            <Button 
+                                variant="outlined" 
+                                onClick={() => setEditMode(true)}
+                            >
+                                Edit
+                            </Button>
+                        </Box>
+                    )}
+                </Box>
 
-        <Divider sx={{ my: 3 }} />
+                <Divider sx={{ my: 3 }} />
 
-        <Typography variant="h5" gutterBottom>
-            Change Password
-        </Typography>
-        
-        <Box component="form" onSubmit={handlePasswordChange} sx={{ mb: 4 }}>
-            <TextField
-            label="Current Password"
-            type="password"
-            fullWidth
-            margin="normal"
-            value={passwordData.oldPassword}
-            onChange={(e) => setPasswordData({...passwordData, oldPassword: e.target.value})}
-            required
-            />
-            
-            <TextField
-            label="New Password"
-            type="password"
-            fullWidth
-            margin="normal"
-            value={passwordData.newPassword}
-            onChange={(e) => setPasswordData({...passwordData, newPassword: e.target.value})}
-            required
-            />
-            
-            <TextField
-            label="Confirm New Password"
-            type="password"
-            fullWidth
-            margin="normal"
-            value={passwordData.confirmPassword}
-            onChange={(e) => setPasswordData({...passwordData, confirmPassword: e.target.value})}
-            required
-            />
+                <Typography variant="h6" gutterBottom>
+                    Change Password
+                </Typography>
+                
+                <Box component="form" onSubmit={handlePasswordChange} sx={{ mb: 4 }}>
+                    <TextField
+                        label="Current Password"
+                        type="password"
+                        fullWidth
+                        margin="normal"
+                        value={passwordData.oldPassword}
+                        onChange={(e) => setPasswordData({...passwordData, oldPassword: e.target.value})}
+                        required
+                    />
+                    
+                    <TextField
+                        label="New Password"
+                        type="password"
+                        fullWidth
+                        margin="normal"
+                        value={passwordData.newPassword}
+                        onChange={(e) => setPasswordData({...passwordData, newPassword: e.target.value})}
+                        required
+                    />
+                    
+                    <TextField
+                        label="Confirm New Password"
+                        type="password"
+                        fullWidth
+                        margin="normal"
+                        value={passwordData.confirmPassword}
+                        onChange={(e) => setPasswordData({...passwordData, confirmPassword: e.target.value})}
+                        required
+                    />
 
-            {error && <Alert severity="error" sx={{ mt: 2 }}>{error}</Alert>}
-            {success && <Alert severity="success" sx={{ mt: 2 }}>{success}</Alert>}
+                    {error && <Alert severity="error" sx={{ mt: 2 }}>{error}</Alert>}
+                    {success && <Alert severity="success" sx={{ mt: 2 }}>{success}</Alert>}
 
-            <Button 
-            type="submit" 
-            variant="contained" 
-            color="primary" 
-            sx={{ mt: 2 }}
-            disabled={loading.password}
-            >
-            {loading.password ? <CircularProgress size={24} /> : 'Change Password'}
-            </Button>
-        </Box>
+                    <Button 
+                        type="submit" 
+                        variant="contained" 
+                        color="primary" 
+                        sx={{ mt: 2 }}
+                        disabled={loading.password}
+                    >
+                        {loading.password ? <CircularProgress size={24} /> : 'Change Password'}
+                    </Button>
+                </Box>
 
-        <Divider sx={{ my: 3 }} />
+                <Divider sx={{ my: 3 }} />
 
-        <Box>
-            <Typography variant="h5" gutterBottom color="error">
-            Danger Zone
-            </Typography>
-            <Button 
-                variant="contained" 
-                color="error"
-                onClick={handleDeleteAccount}
-                disabled={loading.delete}
-                starticon={loading.delete ? <CircularProgress size={20} color="inherit" /> : null}
-            >
-                {loading.delete ? 'Deleting...' : 'Delete Account Permanently'}
-            </Button>
-            <Typography variant="body2" sx={{ mt: 1, color: 'text.secondary' }}>
-                This action cannot be undone. All your data will be permanently deleted.
-            </Typography>
-        </Box>
-        </Container>
-    );
+                <Box>
+                    <Typography variant="h5" gutterBottom color="error">
+                        Danger Zone
+                    </Typography>
+                    <Button 
+                        variant="contained" 
+                        color="error"
+                        onClick={handleDeleteAccount}
+                        disabled={loading.delete}
+                        startIcon={loading.delete ? <CircularProgress size={20} color="inherit" /> : null}
+                    >
+                        {loading.delete ? 'Deleting...' : 'Delete Account Permanently'}
+                    </Button>
+                    <Typography variant="body2" sx={{ mt: 1, color: 'text.secondary' }}>
+                        This action cannot be undone. All your data will be permanently deleted.
+                    </Typography>
+                </Box>
+            </Container>
+        );
     }

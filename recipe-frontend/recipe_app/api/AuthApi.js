@@ -1,6 +1,6 @@
 export async function basicFetch(url, payload) {
-    console.log(`in basic fetch`)
-    console.log(`url = ${url} \n payload = ${JSON.stringify(payload)}`)
+    // console.log(`in basic fetch`)
+    // console.log(`url = ${url} \n payload = ${JSON.stringify(payload)}`)
     const res = await fetch(url, payload)
     const body = await res.json()
     console.log(body)
