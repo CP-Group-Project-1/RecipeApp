@@ -39,19 +39,22 @@ export default function SavedRecipes({base_url}) {
 
     return (
         <div>
-            <h2>Saved Recipes</h2>
-            <ul>
+            <h1 className="selected-title1">Saved Recipes</h1>
+            <ul className="recipe-list1">
                 {savedRecipes.map((recipe) => (
-                    <li key={recipe.id}>
-                        <Link to={`/recipe/${recipe.idMeal}`}>
+                    <li className="recipe-container1" key={recipe.id}>
+                        <button style={{alignSelf:"flex-end"}} onClick={() => handleDeleteRecipe(recipe.idMeal, recipe.id)}>x</button>
+                        <Link to={`/recipe/${recipe.idMeal}`} style={{ color:"black", textDecoration:"none" }}>
+                        <span>
+                            <div className="recipe-title-format">{recipe.recipe_title}
+                            </div>
+                            </span>
                             <img
+                                className="recipe-img"
                                 src={recipe.meal_pic_img}
                                 alt={recipe.recipe_title}
-                                style={{ width: "100px", height: "100px", marginRight: "1rem" }}
                             />
-                            <span>{recipe.recipe_title}</span>
                         </Link>
-                        <button onClick={() => handleDeleteRecipe(recipe.idMeal, recipe.id)}>Delete</button>
                     </li>
                 ))}
             </ul>

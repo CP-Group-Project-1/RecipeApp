@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { Select, MenuItem, FormControl, InputLabel } from "@mui/material";
 
 export default function ByIngredient() {
     const ingredientsUrl = "https://www.themealdb.com/api/json/v1/1/list.php?i=list";
@@ -34,23 +35,68 @@ export default function ByIngredient() {
 
     return (
         <>
-            <select onChange={(e) => setSelectedIngredient(e.target.value)} value={selectedIngredient}>
-                <option value="">Select an Ingredient</option>
+        <FormControl sx={{marginTop:"30px"}} fullWidth>
+            <InputLabel>Select a Category</InputLabel>
+            <Select
+                value={selectedIngredient}
+                onChange={(e) => setSelectedIngredient(e.target.value)}
+                label ="Select a Category"
+                sx={{
+                    backgroundColor: "white",
+                    color: "#333",
+                    fontSize: "16px",
+                    borderRadius: "8px",
+                    paddingBottom: "10px",
+                    height: "60px",
+                    width: "100%",
+                    "& .MuiSelect-select": {
+                        display: "flex",
+                        justifyContent: "center", 
+                        alignItems: "center",
+                        fontSize: "26px",
+                        textDecoration: "underline",
+                    },
+                    "& .MuiOutlinedInput-notchedOutline": {
+                        borderColor: "#ccc",
+                    },
+                        }}
+            >
                 {ingredients.map((ingredient) => (
-                    <option key={ingredient.strIngredient} value={ingredient.strIngredient}>
+                    <MenuItem 
+                        key={ingredient.strIngredient} 
+                        value={ingredient.strIngredient} 
+                        sx={{
+                            fontSize: "18px",
+                            "&:hover": {
+                                backgroundColor: "#FE8427",
+                            },
+                        }}
+                    >
                         {ingredient.strIngredient}
-                    </option>
+                    </MenuItem>
                 ))}
-            </select>
-
+            </Select>
+        </FormControl>
+           
+            <h1 className="selected-title">{selectedIngredient}</h1>
             {recipes.length > 0 && (
                 <ul>
                     {recipes.map((recipe) => (
-                        <li key={recipe.idMeal}>
-                            <button onClick={() => handleRecipeClick(recipe.idMeal)}>
-                                {recipe.strMeal}
-                            </button>
-                        </li>
+                        <div className="recipe-list">
+                        {recipes.map((recipe) => (
+                            <div key={recipe.idMeal} className="recipe-container">
+                                <button className="recipe-format" onClick={() => handleRecipeClick(recipe.idMeal)}>
+                                    {recipe.strMeal}
+                                </button>
+                                <img 
+                                    className="recipe-img" 
+                                    onClick={() => handleRecipeClick(recipe.idMeal)}
+                                    src={recipe.strMealThumb} 
+                                    alt={recipe.strMeal} 
+                                />
+                            </div>
+                        ))}
+                    </div>
                     ))}
                 </ul>
             )}

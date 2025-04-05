@@ -326,16 +326,11 @@ export async function postEmail(token, baseUrl) {
     if (!token) {
         token = localStorage.getItem('token');
         if (!token) {
-            console.error("No token found in localStorage");
             return { success: false, error: "No token found" };
         }
     }
 
-    console.log("Sending email with token:", token);  // Log token
-    console.log("Base URL:", baseUrl);  // Log baseUrl
-
     const apiUrl = `${baseUrl}/shopping_list/send-email/`;
-    console.log("API URL:", apiUrl);  // Log API URL
 
     try {
         const response = await fetch(apiUrl, {
@@ -349,16 +344,12 @@ export async function postEmail(token, baseUrl) {
         const contentType = response.headers.get("Content-Type");
         if (contentType && contentType.includes("application/json")) {
             const data = await response.json();
-            console.log("API response data:", data);  // Log response data
-
             return response.ok ? { success: true } : { success: false, error: data.message || "Unknown error" };
         } else {
             const errorText = await response.text();
-            console.log("Non-JSON response received:", errorText);
             return { success: false, error: "Unexpected response format" };
         }
     } catch (error) {
-        console.error("Error sending email:", error);
         return { success: false, error: "Network error" };
     }
 }
