@@ -2,119 +2,138 @@ import { useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../api/useAuth";
 import {
-  AppBar,
-  Toolbar,
-  TextField,
-  Button,
-  Box,
-  Stack,
-  useMediaQuery,
-  IconButton,
-  Menu,
-  MenuItem,
-  Typography,
-  Divider
+AppBar,
+Toolbar,
+TextField,
+Button,
+Box,
+Stack,
+useMediaQuery,
+IconButton,
+Menu,
+MenuItem,
+Typography,
+Divider,
+Switch,
+FormControlLabel
 } from '@mui/material';
-import { ExitToApp, Bookmark, ShoppingBasket, AccountCircle } from '@mui/icons-material';
+import { ExitToApp, Bookmark, ShoppingBasket, AccountCircle, Brightness4, Brightness7 } from '@mui/icons-material';
 import Logo from '../assets/logo.png'
 
-export default function NavBar() {
-  const navigate = useNavigate();
-  const { isAuthenticated, setAuth } = useAuth();
-  const [searchQuery, setSearchQuery] = useState('');
-  const [anchorEl, setAnchorEl] = useState(null);
-  const isMobile = useMediaQuery((theme) => theme.breakpoints.down('md'));
-  
-  const handleMenuOpen = (event) => {
+export default function NavBar({ toggleColorMode, mode }) {
+const navigate = useNavigate();
+const { isAuthenticated, setAuth } = useAuth();
+const [searchQuery, setSearchQuery] = useState('');
+const [anchorEl, setAnchorEl] = useState(null);
+const isMobile = useMediaQuery((theme) => theme.breakpoints.down('md'));
+
+const handleMenuOpen = (event) => {
     setAnchorEl(event.currentTarget);
-  };
+};
 
-  const handleMenuClose = () => {
+const handleMenuClose = () => {
     setAnchorEl(null);
-  };
+};
 
-  const handleProfileClick = () => {
+const handleProfileClick = () => {
     handleMenuClose();
     navigate('/profile');
-  };
+};
 
-  const handleSearch = () => {
+const handleSearch = () => {
     if (searchQuery.trim()) {
-      navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+    navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
     }
-  };
+};
 
-  const handleLogout = () => {
+const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user_id");
     setAuth(false);
     navigate("/");
     window.location.reload();
-  };
+};
 
-  if (!isAuthenticated) return null;
+if (!isAuthenticated) return null;
 
-  return (
+return (
     <Box sx={{ flexGrow: 1 }}>
-      {isMobile ? (
+    {isMobile ? (
         /* Mobile View (<900px) */
         <>
-          <AppBar position="static" color="primary">
+        <AppBar position="static" color="primary">
             <Toolbar sx={{ 
-              flexDirection: 'column',
-              gap: 1,
-              py: 1,
-              px: 2,
-              maxWidth: '100%',
-              overflow: 'hidden'
+                flexDirection: 'column',
+                gap: 1,
+                py: 1,
+                px: 2,
+                maxWidth: '100%',
+                overflow: 'hidden'
             }}>
-              <Box sx={{ 
+            <Box sx={{ 
                 width: '100%',
                 display: 'flex',
                 justifyContent: 'space-between',
                 alignItems: 'center'
-              }}>
+            }}>
                 <Box 
-                  component="img"
-                  /*src="/src/assets/logo.png"*/
-                  src={Logo}
-                  alt="Cook n Cart Logo"
-                  sx={{ 
-                    height: 40,
-                    width: 'auto',
-                    cursor: 'pointer',
-                    maxWidth: 120
-                  }}
-                  onClick={() => navigate('/')}
+                    component="img"
+                    src={Logo}
+                    alt="Cook n Cart Logo"
+                    sx={{ 
+                        height: 40,
+                        width: 'auto',
+                        cursor: 'pointer',
+                        maxWidth: 120
+                    }}
+                    onClick={() => navigate('/')}
                 />
                 <Stack direction="row" spacing={1}>
-                  <Button
+                <Button
                     color="inherit"
                     startIcon={<Bookmark />}
                     onClick={() => navigate('/saved')}
                     sx={{ 
-                      py: 0, 
-                      minWidth: 'auto',
-                      '& .MuiButton-startIcon': { margin: 0 }
+                    py: 0, 
+                    minWidth: 'auto',
+                    '& .MuiButton-startIcon': { margin: 0 }
                     }}
-                  >
+                >
                     Saved
-                  </Button>
-                  <Button
+                </Button>
+                <Button
                     color="inherit"
                     startIcon={<ShoppingBasket />}
                     onClick={() => navigate('/shoplist')}
                     sx={{ 
-                      py: 0, 
-                      minWidth: 'auto',
-                      '& .MuiButton-startIcon': { margin: 0 }
+                    py: 0, 
+                    minWidth: 'auto',
+                    '& .MuiButton-startIcon': { margin: 0 }
                     }}
-                  >
+                >
                     Cart
-                  </Button>
+                </Button>
+                    <IconButton
+                        color="inherit"
+                        onClick={toggleColorMode}
+                        sx={{ p: 0.5 }}
+                    >
+                        {mode === 'dark' ? <Brightness7 /> : <Brightness4 />}
+                    </IconButton>
+                    <IconButton
+                        color="inherit"
+                        onClick={handleMenuOpen}
+                        sx={{ 
+                        fontSize: '0.75rem',
+                        minWidth: 'auto',
+                        p: 0.5
+                        }}
+                    >
+                        <AccountCircle />
+                    </IconButton>
                 </Stack>
-              </Box>
-              <TextField
+            </Box>
+            <TextField
                 fullWidth
                 variant="outlined"
                 placeholder="Search recipes..."
@@ -123,135 +142,115 @@ export default function NavBar() {
                 onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
                 size="small"
                 sx={{
-                  backgroundColor: 'background.paper',
-                  borderRadius: 1,
-                  '& .MuiOutlinedInput-root': {
+                backgroundColor: 'background.paper',
+                borderRadius: 1,
+                '& .MuiOutlinedInput-root': {
                     borderRadius: 1
-                  }
+                }
                 }}
-              />
+            />
             </Toolbar>
-          </AppBar>
+        </AppBar>
 
-          <AppBar position="static" color="secondary">
+        <AppBar position="static" color="secondary">
             <Toolbar sx={{ 
-              display: 'flex',
-              justifyContent: 'space-between',
-              py: 1,
-              px: 2,
-              maxWidth: '100%',
-              overflow: 'hidden'
+                display: 'flex',
+                justifyContent: 'space-between',
+                py: 1,
+                px: 2,
+                maxWidth: '100%',
+                overflow: 'hidden'
             }}>
-              <Stack direction="row" spacing={2}>
+            <Stack direction="row" spacing={2} alignItems="center">
+                <Typography variant="body2" sx={{ display: { xs: 'none', sm: 'block' }, mr: 1 }}>
+                Browse By:
+                </Typography>
                 <Button 
-                  color="inherit"
-                  onClick={() => navigate('/bycat')}
-                  sx={{ 
-                    fontSize: '0.75rem', 
-                    minWidth: 'max-content',
-                    px: 1
-                  }}
-                >
-                  Category
-                </Button>
-                <Button 
-                  color="inherit"
-                  onClick={() => navigate('/byingredient')}
-                  sx={{ 
-                    fontSize: '0.75rem', 
-                    minWidth: 'max-content',
-                    px: 1
-                  }}
-                >
-                  Ingredient
-                </Button>
-                <Button 
-                  color="inherit"
-                  onClick={() => navigate('/bycuisine')}
-                  sx={{ 
-                    fontSize: '0.75rem', 
-                    minWidth: 'max-content',
-                    px: 1
-                  }}
-                >
-                  Cuisine
-                </Button>
-              </Stack>
-              {/* <Button
-                color="inherit"
-                startIcon={<ExitToApp />}
-                onClick={handleLogout}
-                sx={{ 
-                  fontSize: '0.75rem',
-                  minWidth: 'auto',
-                  '& .MuiButton-startIcon': { margin: 0 }
+                    color="inherit"
+                    onClick={() => navigate('/bycat')}
+                    sx={{ 
+                        fontSize: '0.85rem', 
+                        minWidth: 'max-content',
+                        px: 1
                 }}
-              >
-                Logout
-              </Button> */}
-              <IconButton
-                color="inherit"
-                onClick={handleMenuOpen}
-                sx={{ 
-                  fontSize: '0.75rem',
-                  minWidth: 'auto',
-                  p: 0.5
+                >
+                Category
+                </Button>
+                <Button 
+                    color="inherit"
+                    onClick={() => navigate('/byingredient')}
+                    sx={{ 
+                        fontSize: '0.85rem', 
+                        minWidth: 'max-content',
+                        px: 1
                 }}
-              >
-                <AccountCircle />
-              </IconButton>
-              <Menu
+                >
+                Ingredient
+                </Button>
+                <Button 
+                    color="inherit"
+                    onClick={() => navigate('/bycuisine')}
+                    sx={{ 
+                        fontSize: '0.85rem', 
+                        minWidth: 'max-content',
+                        px: 1
+                }}
+                >
+                Cuisine
+                </Button>
+            </Stack>
+            
+            <Menu
                 anchorEl={anchorEl}
                 open={Boolean(anchorEl)}
                 onClose={handleMenuClose}
-              >
+            >
                 <MenuItem onClick={handleProfileClick}>
-                  <Typography variant="body2">Account Settings</Typography>
+                <Typography variant="body2">Account Settings</Typography>
                 </MenuItem>
                 <Divider />
                 <MenuItem onClick={handleLogout}>
-                  <Stack direction="row" spacing={1} alignItems="center">
+                <Stack direction="row" spacing={1} alignItems="center">
                     <ExitToApp fontSize="small" />
                     <Typography variant="body2">Logout</Typography>
-                  </Stack>
+                </Stack>
                 </MenuItem>
-              </Menu>
+            </Menu>
             </Toolbar>
-          </AppBar>
+        </AppBar>
         </>
-      ) : (
+    ) : (
         /* Desktop View (≥900px) */
         <Box sx={{ maxWidth: 1440, margin: '0 auto', width: '100%' }}>
-          <AppBar position="static" color="primary">
+        <AppBar position="static" color="primary">
             <Toolbar sx={{
-              display: 'grid',
-              gridTemplateColumns: 'auto 1fr auto auto',
-              gap: 2,
-              alignItems: 'center',
-              padding: '8px 24px !important',
-              '& .MuiButton-root': {
-                px: 2,
-                backgroundColor: 'rgba(255,255,255,0.1)',
-                '&:hover': {
-                  backgroundColor: 'rgba(255,255,255,0.2)'
+                display: 'grid',
+                gridTemplateColumns: 'auto 1fr auto auto',
+                gap: 2,
+                alignItems: 'center',
+                padding: '8px 24px !important',
+                '& .MuiButton-root': {
+                    px: 2,
+                    backgroundColor: 'rgba(255,255,255,0.1)',
+                    '&:hover': {
+                    backgroundColor: 'rgba(255,255,255,0.2)'
+                    }
                 }
-              }
             }}>
-              <Box 
+            <Box 
                 component="img"
-                /*src="/src/assets/logo.png"*/
                 src={Logo}
                 alt="Cook n Cart Logo"
                 sx={{ 
-                  height: 50,
-                  width: 'auto',
-                  cursor: 'pointer',
-                  maxWidth: 160
+                height: 50,
+                width: 'auto',
+                cursor: 'pointer',
+                maxWidth: 160
                 }}
                 onClick={() => navigate('/')}
-              />
+            />
 
-              <TextField
+            <TextField
                 variant="outlined"
                 placeholder="Search recipes..."
                 value={searchQuery}
@@ -259,109 +258,110 @@ export default function NavBar() {
                 onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
                 size="small"
                 sx={{
-                  mx: 2,
-                  backgroundColor: 'background.paper',
-                  borderRadius: 1,
-                  '& .MuiOutlinedInput-root': {
+                mx: 2,
+                backgroundColor: 'background.paper',
+                borderRadius: 1,
+                '& .MuiOutlinedInput-root': {
                     borderRadius: 1
-                  }
+                }
                 }}
-              />
+            />
 
-              <Stack direction="row" spacing={2}>
+            <Stack direction="row" spacing={2}>
                 <Button
-                  color="inherit"
-                  startIcon={<Bookmark />}
-                  onClick={() => navigate('/saved')}
+                    color="inherit"
+                    startIcon={<Bookmark />}
+                    onClick={() => navigate('/saved')}
                 >
-                  Saved Recipes
+                Saved Recipes
                 </Button>
                 <Button
-                  color="inherit"
-                  startIcon={<ShoppingBasket />}
-                  onClick={() => navigate('/shoplist')}
+                    color="inherit"
+                    startIcon={<ShoppingBasket />}
+                    onClick={() => navigate('/shoplist')}
                 >
-                  Shopping Cart
+                Shopping Cart
                 </Button>
-              </Stack>
+            </Stack>
 
-              {/* <Button
-                color="inherit"
-                startIcon={<ExitToApp />}
-                onClick={handleLogout}
-                sx={{ ml: 'auto !important' }}
-              >
-                Logout
-              </Button> */}
-              <Box sx={{ ml: 'auto !important' }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                 <IconButton
-                  color="inherit"
-                  onClick={handleMenuOpen}
-                  size="large"
+                    color="inherit"
+                    onClick={toggleColorMode}
+                    sx={{ ml: 1 }}
                 >
-                  <AccountCircle />
+                {mode === 'dark' ? <Brightness7 /> : <Brightness4 />}
+                </IconButton>
+                <IconButton
+                    color="inherit"
+                    onClick={handleMenuOpen}
+                    size="large"
+                >
+                <AccountCircle />
                 </IconButton>
                 <Menu
-                  anchorEl={anchorEl}
-                  open={Boolean(anchorEl)}
-                  onClose={handleMenuClose}
-                  anchorOrigin={{
-                    vertical: 'bottom',
-                    horizontal: 'right',
-                  }}
-                  transformOrigin={{
-                    vertical: 'top',
-                    horizontal: 'right',
-                  }}
+                    anchorEl={anchorEl}
+                    open={Boolean(anchorEl)}
+                    onClose={handleMenuClose}
+                    anchorOrigin={{
+                        vertical: 'bottom',
+                        horizontal: 'right',
+                    }}
+                    transformOrigin={{
+                        vertical: 'top',
+                        horizontal: 'right',
+                    }}
                 >
-                  <MenuItem onClick={handleProfileClick}>
+                <MenuItem onClick={handleProfileClick}>
                     <Typography variant="body1">Account Settings</Typography>
-                  </MenuItem>
-                  <Divider />
-                  <MenuItem onClick={handleLogout}>
+                </MenuItem>
+                <Divider />
+                <MenuItem onClick={handleLogout}>
                     <Stack direction="row" spacing={1} alignItems="center">
-                      <ExitToApp fontSize="small" />
-                      <Typography variant="body1">Logout</Typography>
+                    <ExitToApp fontSize="small" />
+                    <Typography variant="body1">Logout</Typography>
                     </Stack>
-                  </MenuItem>
+                </MenuItem>
                 </Menu>
-              </Box>
+            </Box>
             </Toolbar>
-          </AppBar>
+        </AppBar>
 
-          <AppBar position="static" color="secondary">
+        <AppBar position="static" color="secondary">
             <Toolbar sx={{
-              justifyContent: 'center',
-              gap: 4,
-              padding: '8px 24px !important'
+                justifyContent: 'space-between',
+                padding: '8px 24px !important'
             }}>
-              <Stack direction="row" spacing={3}>
+            <Stack direction="row" spacing={3} alignItems="center">
+                <Typography variant="body1" sx={{ mr: 1 }}>
+                Browse Recipes By:
+                </Typography>
                 <Button 
-                  color="inherit"
-                  onClick={() => navigate('/bycat')}
-                  sx={{ px: 3 }}
+                    color="inherit"
+                    onClick={() => navigate('/bycat')}
+                    sx={{ px: 3 }}
                 >
-                  Category
+                Category
                 </Button>
                 <Button 
-                  color="inherit"
-                  onClick={() => navigate('/byingredient')}
-                  sx={{ px: 3 }}
+                    color="inherit"
+                    onClick={() => navigate('/byingredient')}
+                    sx={{ px: 3 }}
                 >
-                  Ingredient
+                Ingredient
                 </Button>
                 <Button 
-                  color="inherit"
-                  onClick={() => navigate('/bycuisine')}
-                  sx={{ px: 3 }}
+                    color="inherit"
+                    onClick={() => navigate('/bycuisine')}
+                    sx={{ px: 3 }}
                 >
-                  Cuisine
+                Cuisine
                 </Button>
-              </Stack>
+            </Stack>
             </Toolbar>
-          </AppBar>
+        </AppBar>
         </Box>
-      )}
+    )}
     </Box>
-  );
+);
 }
