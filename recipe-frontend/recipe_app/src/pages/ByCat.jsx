@@ -82,7 +82,6 @@ export default function ByCat() {
         </FormControl>
 
 
-        {/* <h1 className="selected-title">{selectedCategory}</h1> */}
             {recipes.length > 0 && (
             <ul>
                 {recipes.map((recipe) => (
