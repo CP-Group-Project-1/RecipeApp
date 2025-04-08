@@ -365,6 +365,9 @@ Setting up DRF framework
                     SPF, DKIM, and DMARC
                     - TO prevent subsenqunet Geminni api calls for the same ingredients email
 
+                - Pushing latest images to DH and to AWS for validation
+                    - validaion succesfull
+
 
 
 
