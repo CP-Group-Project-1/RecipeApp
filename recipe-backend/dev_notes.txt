@@ -339,6 +339,32 @@ Setting up DRF framework
                     - Spices
                     - Candie(Candy)
 
+                - Created OpenAI account and team project with key
+                    - valiadtion of testing api key after sign succesfull
+                    - NOt going to use, due to requiring of CC for billing after free tier usage is up
+
+                - Looking into other options
+                    - reviewing link, https://www.analyticsvidhya.com/blog/2025/02/top-free-apis-for-ai-development/?utm_source=chatgpt.com
+                    - Looking into Google AI Studio, https://aistudio.google.com/prompts/new_chat
+                        - Looking into Gemini 1.5 Flash
+                            - Free Tier:
+                                •	Requests per Minute (RPM): 15
+                                •	Tokens per Minute (TPM): 1,000,000 ￼
+                                •	Requests per Day (RPD): 1,500
+                            - Reviwing API request how to link, https://ai.google.dev/gemini-api/docs/quickstart?lang=rest
+                                - Installing the Gemini API libray
+                                - Updated requirements.txt
+
+                - Building prompt for google model
+                    - valiadtion of prompt and response return succesfull
+                - WIP on handling of response data returned
+                - Validated process of email based on results provided..succesfull
+                - Adding GEMINI_API_KEY to docker-compose files and AWS secrets
+
+                - THinking of adding a timer due to sometines the email needs to pressed twice so the first email can populate faster due to
+                    SPF, DKIM, and DMARC
+                    - TO prevent subsenqunet Geminni api calls for the same ingredients email
+
 
 
 
@@ -391,6 +417,19 @@ Setting up DRF framework
        
     }
 
-
-
-377aef1c4ef431245d421ae2ec5162a255cd8a70	
+ingredients = [
+    "Salt Cod",
+    "Ackee",
+    "Onion",
+    "Paprika",
+    "Curry Powder",
+    "Jerusalem Artichokes",
+    "Hotsauce",
+    "Red Pepper",
+    "Yellow Pepper",
+    "Tomatoes",
+    "Pepper",
+    "Self-raising Flour",
+    "Suet",
+    "Olive Oil"
+]

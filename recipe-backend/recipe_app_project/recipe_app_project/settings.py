@@ -208,7 +208,7 @@ STATICFILES_DIRS = [
 
 #DEBUG, COPY and Paste from chatGpt to debug password
 # Use this below when wanting to see logging(print) statements in docker logs
-"""
+
 import os
 import logging.config
 
@@ -224,4 +224,4 @@ LOGGING = {
         'handlers': ['console'],
         'level': 'DEBUG' if os.environ.get('DEBUG') == 'True' else 'INFO',
     },
-}"""
+}
