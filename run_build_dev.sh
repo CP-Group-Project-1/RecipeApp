@@ -17,6 +17,5 @@ export POSTGRES_PASSWORD=postgres
 docker-compose -f docker-compose.dev.yml down -v --remove-orphans
 docker-compose -f docker-compose.dev.yml up -d --build
 
-
 docker exec recipeapp-api-1  python /src/recipe_app_project/manage.py makemigrations 
 docker exec recipeapp-api-1  python /src/recipe_app_project/manage.py migrate
