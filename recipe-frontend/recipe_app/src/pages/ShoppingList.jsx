@@ -109,11 +109,12 @@ const ShoppingList = ({ base_url, token }) => {
                         <input
                             className="qty-input"
                             type="number"
-                            value={newQty[item.id] || Math.round(item.qty)}  
+                            value={newQty[item.id] || item.qty}  
                             onChange={(e) => handleQtyChange(item.id, e.target.value)}
-                            min="1"
+                            min="0.00"
+                            step="0.25"
                         />
-                        <span className="ingredient-name">{item.item} {item.measure || ''}</span>
+                        <span className="ingredient-name">{item.measure} {item.item}</span>
                         <button onClick={() => handleDelete(item.id)}>
                             x
                         </button>

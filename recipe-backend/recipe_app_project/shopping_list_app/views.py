@@ -7,7 +7,7 @@ from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from .models import ShoppingListItem
 from .serializers import ShoppingListItemSerializer
-from .units import parse_measure, best_unit, Q_
+from .units import parse_measure, best_unit, Q_, skip_ingredient, is_spice, parse_custom_units, UNIT_DISPLAY_NAMES
 from django.core.mail import send_mail
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
@@ -28,11 +28,6 @@ def get_item(id):
     except:
         return None
 
-# determine if ingredient should be skipped
-SKIP_INGREDIENTS = ["water"]
-def skip_ingredient(ingredient):
-    return ingredient.strip().lower() in SKIP_INGREDIENTS
-
 class ShoppingListItems(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -49,77 +44,102 @@ class ShoppingListItems(APIView):
         for meal in meals_data:
             for i in range(1, 21):
                 ingredient = meal.get(f"strIngredient{i}")
-                measure = meal.get(f"strMeasure{i}")
+                measure_str = meal.get(f"strMeasure{i}")
 
                 if not ingredient or not ingredient.strip():
                     continue
 
                 ingredient = ingredient.strip().lower()
 
+                # Do no include undesired ingredients
                 if skip_ingredient(ingredient):
                     continue
+                
+                # Handle spices with default qty of 1
+                if is_spice(ingredient):
+                    if ShoppingListItem.objects.filter(user=user, item=ingredient).exists():
+                        continue
+                    new = ShoppingListItem(user=user, item=ingredient, qty=1, measure="")
+                    new.save()
+                    items.append(new)
+                    continue
 
-                qty = parse_measure(measure)
+
+                qty = parse_measure(measure_str)
+
+                # Fallback to custom unit parsing
                 if qty is None:
-                    continue
+                    custom_qty, custom_unit = parse_custom_units(measure_str)
+                    if custom_qty is not None and custom_unit:
+                        existing = ShoppingListItem.objects.filter(
+                            user=user,
+                            item=ingredient,
+                            measure=custom_unit
+                        ).first()
 
-                # Handle items without a measuring unit
-                if str(qty.units) == "[dimensionless]":
-                    existing = ShoppingListItem.objects.filter(
-                        user=user,
-                        item=ingredient,
-                        measure__isnull=True
-                    ).first()
-
-                    if existing:
-                        existing.qty += float(qty.magnitude)
-                        existing.save()
-                        items.append(existing)
+                        if existing:
+                            existing.qty = float(existing.qty) + float(custom_qty)
+                            existing.save()
+                            items.append(existing)
+                        else:
+                            new = ShoppingListItem(user=user, item=ingredient, qty=custom_qty, measure=custom_unit)
+                            new.save()
+                            items.append(new)
+                        continue
                     else:
-                        new = ShoppingListItem(user=user, item=ingredient, qty=float(qty.magnitude))
-                        new.save()
-                        items.append(new)
-                    continue
+                        continue  # Skip if no valid quantity could be parsed
 
-                compact_qty = qty.to_compact()
-                unit = f"{compact_qty.units:~}".strip().lower()
+                # Pint-compatible quantity
+                unit = None if qty.dimensionless else f"{qty.units:~}"
+                display_unit = UNIT_DISPLAY_NAMES.get(unit, unit) if unit else None
 
-                # Search for existing ingredient
+                # Attempt to combine with any matching item
                 existing_items = ShoppingListItem.objects.filter(user=user, item=ingredient)
 
                 matched = None
                 for entry in existing_items:
-                    if entry.measure:
-                        try:
+                    try:
+                        if not entry.measure and unit is None:
+                            matched = entry
+                            break
+                        elif entry.measure and unit:
                             existing_qty = Q_(float(entry.qty), entry.measure)
-                            if qty.check(existing_qty):  # same dimensionality
+                            if qty.check(existing_qty):
                                 matched = entry
                                 break
-                        except Exception as e:
-                            print("Check failed:", e)
-                            continue
+                    except Exception:
+                        continue
 
                 if matched:
                     try:
-                        total_qty = Q_(float(matched.qty), matched.measure) + qty.to(matched.measure)
-                        compact_total = best_unit(total_qty)
-                        matched.qty = compact_total.magnitude
-                        matched.measure = f"{compact_total.units:~}"
+                        if matched.measure and unit:
+                            base_qty = Q_(float(matched.qty), matched.measure)
+                            if qty.check(base_qty):
+                                total_qty = base_qty + qty.to(matched.measure)
+                                normalized = best_unit(total_qty)
+
+                                matched.qty = float(normalized.magnitude if hasattr(normalized, "magnitude") else normalized)
+                                raw_unit = f"{normalized.units:~}" if hasattr(normalized, "units") else matched.measure
+                                matched.measure = UNIT_DISPLAY_NAMES.get(raw_unit, raw_unit)
+                            else:
+                                # Units are incompatible – skip this merge attempt
+                                continue
+                        else:
+                            matched.qty = float(matched.qty) + float(qty.magnitude if hasattr(qty, "magnitude") else qty)
+
                         matched.save()
                         items.append(matched)
-                    except Exception as e:
-                        print("Unit conversion failed:", e)
-                        new = ShoppingListItem(user=user, item=ingredient, qty=compact_qty.magnitude, measure=unit)
-                        new.save()
-                        items.append(new)
+                    except Exception:
+                        continue    
                 else:
-                    new = ShoppingListItem(user=user, item=ingredient, qty=compact_qty.magnitude, measure=unit)
+                    new = ShoppingListItem(user=user, item=ingredient, qty=qty.magnitude if hasattr(qty, "magnitude") else qty, measure=unit)
                     new.save()
                     items.append(new)
 
         if items:
-            return Response({"message": "Ingredients have been added to your shopping list."}, status=status.HTTP_201_CREATED)
-        return Response({"message": "No ingredients to add."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"message": "Ingredients added to shopping list."}, status=status.HTTP_201_CREATED)
+        return Response({"message": "No valid ingredients to add."}, status=status.HTTP_400_BAD_REQUEST)
+
         
     def delete(self, request):
         ShoppingListItem.objects.filter(user=request.user).delete()
@@ -162,7 +182,8 @@ class ShoppingListItemDetail(APIView):
         else:
             item.delete()
             return Response({"message": "Item removed from shopping list."}, status=status.HTTP_200_OK)
-
+    
+@method_decorator(csrf_exempt, name='dispatch')
 class SendShoppingListEmailView(APIView):
     permission_classes = [IsAuthenticated]
 
