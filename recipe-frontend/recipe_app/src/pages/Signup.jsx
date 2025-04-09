@@ -1,171 +1,220 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { signup } from "../../api/AuthApi"; 
+import { signup } from "../../api/AuthApi";
+import {
+  Box,
+  Button,
+  Container,
+  TextField,
+  Typography,
+  Paper,
+  Alert,
+  CircularProgress,
+  Grid,
+  Link
+} from "@mui/material";
+import { styled } from "@mui/system";
 
-export default function Signup({base_url}) {
-    // console.log(`in signup.jsx`)
-    // console.log(`baseUrl = ${base_url}`)
-    const navigate = useNavigate();
+const FormPaper = styled(Paper)(({ theme }) => ({
+  padding: theme.spacing(4),
+  maxWidth: 500,
+  margin: "auto",
+  marginTop: theme.spacing(4)
+}));
 
-    const [formData, setFormData] = useState({
-        name: "",
-        email: "",
-        password: "",
-        confirmPassword: "",
-    });
-    const [error, setError] = useState("");
-    const [isLoading, setIsLoading] = useState(false);
-    const [isEmailTouched, setIsEmailTouched] = useState(false);
-    const [isConfirmPasswordTouched, setIsConfirmPasswordTouched] = useState(false);
+export default function Signup({ base_url }) {
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+  });
+  const [errors, setErrors] = useState({
+    name: false,
+    email: false,
+    password: false,
+    confirmPassword: false,
+  });
+  const [errorMessage, setErrorMessage] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
-    const validateEmail = (email) => {
-        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-    };
+  const validateEmail = (email) => {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  };
+
+  const validatePassword = (password) => {
+    return password.length >= 8 && 
+           /\d/.test(password) && 
+           /[!@#$%^&*(),.?":{}|<>]/.test(password);
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
     
-    const validatePassword = (password) => {
-        return /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>]).{8,}$/.test(password);
+    // Clear specific error when typing
+    if (errors[name]) {
+      setErrors(prev => ({ ...prev, [name]: false }));
+    }
+    if (errorMessage) setErrorMessage("");
+  };
+
+  const handleBlur = (e) => {
+    const { name, value } = e.target;
+    let newErrors = { ...errors };
+
+    switch (name) {
+      case "email":
+        newErrors.email = !validateEmail(value);
+        break;
+      case "password":
+        newErrors.password = !validatePassword(value);
+        break;
+      case "confirmPassword":
+        newErrors.confirmPassword = value !== formData.password;
+        break;
+    }
+
+    setErrors(newErrors);
+  };
+
+  const validateForm = () => {
+    const newErrors = {
+      name: !formData.name,
+      email: !validateEmail(formData.email),
+      password: !validatePassword(formData.password),
+      confirmPassword: formData.password !== formData.confirmPassword,
     };
 
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData(prevState => ({
-            ...prevState,
-            [name]: value,
-        }));
+    setErrors(newErrors);
 
-        if (name === "email" && error) {
-            setError("");
-        }
-        if (name === "confirmPassword" && error) {
-            setError("");
-        }
-    };
-    
-    const handleBlur = (e) => {
-        const { name, value } = e.target;
-    
-        // Validate email only when the field loses focus
-        if (name === "email") {
-            setIsEmailTouched(true);
-            if (!validateEmail(value)) {
-                setError("Invalid email format.");
-            } else {
-                setError("");
-            }
-        }
-    
-        // Validate confirm password only when the field loses focus
-        if (name === "confirmPassword") {
-            setIsConfirmPasswordTouched(true);
-            if (value !== formData.password) {
-                setError("Passwords do not match.");
-            } else {
-                setError("");
-            }
-        }
-    };
+    if (newErrors.name) return "Name is required";
+    if (newErrors.email) return "Invalid email format";
+    if (newErrors.password) return "Password must be 8+ chars with a number and special character";
+    if (newErrors.confirmPassword) return "Passwords don't match";
 
-    const validateForm = () => {
-        const { name, email, password, confirmPassword } = formData;
+    return "";
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const validationError = validateForm();
+    if (validationError) {
+      setErrorMessage(validationError);
+      return;
+    }
+
+    setIsLoading(true);
+    setErrorMessage("");
+
+    try {
+      const response = await signup(base_url, formData);
+      if (response.success) {
+        navigate("/", { replace: true });
+      } else {
+        setErrorMessage(response.error || "Signup failed. Please try again.");
+      }
+    } catch (err) {
+      setErrorMessage("Signup failed. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <Container component="main" maxWidth="sm">
+      <FormPaper elevation={3}>
+        <Typography component="h1" variant="h5" align="center" gutterBottom>
+          Create Account
+        </Typography>
         
-        if (![name, email, password, confirmPassword].every(Boolean)) 
-            return "All fields are required";
-        if (!validateEmail(email)) 
-            return "Invalid email format (example@domain.com)";
-        if (!validatePassword(password)) 
-            return "Password must be at least 8 characters, include a number, and a special character";
-        if (password !== confirmPassword) 
-            return "Passwords do not match";
-    
-        return "";
-    };
+        {errorMessage && (
+          <Alert severity="error" sx={{ mb: 3 }}>
+            {errorMessage}
+          </Alert>
+        )}
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        
-        const errorMessage = validateForm();
-        if (errorMessage) {
-            setError(errorMessage);
-            return;
-        }
-        setIsLoading(true);
+        <Box component="form" onSubmit={handleSubmit} noValidate>
+          <TextField
+            margin="normal"
+            required
+            fullWidth
+            id="name"
+            label="Full Name"
+            name="name"
+            autoComplete="name"
+            autoFocus
+            value={formData.name}
+            onChange={handleChange}
+            error={errors.name}
+            helperText={errors.name && "Please enter your name"}
+          />
+          
+          <TextField
+            margin="normal"
+            required
+            fullWidth
+            id="email"
+            label="Email Address"
+            name="email"
+            autoComplete="email"
+            value={formData.email}
+            onChange={handleChange}
+            onBlur={handleBlur}
+            error={errors.email}
+            helperText={errors.email ? "Invalid email format" : "example@domain.com"}
+          />
+          
+          <TextField
+            margin="normal"
+            required
+            fullWidth
+            name="password"
+            label="Password"
+            type="password"
+            id="password"
+            autoComplete="new-password"
+            value={formData.password}
+            onChange={handleChange}
+            onBlur={handleBlur}
+            error={errors.password}
+            helperText={errors.password ? 
+              "Must be 8+ chars with number & special character" : 
+              "At least 8 characters with number & special character"}
+          />
+          
+          <TextField
+            margin="normal"
+            required
+            fullWidth
+            name="confirmPassword"
+            label="Confirm Password"
+            type="password"
+            id="confirmPassword"
+            value={formData.confirmPassword}
+            onChange={handleChange}
+            onBlur={handleBlur}
+            error={errors.confirmPassword}
+            helperText={errors.confirmPassword && "Passwords don't match"}
+          />
 
-        try {
-            const response = await signup(base_url, formData);
-            if (response.success) {
-                navigate("/", { replace: true });
-            } else {
-                setError(response.error);
-            }
-        } catch (err) {
-            setError("Signup failed. Please try again.");
-        }
-    };
+          <Button
+            type="submit"
+            fullWidth
+            variant="contained"
+            sx={{ mt: 3, mb: 2 }}
+            disabled={isLoading}
+          >
+            {isLoading ? (
+              <CircularProgress size={24} color="inherit" />
+            ) : (
+              "Sign Up"
+            )}
+          </Button>
 
-    return (
-        <>
-            <h2>Sign Up</h2>
-            <form onSubmit={handleSubmit} method="POST">
-                <div>
-                    <label>Name</label>
-                    <input 
-                        type="text"
-                        name="name"
-                        value={formData.name}
-                        onChange={handleChange}
-                        placeholder="Name"
-                        required
-                    />
-                </div>
-                <div>
-                    <label>
-                        Email (example@domain.com)
-                    </label>
-                    <input 
-                        type="email"
-                        name="email"
-                        value={formData.email}
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                        placeholder="Email"
-                        required
-                    />
-                </div>
-                <div>
-                    <label>
-                        Password (min 8 chars, number, special char)
-                    </label>
-                    <input 
-                        type="password"
-                        name="password"
-                        value={formData.password}
-                        onChange={handleChange}
-                        placeholder="Password"
-                        required
-                    />
-                </div>
-                <div>
-                    <label>Confirm Password</label>
-                    <input 
-                        type="password"
-                        name="confirmPassword"
-                        value={formData.confirmPassword}
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                        placeholder="Confirm Password"
-                        required
-                    />
-                </div>
-                {(isEmailTouched || isConfirmPasswordTouched) && error && <p>{error}</p>}
-                <div>
-                    <button type="submit" disabled={isLoading}>
-                        {isLoading ? "Signing up..." : "Sign Up"}
-                    </button>
-                    <button type="button" onClick={() => navigate('/')}>
-                        Cancel
-                    </button>
-                </div>
-            </form>
-        </>
-    );
+        </Box>
+      </FormPaper>
+    </Container>
+  );
 }

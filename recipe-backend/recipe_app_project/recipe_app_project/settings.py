@@ -71,7 +71,7 @@ ROOT_URLCONF = 'recipe_app_project.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / "templates"],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -198,3 +198,30 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = "apikey"
 EMAIL_HOST_PASSWORD = os.getenv("SENDGRID_API_KEY")
 DEFAULT_FROM_EMAIL = "CookNCart25@gmail.com"
+
+STATICFILES_DIRS = [
+    BASE_DIR / "static"
+]
+
+
+
+
+#DEBUG, COPY and Paste from chatGpt to debug password
+# Use this below when wanting to see logging(print) statements in docker logs
+
+import os
+import logging.config
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'DEBUG' if os.environ.get('DEBUG') == 'True' else 'INFO',
+    },
+}

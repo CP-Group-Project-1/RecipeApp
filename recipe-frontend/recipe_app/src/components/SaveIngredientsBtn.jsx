@@ -1,6 +1,7 @@
 import React from "react";
 import { saveShoppingList } from "../../api/AuthApi";
 import { useAuth } from "../../api/useAuth";
+import { toast } from "react-toastify";
 
 export default function SaveIngredientsBtn({ recipe, base_url }) {
     console.log('In_SaveIngredientsBtn')
@@ -26,18 +27,20 @@ export default function SaveIngredientsBtn({ recipe, base_url }) {
             const response = await saveShoppingList(token, meals, base_url);
 
             if (response.success) {
-                alert("Ingredients saved successfully!");
+                toast.success("Ingredients saved successfully!");
             } else {
-                alert("Error saving ingredients: " + response.error);
+                toast.success("Error saving ingredients: " + response.error);
             }
         } else {
-            alert("User is not authenticated.");
+            toast.success("User is not authenticated.");
 
         }
     };
 
     return (
+        <>
         <button onClick={handleSave}>Save Ingredients</button>
+        </>
     );
 }
 

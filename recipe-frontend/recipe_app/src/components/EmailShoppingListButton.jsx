@@ -1,5 +1,7 @@
 import React, { useState } from "react";
-import { postEmail } from "../../api/AuthApi"; // Assuming postEmail is correctly defined in AuthApi
+import { postEmail } from "../../api/AuthApi"; 
+import { toast } from "react-toastify";
+
 
 const EmailShoppingListButton = ({ token, baseUrl }) => {
     const [loading, setLoading] = useState(false);
@@ -11,12 +13,12 @@ const EmailShoppingListButton = ({ token, baseUrl }) => {
         console.log("Sending email...");
     
         const response = await postEmail(token, baseUrl);
-        console.log("Response from API:", response);  // Log the response
+        console.log("Response from API:", response); 
     
         if (response.success) {
-            setMessage("Shopping list has been sent to your email!");
+             toast.success("Shopping list sent!");
         } else {
-            setMessage(`Error: ${response.error}`);
+             toast.success(`Error: ${response.error}`);
         }
     
         setLoading(false);
@@ -26,7 +28,7 @@ const EmailShoppingListButton = ({ token, baseUrl }) => {
     return (
         <div>
             <button onClick={handleSendEmail} disabled={loading}>
-                {loading ? "Sending..." : "Send Shopping List to Email"}
+                {loading ? "Sending..." : "Send to Email"}
             </button>
             {message && <p>{message}</p>}
         </div>

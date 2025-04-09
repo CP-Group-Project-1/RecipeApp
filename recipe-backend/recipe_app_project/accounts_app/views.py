@@ -6,6 +6,8 @@ from .serializers import SignUpSerializer, UsersSerializer
 from rest_framework.permissions import AllowAny
 from rest_framework.authtoken.models import Token
 from django.db.utils import IntegrityError
+#import logging
+#logger = logging.getLogger(__name__)
 
 class UserSignUp(CreateAPIView):
     users = User.objects.all()
@@ -47,9 +49,14 @@ class SingleUser(APIView):
     
     def put(self, request, id):
         """ This method updates a users information """
+        #logger.info('In PUT(Update) for SingleUser')
+        #logger.info(f'request = {request}')
+        #logger.info(f'request.data = {request.data}')
+        #logger.info(f'id = {id}')
 
         user = User.objects.get(pk=id)  # get user by id 
-        print(request.data)
+        #logger.info(f'user = {user}')
+        #print(request.data)
 
         #user.full_clean()
         #user.save()
@@ -69,7 +76,6 @@ class SingleUser(APIView):
             if serialize_user.data['email'] != current_email:
                 msg += f'UPDATED, account email to [{serialize_user.data["email"]}]\n'
 
-           
             if 'password' in request.data:
                 if request.data['password'] != current_pw and msg != '':
                     msg += "Password updated"

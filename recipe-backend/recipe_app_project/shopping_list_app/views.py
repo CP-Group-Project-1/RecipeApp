@@ -1,15 +1,24 @@
 from django.shortcuts import render
-import re, math
+import re, math, json
+from fractions import Fraction
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from .models import ShoppingListItem
 from .serializers import ShoppingListItemSerializer
-from .units import parse_measure, parse_custom_units, best_unit, skip_ingredient, Q_, UNIT_DISPLAY_NAMES, is_spice
+from .units import parse_measure, best_unit, Q_
+from django.core.mail import send_mail
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
+from django.template.loader import render_to_string
+from google import genai
+from os import getenv
+from django.core.exceptions import ValidationError
+import logging #TODO Comment out when done with development
+logger = logging.getLogger(__name__)
 
+gemini_api_key = getenv('GEMINI_API_KEY')
 
 
 
@@ -179,9 +188,19 @@ class SendShoppingListEmailView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
+
         user = request.user
         items = ShoppingListItem.objects.filter(user=user)
-        shopping_list_items = []
+        #shopping_list_items = []
+        shopping_list_dict = {}  # Stores item as key, value is the quantiy string
+        ingredient_categories = [
+            'Produce', 'Meat & Seafood', 'Dairy', 'Canned Goods', 'Baking', 'Dry Goods & Pasta',
+            'Condiments', 'Bread', 'Spices', 'Candies'
+            ]
+        prompt = f"Classify the ingredients provided into one of the following categories, {ingredient_categories}\n\nIngredients are:\n"
+        ingredients_for_prompt = []  # Store in array to prevent to keep rebuilding the prompt string for each ingredient
+        ingredient_ctr = 1
+
         for item in items:
             if item.measure:
                 try:
@@ -193,16 +212,92 @@ class SendShoppingListEmailView(APIView):
             else:
                 qty_str = str(item.qty)
             
-            shopping_list_items.append(f"-{qty_str} {item.item}".strip())
+            #shopping_list_items.append(f"\u2022{qty_str} {item.item}".strip() + '\n')
+            shopping_list_dict[item.item] = qty_str.strip()
+            ingredients_for_prompt.append(f'{ingredient_ctr}.) {item.item}\n')
+            ingredient_ctr += 1
 
+        ingredients_for_prompt.append('\nReturn Only valid JSON format without any explanantion, markdown formatting, or code blocks. Use double quotes on keys and values, example: {"Beef": "Meat & Seafood", "Basil": "Spices"}')
+
+        prompt += ''.join(ingredients_for_prompt)
+        logger.info('Prompt to send below')
+        logger.info(prompt)
+        logger.info('*' * 50)
+        logger.info(shopping_list_dict)
+
+        #API call to to google model
+        client = genai.Client(api_key=gemini_api_key)
+        try:
+            response = client.models.generate_content(
+                model="gemini-1.5-flash",
+                contents=prompt
+            )
+
+            logger.info('response.text below')
+            logger.info(response.text)
+            logger.info('*' * 50)
+
+            # Convert text to dict
+            response_dict = json.loads(response.text)
+        except json.JSONDecodeError as err:
+            logger.info(f'Failure occured during gemini. Failure is {err}')
+            raise ValidationError(f'Failure occured during gemini. Failure is {err} | {response.text}')
+
+
+        # Stores Category as key and its respective value a list object with corrsponding ingredients
+            # i.e {'Dry Goods & Pasta': ['rice'], 'Produce': ['onion', 'lime', 'garlic clove', 'cucumber', 'carrots']}
+        tmp_dict = {} 
+
+        # Iterate thru dict and create key value pairs
+        for ingredient_key in response_dict:
+            category = response_dict[ingredient_key]
+            if category in tmp_dict:
+                tmp_dict[category].append(ingredient_key)
+            else:
+                tmp_dict[category] = [ingredient_key]
+
+        logger.info(response.text)
+        logger.info(tmp_dict)
+
+        # Will store the Category as key and its respective value the corresponging ingrediesnt and qty needed strings
+        msg_dict = {}
+
+        # Iterate thru dict. each key has an array object of ingredients that are keys in the shopping_list_dict
+        for category in tmp_dict:
+
+            if category not in msg_dict:
+                #logger.info(f'Adding category [{category}]')
+                msg_dict[category] = []
+
+            #logger.info(category)
+            # Iterate thru array
+            for ingredient_key in tmp_dict[category]:
+                #logger.info(ingredient_key)
+                msg_dict[category].append(f'\u2022{shopping_list_dict[ingredient_key]} {ingredient_key}\n')
+
+        message = 'Hello, \n\nHere is your shopping list:\n\n'
+        for category in msg_dict:
+            message += f"{category}:\n{''.join(msg_dict[category])}\n"
+
+
+        logger.info(f'Customer messgage = {message}')
         subject = "Your Shopping List"
-        message = f"Hello, \n\nHere is your shopping list:\n\n" + "\n".join(shopping_list_items) + "\n\nBest regards,\nYour Cook-N-Cart Team"
+        html_template = 'email_shopping_list.html'
+        
+        #message = f"Hello, \n\nHere is your shopping list:\n\n" + "\n".join(shopping_list_items) + "\n\nBest regards,\nYour Cook-N-Cart Team"
+        
+        convert_to_html = render_to_string(
+            template_name = html_template,
+            context = {"message": message}
+        )
 
+        
         send_mail(
             subject=subject,
             message=message,
             from_email=None,
             recipient_list=[user.email],
             fail_silently=False,
+            html_message=convert_to_html
         )
         return Response({"message": "Shopping list sent."})

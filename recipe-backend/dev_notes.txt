@@ -244,6 +244,141 @@ Setting up DRF framework
         - https://github.com/justinmklam/recipe-converter
         - https://python-measurement.readthedocs.io/en/latest/
 
+
+    - Added automation support for transfering files to ec2 instanace and execution of app on ec2 instance
+    - Updated navbar to import logo
+        - validation successfull locally and on ec2
+        - Attempting to send email..validation unsuccessfull
+            - updating docker-compose.prod with SENDGRID_API_KEY variable
+                - valiated in ec2 successfull..email sent and received
+
+
+    
+    - Debugging why password not updating even though it accepts the request and saves
+        - Did not name the vaiable correctly in the UsersSerializer for instance
+         and needed to include the passowrd in the fields..without this the serialzer ignores the field.
+         - Did not incldue password in fields because did not want the password being returned in the response
+         also needed to add password = serializers.CharField(write_only=True, required=False)
+         - validation successfull of password change 
+
+
+    - WIP on updating the email message to be html format with logo
+        - Reviewing DRF documention, https://docs.djangoproject.com/en/5.1/topics/email/
+        - Reviwing https://medium.com/@arifcse21/send-and-email-with-html-template-and-context-data-from-a-django-project-e9606644185c
+        - Reviewing https://mailtrap.io/blog/python-send-html-email/
+        - Reviewing https://medium.com/@akshatgadodia/simplifying-email-sending-in-django-a-step-by-step-guide-7dc90079738b
+        - Reviewing https://medium.com/dajngo/email-configuration-in-django-3c7d9e149445
+        - Reviewing https://learndjango.com/tutorials/template-structure
+        - Reviewing https://docs.djangoproject.com/en/5.1/topics/templates/
+        - Reviewing https://medium.com/@KaziMushfiq1234/add-image-or-file-to-drf-project-a0b0f8c3bd7d
+        - Reviewing https://docs.djangoproject.com/en/5.1/howto/static-files/
+        - Reviewing https://www.w3schools.com/django/django_add_static_files.php
+        - Reviewing https://blog.idrsolutions.com/how-to-display-base64-images-in-html/
+        - Reviewing https://medium.com/@mdmarjanhossain0/upload-base64-images-to-the-django-rest-framework-67b58a779b63
+        - Reviewing https://sentry.io/answers/how-do-i-display-a-base64-image-in-html/
+        - Reviewing https://ahmedyasin487.medium.com/attaching-multiple-images-or-files-to-email-in-django-from-filefield-or-imagefield-9f8421ac2f8c
+      
+
+        - Updating TEMPLATES 'DIRS' list object with BASE_DIR / "templates"
+            - the Django template loader will look for a project-level templates directory
+        - Created 'templates' directory
+            - Created file email_shopping_list.html in templates diretory
+        - Added static directory, placed image inside directory
+        - Email sent..validation..unsuccessfull
+            - the email is unable to access the image location..
+                - need to include the domain url or conver the image to base64 encoding
+                    - researching base64 concept
+            - Using site http://base64online.org/encode/ to convert image to Base64
+            - Succesfully embedded image into email, however gmail does not support display of base64 encoded images
+                - reviewing link, https://stackoverflow.com/questions/46783599/base64-encoded-image-is-not-showing-in-gmail
+            - Researching what CIDs are for image embedding
+                - Some web mail clients do not render CIDs, consider it spam, so not always consistent across clients
+                    - continuing to research
+                        - reviewing topic about svg
+            - Reviewing https://stackoverflow.com/questions/3787755/django-how-to-send-html-emails-with-embedded-images
+            - Reviewing https://www.reddit.com/r/django/comments/mlq730/embedding_images_in_emails_best_practices/
+            - Reviewing https://www.pipedrive.com/en/blog/embedding-images-in-emails
+            - Discussing with chatgpt
+                - ok gmail does not accept base64 we already know that and CID may not work for this case as well so we can rule those out right ?
+                    ❌ Base64 embedding
+                        •	Gmail does not render base64 images in email body (<img src="data:image/...">).
+                        •	Even if the image is small, Gmail will treat it as potentially unsafe or just ignore it.
+
+                    ❌ CID (Content-ID) embedding
+                        •	Inconsistent support.
+                        •	Gmail and other web-based clients often don’t render images referenced via CID.
+                        •	It also requires complex MIME setup, and is better suited for internal systems or Outlook-heavy environments.
+
+                - Creating an ec2 instance jsut to get a logo is overkill of resource..
+                - THe image can be sourced from a Public image hosting service and even from GitHub as long as repo is public
+                    - SOme email clients will still block this as well ..researching
+                        - The safest option for rendering in email is using a Content Delivery Network
+                        - Creating account on Cloudinary
+                        - Uploaded logo
+                            - image url = https://res.cloudinary.com/djpwhgkd0/image/upload/v1743823939/logo_small_pcqrrh.png
+                        - Updated html template..valiation succesfull
+
+            - Updated to html template to replace line breaks with <br>.
+                - Added unicode for bullet points
+                - validation succesfull
+
+            - Pushing latest version to DH and will validate for ec2
+                - validation succesfull
+
+            
+            - WIP on leveraging OpenAI to classify ingredients for shopping list email
+                - Shopping list items will be catehoried into the following:
+                    - Produce 
+                    - Meat & Seafood
+                    - Dairy
+                    - Canned Goods
+                    - Baking
+                    - Dry Goods & Pasta
+                    - Condiments
+                    - Bread
+                    - Spices
+                    - Candie(Candy)
+
+                - Created OpenAI account and team project with key
+                    - valiadtion of testing api key after sign succesfull
+                    - NOt going to use, due to requiring of CC for billing after free tier usage is up
+
+                - Looking into other options
+                    - reviewing link, https://www.analyticsvidhya.com/blog/2025/02/top-free-apis-for-ai-development/?utm_source=chatgpt.com
+                    - Looking into Google AI Studio, https://aistudio.google.com/prompts/new_chat
+                        - Looking into Gemini 1.5 Flash
+                            - Free Tier:
+                                •	Requests per Minute (RPM): 15
+                                •	Tokens per Minute (TPM): 1,000,000 ￼
+                                •	Requests per Day (RPD): 1,500
+                            - Reviwing API request how to link, https://ai.google.dev/gemini-api/docs/quickstart?lang=rest
+                                - Installing the Gemini API libray
+                                - Updated requirements.txt
+
+                - Building prompt for google model
+                    - valiadtion of prompt and response return succesfull
+                - WIP on handling of response data returned
+                - Validated process of email based on results provided..succesfull
+                - Adding GEMINI_API_KEY to docker-compose files and AWS secrets
+
+                - THinking of adding a timer due to sometines the email needs to pressed twice so the first email can populate faster due to
+                    SPF, DKIM, and DMARC
+                    - TO prevent subsenqunet Geminni api calls for the same ingredients email
+
+                - Pushing latest images to DH and to AWS for validation
+                    - validaion succesfull
+
+
+
+
+                    
+
+                    
+
+
+                
+            
+
         
 
 
@@ -285,28 +420,19 @@ Setting up DRF framework
        
     }
 
-
-
-
-keep:
-!/bin/bash
-
-#THis file runs the docker-compose.dev.yml file, building the container
-
-# These environment variables are consumed by the docker-compose file.
-# We can supply explicit defaults that are checked in with source code 
-# since they are only used for local development.
-clear
-export SECRET_KEY=birdistheword
-export DEBUG=True
-export POSTGRES_DB=recipe_app_db
-export POSTGRES_USER=postgres
-export POSTGRES_PASSWORD=postgres
-
-# Stop and remove all containers, networks, and volumes from the previous run
-docker-compose -f docker-compose.dev.yml down -v --remove-orphans
-docker-compose -f docker-compose.dev.yml up -d --build
-
-
-docker exec recipeapp-api-1  python /src/recipe_app_project/manage.py makemigrations 
-docker exec recipeapp-api-1  python /src/recipe_app_project/manage.py migrate
+ingredients = [
+    "Salt Cod",
+    "Ackee",
+    "Onion",
+    "Paprika",
+    "Curry Powder",
+    "Jerusalem Artichokes",
+    "Hotsauce",
+    "Red Pepper",
+    "Yellow Pepper",
+    "Tomatoes",
+    "Pepper",
+    "Self-raising Flour",
+    "Suet",
+    "Olive Oil"
+]

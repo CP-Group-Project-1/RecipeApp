@@ -1,6 +1,6 @@
 import './App.css';
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { useLayoutEffect } from 'react';
+import { useLayoutEffect, useState, useMemo } from 'react';
 import { useAuth } from "../api/useAuth";
 import ProtectedRoute from './components/ProtectedRoute';
 import LoginSignup from './pages/LoginSignup';
@@ -12,6 +12,11 @@ import RecipePage from './pages/RecipePage';
 import SavedRecipes from './pages/SavedRecipes';
 import NavBar from './components/NavBar';
 import ShoppingList from './pages/ShoppingList';
+import { ToastContainer } from "react-toastify";
+import Profile from './pages/Profile';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+import { CssBaseline } from '@mui/material';
+import { theme as customTheme } from './theme/theme';
 
 function App() {
 
@@ -28,24 +33,70 @@ function App() {
   useLayoutEffect(() => {
   }, [isAuthenticated]);
 
+  const [mode, setMode] = useState('light');
+  
+  const colorMode = useMemo(
+    () => ({
+      toggleColorMode: () => {
+        setMode((prevMode) => (prevMode === 'light' ? 'dark' : 'light'));
+      },
+    }),
+    [],
+  );
+
+  const theme = useMemo(
+    () =>
+      createTheme({
+        ...customTheme,
+        palette: {
+          ...customTheme.palette,
+          mode,
+          primary: {
+            main: mode === 'light' ? customTheme.palette.primary.main : '#2E7D32',
+          },
+          secondary: {
+            main: mode === 'light' ? customTheme.palette.secondary.main : '#1B5E20',
+          },
+          background: {
+            default: mode === 'light' ? '#f5f5f5' : '#121212',
+            paper: mode === 'light' ? '#ffffff' : '#1e1e1e',
+          },
+        },
+      }),
+    [mode],
+  );
+
   return (
-    <>
-    <BrowserRouter>
-      {isAuthenticated && <NavBar />}
-      <Routes>
-        <Route path="/auth" element={!isAuthenticated ? <LoginSignup base_url={base_url}/> : <Navigate to="/" replace/>} />
-        <Route path="/" element={<Home isAuthenticated={isAuthenticated} />} />
-        <Route element={<ProtectedRoute/>}>
-          <Route path="/bycat" element={<ByCat />} />
-          <Route path="/byingredient" element={<ByIngredient />} />
-          <Route path="/bycuisine" element={<ByCuisine />} />
-          <Route path="/recipe/:idMeal" element={<RecipePage base_url={base_url}/>} />
-          <Route path="/saved" element={<SavedRecipes base_url={base_url}/>} />
-          <Route path="/shoplist" element={<ShoppingList base_url={base_url}/>} />
-        </Route>
-      </Routes>
-    </BrowserRouter>
-    </>
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <BrowserRouter>
+        {isAuthenticated && <NavBar toggleColorMode={colorMode.toggleColorMode} mode={mode} />}
+        <Routes>
+          <Route path="/auth" element={!isAuthenticated ? <LoginSignup base_url={base_url}/> : <Navigate to="/" replace/>} />
+          <Route path="/" element={<Home isAuthenticated={isAuthenticated} />} />
+          <Route element={<ProtectedRoute/>}>
+            <Route path="/bycat" element={<ByCat />} />
+            <Route path="/byingredient" element={<ByIngredient />} />
+            <Route path="/bycuisine" element={<ByCuisine />} />
+            <Route path="/recipe/:idMeal" element={<RecipePage base_url={base_url}/>} />
+            <Route path="/saved" element={<SavedRecipes base_url={base_url}/>} />
+            <Route path="/shoplist" element={<ShoppingList base_url={base_url}/>} />
+            <Route path="/profile" element={<Profile base_url={base_url}/>} />
+          </Route>
+        </Routes>
+
+        <ToastContainer 
+          position="top-right"
+          autoClose={1000} // Adjust autoClose time
+          hideProgressBar={true}
+          theme={mode} // This will automatically adjust toast theme
+          toastStyle={{ 
+            backgroundColor: mode === 'light' ? "#FFDE6D" : "#424242",
+            color: mode === 'light' ? "#05324D" : "#ffffff"
+          }}
+        />
+      </BrowserRouter>
+    </ThemeProvider>
   );
 }
 

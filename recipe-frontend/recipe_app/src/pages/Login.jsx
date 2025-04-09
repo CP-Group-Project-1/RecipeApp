@@ -2,139 +2,188 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { login, basicFetch } from "../../api/AuthApi";
 import { useAuth } from "../../api/useAuth";
+import {
+  AppBar,
+  Toolbar,
+  Box,
+  Button,
+  Container,
+  TextField,
+  Typography,
+  Paper,
+  Alert,
+  CircularProgress,
+} from "@mui/material";
+import { styled } from "@mui/system";
 
-export default function Login({base_url}) {
-    //console.log('IN_Login_Page')
-    const navigate = useNavigate();
+const FormPaper = styled(Paper)(({ theme }) => ({
+  padding: theme.spacing(4),
+  maxWidth: 500,
+  margin: "auto",
+  marginTop: theme.spacing(4)
+}));
+
+export default function Login({ base_url }) {
+  const navigate = useNavigate();
+  const { setAuth } = useAuth();
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  });
+  const [errors, setErrors] = useState({
+    email: false,
+    password: false,
+  });
+  const [errorMessage, setErrorMessage] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
+  const validateEmail = (email) => {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
     
-    // adding setAuth
-    const { setAuth } = useAuth();
+    // Clear specific error when typing
+    if (errors[name]) {
+      setErrors(prev => ({ ...prev, [name]: false }));
+    }
+    if (errorMessage) setErrorMessage("");
+  };
 
-    const [formData, setFormData] = useState({
-        email: "",
-        password: "",
-    });
+  const handleBlur = (e) => {
+    const { name, value } = e.target;
+    let newErrors = { ...errors };
 
-    const [error, setError] = useState("");
-    const [isLoading, setIsLoading] = useState(false);
-    const [isEmailTouched, setIsEmailTouched] = useState(false);
+    if (name === "email") {
+      newErrors.email = !validateEmail(value);
+    }
 
-    const validateEmail = (email) => {
-        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    setErrors(newErrors);
+  };
+
+  const validateForm = () => {
+    const newErrors = {
+      email: !validateEmail(formData.email),
+      password: !formData.password,
     };
 
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData((prevState) => ({
-            ...prevState,
-            [name]: value,
-        }));
+    setErrors(newErrors);
 
-        // if (name === "email" && error) {
-        //     setError("");
-        // }
+    if (newErrors.email) return "Invalid email format";
+    if (newErrors.password) return "Password is required";
+
+    return "";
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const validationError = validateForm();
+    if (validationError) {
+      setErrorMessage(validationError);
+      return;
+    }
+
+    setIsLoading(true);
+    setErrorMessage("");
+
+    try {
+      const response = await login(formData, base_url);
+      
+      if (response.token) {
+        localStorage.setItem("token", response.token);
         
-        // Clear error when user types
-        if (error) setError("");
-
-    };
-
-    const handleBlur = (e) => {
-        const { name, value } = e.target;
-        if (name === "email") {
-            setIsEmailTouched(true);
-            if (!validateEmail(value)) {
-                setError("Invalid email format.");
-            }
+        // Get user ID
+        const userResponse = await basicFetch(`${base_url}/user_accounts/user/single_user/`, {
+          method: "GET",
+          headers: {
+            "Authorization": `Token ${response.token}`,
+            "Content-Type": "application/json"
+          }
+        });
+        
+        localStorage.setItem("user_id", userResponse.id);
+        setAuth(true);
+        navigate("/", { replace: true });
+      } else {
+        // Handle specific error cases
+        if (response.error && response.error.toLowerCase().includes("password")) {
+          setErrorMessage("Invalid password. Please try again.");
+        } else if (response.error && response.error.toLowerCase().includes("user")) {
+          setErrorMessage("No account found with this email.");
+        } else {
+          setErrorMessage(response.error || "Login failed. Please try again.");
         }
-    };
+      }
+    } catch (err) {
+      setErrorMessage("Unable to connect to server. Please try again later.");
+      console.error("Login error:", err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+  return (
+    <Container component="main" maxWidth="sm">
+      <FormPaper elevation={3}>
+        <Typography component="h1" variant="h5" align="center" gutterBottom>
+          Sign In
+        </Typography>
+        
+        {errorMessage && (
+          <Alert severity="error" sx={{ mb: 3 }}>
+            {errorMessage}
+          </Alert>
+        )}
 
-        if (!validateEmail(formData.email)) {
-            setError("Invalid email format.");
-            return;
-        }
+        <Box component="form" onSubmit={handleSubmit} noValidate>
+          <TextField
+            margin="normal"
+            required
+            fullWidth
+            id="email"
+            label="Email Address"
+            name="email"
+            autoComplete="email"
+            autoFocus
+            value={formData.email}
+            onChange={handleChange}
+            onBlur={handleBlur}
+            error={errors.email}
+            helperText={errors.email ? "Invalid email format" : "example@domain.com"}
+          />
+          
+          <TextField
+            margin="normal"
+            required
+            fullWidth
+            name="password"
+            label="Password"
+            type="password"
+            id="password"
+            autoComplete="current-password"
+            value={formData.password}
+            onChange={handleChange}
+            error={errors.password}
+            helperText={errors.password && "Password is required"}
+          />
 
-        setIsLoading(true);
-        setError(""); // clear previous errors
-
-        try {
-            //console.log('Attempting to get user token')
-            const response = await login(formData, base_url);
-            if (response.token) {
-              localStorage.setItem("token", response.token);
-              //console.log(response);
-              
-              //Getting user_id
-              //console.log('Getting user_id');
-
-              const token = response.token
-              //const singleUserEp = `${base_url}user_accounts/user/`
-              const singleUserEp = `${base_url}/user_accounts/user/single_user/`;
-                // console.log(`singleuserEp = ${singleUserEp}`);
-              const userPayload = {
-                method: "GET",
-                headers:{
-                "Content-Type": "application/json",
-                "Authorization": `Token ${token}`
-              }
-              //body: JSON.stringify(data)
-              }
-              //console.log(`Hitting Endpoint = [${singleUserEp}]`);
-              const userBody = await basicFetch(singleUserEp, userPayload);
-              //console.log(userBody);
-              //console.log(`user_id = [${userBody.id}]`);
-              localStorage.setItem("user_id", userBody.id);
-                
-              // adding setAuth
-              setAuth(true);
-              // edit navigate
-              navigate("/", { replace: true });
-            } else {
-                setError(response.error || "Login failed. Please try again.");
-            }
-        } catch (err) {
-            setError("Login failed. Please try again.");
-        } finally {
-            setIsLoading(false);
-        }
-    };
-
-    return (
-        <>
-            <h2>Login</h2>
-            <br></br>
-            <form onSubmit={handleSubmit} method="POST">
-                <div>
-                    <label>Username</label>
-                    <input
-                        type="text"
-                        name="email"
-                        value={formData.email}
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                        required
-                    />
-                </div>
-                <div>
-                    <label>Password</label>
-                    <input
-                        type="password"
-                        name="password"
-                        value={formData.password}
-                        onChange={handleChange}
-                        required
-                    />
-                </div>
-                {error && <p style={{color: 'red'}}>{error}</p>}
-                <div>
-                    <button onClick={() => navigate('/')} type="submit" disabled={isLoading}>
-                        {isLoading ? "Logging in..." : "Submit"}
-                    </button>
-                </div>
-            </form>
-        </>
-    );
+          <Button
+            type="submit"
+            fullWidth
+            variant="contained"
+            sx={{ mt: 3, mb: 2 }}
+            disabled={isLoading}
+          >
+            {isLoading ? (
+              <CircularProgress size={24} color="inherit" />
+            ) : (
+              "Sign In"
+            )}
+          </Button>
+        </Box>
+      </FormPaper>
+    </Container>
+  );
 }

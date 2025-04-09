@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { Select, MenuItem, FormControl, InputLabel } from "@mui/material";
+
 
 export default function ByCat() {
     const categoriesUrl = "https://www.themealdb.com/api/json/v1/1/list.php?c=list";
@@ -32,28 +34,80 @@ export default function ByCat() {
         navigate(`/recipe/${idMeal}`);
     };
 
+
+
     return (
         <>
-            <select onChange={(e) => setSelectedCategory(e.target.value)} value={selectedCategory}>
-                <option value="">Select a Category</option>
+        <FormControl sx={{marginTop:"30px"}} fullWidth>
+            <InputLabel>Select a Category</InputLabel>
+            <Select
+                value={selectedCategory}
+                onChange={(e) => setSelectedCategory(e.target.value)}
+                label ="Select a Category"
+                sx={{
+                    backgroundColor: "white",
+                    color: "#333",
+                    fontSize: "16px",
+                    borderRadius: "8px",
+                    paddingBottom: "10px",
+                    height: "60px",
+                    width: "100%",
+                    "& .MuiSelect-select": {
+                        display: "flex",
+                        justifyContent: "center", 
+                        alignItems: "center",
+                        fontSize: "26px",
+                        textDecoration: "underline",
+                    },
+                    "& .MuiOutlinedInput-notchedOutline": {
+                        borderColor: "#ccc",
+                    },
+                        }}
+            >
                 {categories.map((category) => (
-                    <option key={category.strCategory} value={category.strCategory}>
+                    <MenuItem 
+                        key={category.strCategory} 
+                        value={category.strCategory} 
+                        sx={{
+                            fontSize: "18px",
+                            "&:hover": {
+                                backgroundColor: "#FE8427",
+                            },
+                        }}
+                    >
                         {category.strCategory}
-                    </option>
+                    </MenuItem>
                 ))}
-            </select>
+            </Select>
+        </FormControl>
+
 
             {recipes.length > 0 && (
-                <ul>
+            <ul>
+                {recipes.map((recipe) => (
+                    <div className="recipe-list">
                     {recipes.map((recipe) => (
-                        <li key={recipe.idMeal}>
-                            <button onClick={() => handleRecipeClick(recipe.idMeal)}>
+                        <div key={recipe.idMeal} className="recipe-container">
+                            <button className="recipe-format" onClick={() => handleRecipeClick(recipe.idMeal)}>
                                 {recipe.strMeal}
                             </button>
-                        </li>
+                            <img 
+                                className="recipe-img" 
+                                onClick={() => handleRecipeClick(recipe.idMeal)}
+                                src={recipe.strMealThumb} 
+                                alt={recipe.strMeal} 
+                            />
+                        </div>
                     ))}
-                </ul>
+                    </div>
+                ))}
+            </ul>
             )}
         </>
     );
 }
+
+// #FE8427
+// #05324D
+// #3EA79D
+// #FFD23A

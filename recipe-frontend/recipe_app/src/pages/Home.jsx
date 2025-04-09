@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../api/useAuth";
+import RandomRecipe from "../components/RandomRecipe";
 
 export default function Home() {
     const navigate = useNavigate();
@@ -7,8 +8,10 @@ export default function Home() {
 
     return (
         <div style={{ padding: "20px" }}>
-            <h2>Welcome to Cook n Cart</h2>
-            
+            <h2 className="selected-title1" 
+            style={{marginBottom:"-15px", marginTop:"5px"}}
+            >Welcome to Cook n Cart</h2>
+            {/* The following is needed for to see login/signup */}
             {!isAuthenticated ? (
                 <div style={{ textAlign: "center", marginTop: "40px" }}>
                     <p>Please login or sign up to access all features</p>
@@ -20,43 +23,39 @@ export default function Home() {
                     </button>
                 </div>
             ) : (
-                <div style={{ marginTop: "30px" }}>
-                    <h3>Browse Recipes By:</h3>
-                    <div style={{ display: "flex", gap: "10px", marginTop: "20px" }}>
-                        <button onClick={() => navigate('/bycat')}>Category</button>
-                        <button onClick={() => navigate('/byingredient')}>Ingredient</button>
-                        <button onClick={() => navigate('/bycuisine')}>Cuisine</button>
-                    </div>
-                    
-                    <div style={{ marginTop: "30px" }}>
-                        <h3>Your Saved Content:</h3>
-                        <div style={{ display: "flex", gap: "10px", marginTop: "20px" }}>
-                            <button onClick={() => navigate('/saved')}>Saved Recipes</button>
-                            <button onClick={() => navigate('/shoplist')}>Shopping List</button>
-                        </div>
-                    </div>
+                <>
+                <div className="home-container">
+                    <h3>
+                    Discover delicious recipes by searching through categories, ingredients, or cuisines.
+                    </h3>
+                    <p>
+                    <strong>Cook n Cart</strong> provides a unique feature that allows you to seamlessly add the ingredients from any recipe to your personalized shopping list. Once you're ready, you can even email the list to yourself for easy access while you're at the store.
+                    </p>
+                    <p style={{ fontSize:"25px", marginBottom:"-5px", fontStyle:"oblique"}} ><strong>Happy cooking!</strong></p>
+                    <hr></hr>
                 </div>
+
+                    <h2 className="selected-title1"
+                    style={{
+                        fontSize:"35px", 
+                        marginTop:"-10px", 
+                        textAlign:"left",
+                        color:"#333",
+                        marginLeft: "10px"
+                    }}
+                    >
+                        Try something new!
+                        </h2>
+                    <div className="recipe-list2">
+                        <RandomRecipe />
+                        <RandomRecipe />
+                        <RandomRecipe />
+                        <RandomRecipe />
+                        <RandomRecipe />
+                        <RandomRecipe />
+                    </div>
+                </>
             )}
         </div>
     )
 }
-
-// import { useNavigate } from "react-router-dom";
-
-// export default function Home() {
-//     const navigate = useNavigate();
-    
-//     return (
-//         <>
-//             <h2>Home Page</h2>
-//             <button onClick={() => navigate('/login')}>
-//                 Login
-//             </button> 
-
-//             <button onClick={() => navigate('/signup')} style={{ marginLeft: "10px"  }}>
-//                 Sign Up
-//             </button>
-    
-//         </>
-//     )
-// }

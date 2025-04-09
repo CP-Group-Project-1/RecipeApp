@@ -2,8 +2,9 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { getRecipe, deleteRecipe } from "../../api/AuthApi";
 
-export default function SavedRecipes({base_url}) {
+export default function SavedRecipes({ base_url }) {
     const [savedRecipes, setSavedRecipes] = useState([]);
+    const [loading, setLoading] = useState(true); 
     const userId = localStorage.getItem("user_id");
 
     useEffect(() => {
@@ -13,16 +14,22 @@ export default function SavedRecipes({base_url}) {
         }
 
         async function fetchRecipes() {
-            const response = await getRecipe(base_url, userId);
-            if (response.success) {
-                setSavedRecipes(response.data);
-            } else {
-                alert("Error retrieving recipes: " + response.error);
+            try {
+                const response = await getRecipe(base_url, userId);
+                if (response.success) {
+                    setSavedRecipes(response.data);
+                } else {
+                    alert("Error retrieving recipes: " + response.error);
+                }
+            } catch (error) {
+                alert("Error fetching recipes: " + error.message);
+            } finally {
+                setLoading(false);
             }
         }
 
         fetchRecipes();
-    }, [userId]);
+    }, [userId, base_url]);
 
     const handleDeleteRecipe = async (idMeal, recipeId) => {
         const response = await deleteRecipe(base_url, userId, recipeId);
@@ -33,25 +40,43 @@ export default function SavedRecipes({base_url}) {
         }
     };
 
+    if (loading) {
+        return <p>Loading recipes...</p>;
+    }
+
     if (!savedRecipes.length) {
         return <p>No saved recipes yet!</p>;
     }
 
     return (
         <div>
-            <h2>Saved Recipes</h2>
-            <ul>
+            <h1 className="selected-title1">Saved Recipes</h1>
+            <ul className="recipe-list1">
                 {savedRecipes.map((recipe) => (
-                    <li key={recipe.id}>
-                        <Link to={`/recipe/${recipe.idMeal}`}>
+                    <li className="recipe-container" key={recipe.id}>
+                        <button 
+                            style={{
+                                alignSelf:"flex-end", 
+                                position:"absolute", 
+                                cursor:"pointer", 
+                                background:"#be0e0e",
+                                marginTop:"5px",
+                            }} 
+                            onClick={() => handleDeleteRecipe(recipe.idMeal, recipe.id)}>
+                                x
+                        </button>
+                        <Link to={`/recipe/${recipe.idMeal}`} 
+                            style={{ 
+                                color:"black", 
+                                textDecoration:"none"
+                            }}>
+                            <div className="recipe-title-format">{recipe.recipe_title}</div>
                             <img
+                                className="recipe-img"
                                 src={recipe.meal_pic_img}
                                 alt={recipe.recipe_title}
-                                style={{ width: "100px", height: "100px", marginRight: "1rem" }}
                             />
-                            <span>{recipe.recipe_title}</span>
                         </Link>
-                        <button onClick={() => handleDeleteRecipe(recipe.idMeal, recipe.id)}>Delete</button>
                     </li>
                 ))}
             </ul>
