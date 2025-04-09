@@ -1,26 +1,18 @@
 from rest_framework import serializers
 from .models import ShoppingListItem
-from .units import Q_, format_quantity
+from .units import UNIT_DISPLAY_NAMES
 
 
 
 class ShoppingListItemSerializer(serializers.ModelSerializer):
-    formatted_qty = serializers.SerializerMethodField()
+    measure = serializers.SerializerMethodField()
+
     class Meta:
         model = ShoppingListItem
-        fields = ['id', 'user', 'item', 'qty', 'measure', 'formatted_qty']
+        fields = ['id', 'user', 'item', 'qty', 'measure']
     
-    def get_formatted_qty(self, obj):
-        # Build the quantity safely using Q_
-        if obj.measure:
-            try:
-                qty = Q_(obj.qty, obj.measure)
-            except Exception:
-                qty = obj.qty
-        else:
-            qty = obj.qty
-
-        return format_quantity(qty) 
+    def get_measure(self, obj):
+        return UNIT_DISPLAY_NAMES.get(obj.measure, obj.measure or "")
 
 
 class RecipeSerializer(serializers.Serializer):

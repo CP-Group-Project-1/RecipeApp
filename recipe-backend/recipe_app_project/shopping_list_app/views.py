@@ -6,8 +6,7 @@ from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from .models import ShoppingListItem
 from .serializers import ShoppingListItemSerializer
-from .units import parse_measure, parse_custom_units, best_unit, skip_ingredient, Q_
-from django.core.mail import send_mail
+from .units import parse_measure, parse_custom_units, best_unit, skip_ingredient, Q_, UNIT_DISPLAY_NAMES, is_spice
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 
@@ -42,8 +41,20 @@ class ShoppingListItems(APIView):
                     continue
 
                 ingredient = ingredient.strip().lower()
+
+                # Do no include undesired ingredients
                 if skip_ingredient(ingredient):
                     continue
+                
+                # Handle spices with default qty of 1
+                if is_spice(ingredient):
+                    if ShoppingListItem.objects.filter(user=user, item=ingredient).exists():
+                        continue
+                    new = ShoppingListItem(user=user, item=ingredient, qty=1, measure="")
+                    new.save()
+                    items.append(new)
+                    continue
+
 
                 qty = parse_measure(measure_str)
 
@@ -71,6 +82,7 @@ class ShoppingListItems(APIView):
 
                 # Pint-compatible quantity
                 unit = None if qty.dimensionless else f"{qty.units:~}"
+                display_unit = UNIT_DISPLAY_NAMES.get(unit, unit) if unit else None
 
                 # Attempt to combine with any matching item
                 existing_items = ShoppingListItem.objects.filter(user=user, item=ingredient)
@@ -92,18 +104,24 @@ class ShoppingListItems(APIView):
                 if matched:
                     try:
                         if matched.measure and unit:
-                            total_qty = Q_(float(matched.qty), matched.measure) + qty.to(matched.measure)
-                            normalized = best_unit(total_qty)
-                            matched.qty = normalized.magnitude if hasattr(normalized, "magnitude") else normalized
-                            matched.measure = f"{normalized.units:~}" if hasattr(normalized, "units") else matched.measure
+                            base_qty = Q_(float(matched.qty), matched.measure)
+                            if qty.check(base_qty):
+                                total_qty = base_qty + qty.to(matched.measure)
+                                normalized = best_unit(total_qty)
+
+                                matched.qty = float(normalized.magnitude if hasattr(normalized, "magnitude") else normalized)
+                                raw_unit = f"{normalized.units:~}" if hasattr(normalized, "units") else matched.measure
+                                matched.measure = UNIT_DISPLAY_NAMES.get(raw_unit, raw_unit)
+                            else:
+                                # Units are incompatible – skip this merge attempt
+                                continue
                         else:
                             matched.qty = float(matched.qty) + float(qty.magnitude if hasattr(qty, "magnitude") else qty)
+
                         matched.save()
                         items.append(matched)
                     except Exception:
-                        new = ShoppingListItem(user=user, item=ingredient, qty=qty.magnitude if hasattr(qty, "magnitude") else qty, measure=unit)
-                        new.save()
-                        items.append(new)
+                        continue    
                 else:
                     new = ShoppingListItem(user=user, item=ingredient, qty=qty.magnitude if hasattr(qty, "magnitude") else qty, measure=unit)
                     new.save()

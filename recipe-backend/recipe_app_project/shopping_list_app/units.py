@@ -9,16 +9,45 @@ CUSTOM_UNITS = {"can", "cans", "clove", "cloves", "handful", "knob", "large", "c
 
 SKIP_INGREDIENTS = {"water"}
 
+UNIT_DISPLAY_NAMES = {
+    "cp": "cup",
+    "pin": "pinch",
+    "knob": "knob",
+    "tbsp": "tbsp",
+    "tsp": "tsp",
+    "oz": "oz",
+    "g": "g",
+    "kg": "kg",
+    "ml": "ml",
+    "l": "l"
+}
+
+SPICES = {"nutmeg", "mustard powder", "salt", "pepper", "coriander", "garlic powder", "onion powsder", "paprika", "cayenne", "chili powder", "cinnamon", "cloves", "cardamom", "turmeric", "ginger", "allspice", "fennel seeds", "cumin", "black pepper", "white pepper"}
+
 def skip_ingredient(ingredient):
     return ingredient.strip().lower() in SKIP_INGREDIENTS
 
+def is_spice(ingredient):
+    return ingredient.strip().lower() in SPICES
+
 def parse_measure(measure_str):
     try:
-        if not measure_str or measure_str.strip() == "":
+        if not measure_str or not measure_str.strip():
             return None
-        return Q_(measure_str.strip().lower())
+
+        cleaned = measure_str.strip().lower()
+
+        # Match: number (int/float/fraction) + single unit word
+        match = re.match(r"([\d/.\s]+)\s*([a-zA-Z]+)", cleaned)
+        if match:
+            qty = match.group(1).strip()
+            unit = match.group(2).strip()
+            return Q_(f"{qty} {unit}")
+
+        return None
     except Exception:
         return None
+
 
 def parse_custom_units(measure_str: str):
     if not measure_str:
@@ -64,14 +93,28 @@ def best_unit(qty: Quantity):
 
     return qty.to_base_units()
 
-def format_quantity(qty):
-    if isinstance(qty, (int, float)):
-        return str(Fraction(qty).limit_denominator(8))
-    if hasattr(qty, "magnitude"):
-        if qty.dimensionless:
-            return str(Fraction(qty.magnitude).limit_denominator(8))
-        return f"{Fraction(qty.magnitude).limit_denominator(8)} {qty.units:~}"
-    return str(qty)
+# def format_quantity(qty):
+#     def to_mixed_string(frac: Fraction):
+#         if frac.denominator == 1:
+#             return str(frac.numerator)
+#         whole = frac.numerator // frac.denominator
+#         remainder = frac - whole
+#         if whole == 0:
+#             return str(remainder)
+#         return f"{whole} {abs(remainder)}"
+
+#     if isinstance(qty, (int, float)):
+#         return to_mixed_string(Fraction(qty).limit_denominator(8))
+
+#     if hasattr(qty, "magnitude"):
+#         if qty.dimensionless:
+#             return to_mixed_string(Fraction(qty.magnitude).limit_denominator(8))
+#         unit = f"{qty.units:~}"
+#         display_unit = UNIT_DISPLAY_NAMES.get(unit, unit)
+#         return f"{to_mixed_string(Fraction(qty.magnitude).limit_denominator(8))} {display_unit}"
+
+    # return str(qty)
+
 
 
 
