@@ -84,7 +84,7 @@ hr {
   border: 1px solid #ddd;
   padding: 8px;
   border-radius: 10px;
-  background-color: #f9f9f9;
+  /* background-color: #f9f9f9; */
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
 }
 
@@ -185,10 +185,12 @@ select:focus {
 .recipe-page-img {
   width: 100%;
   height: auto;
-  border-radius: 8px;
+  max-width: 400px;
   object-fit: cover;
-  flex-grow: 1;
+  border-radius: 8px;
+  margin: 0 auto;
 }
+
 
 .recipe-ingr-inst {
   display: flex;
@@ -250,6 +252,44 @@ select:focus {
 
 
 
+
+@media (max-width: 768px) {
+  .recipe-ingr-inst {
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .ingredients-container {
+    max-width: 100%;
+    padding: 10px;
+  }
+
+  .instructions-container {
+    padding: 10px;
+  }
+
+  .recipe-buttons {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .recipe-buttons button {
+    width: 100%;
+    max-width: 300px;
+  }
+
+  .selected-title,
+  .selected-title1 {
+    font-size: 32px;
+    margin-top: 0;
+  }
+}
+
+
+
+
+
+
 .recipe-list1 {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -260,6 +300,34 @@ select:focus {
   max-width: 100%;
   width: 100%;
 }
+
+@media (max-width: 1024px) {
+  .recipe-list1 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .recipe-list1 {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+.delete-button {
+  position: absolute;
+  margin-top: 5px;
+  background-color: #be0e0e;
+  color: white;
+  cursor: pointer;
+  align-self: flex-end;
+}
+
+.delete-button:hover {
+  background-color: #ff3333;
+}
+
+
 
 .recipe-title-format {
   font-size: 24px;
@@ -402,7 +470,7 @@ select:focus {
   /* padding: 20px; */
   border-radius: 10px;
   /* box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); */
-  background-color: #fff;
+  /* background-color: #fff; */
   color: #333;
   /* max-width: 600px; */
   margin: 20px auto;

@@ -80,7 +80,7 @@ const ShoppingList = ({ base_url, token }) => {
     const sortedShoppingList = [...shoppingList].sort((a, b) => a.item.localeCompare(b.item));
 
     if (loading) {
-        return <p>Loading...</p>;  // Show "Loading..." while fetching
+        return <p>Loading...</p>; 
     }
 
     return (

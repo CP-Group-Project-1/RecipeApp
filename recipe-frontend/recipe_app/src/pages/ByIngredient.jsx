@@ -78,27 +78,23 @@ export default function ByIngredient() {
             </Select>
         </FormControl>
            
-            <h1 className="selected-title">{selectedIngredient}</h1>
+
             {recipes.length > 0 && (
-                <ul>
-                    {recipes.map((recipe) => (
-                        <div className="recipe-list">
-                        {recipes.map((recipe) => (
-                            <div key={recipe.idMeal} className="recipe-container">
-                                <button className="recipe-format" onClick={() => handleRecipeClick(recipe.idMeal)}>
-                                    {recipe.strMeal}
-                                </button>
-                                <img 
-                                    className="recipe-img" 
-                                    onClick={() => handleRecipeClick(recipe.idMeal)}
-                                    src={recipe.strMealThumb} 
-                                    alt={recipe.strMeal} 
-                                />
-                            </div>
-                        ))}
-                    </div>
-                    ))}
-                </ul>
+                <div className="recipe-list">
+                {recipes.map((recipe) => (
+                  <div key={recipe.idMeal} className="recipe-container">
+                    <button className="recipe-format" onClick={() => handleRecipeClick(recipe.idMeal)}>
+                      {recipe.strMeal}
+                    </button>
+                    <img 
+                      className="recipe-img" 
+                      onClick={() => handleRecipeClick(recipe.idMeal)}
+                      src={recipe.strMealThumb} 
+                      alt={recipe.strMeal} 
+                    />
+                  </div>
+                ))}
+              </div>              
             )}
         </>
     );
