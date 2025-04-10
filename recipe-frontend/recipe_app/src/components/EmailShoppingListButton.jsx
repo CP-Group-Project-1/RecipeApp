@@ -8,6 +8,7 @@ const EmailShoppingListButton = ({ token, baseUrl }) => {
     const [message, setMessage] = useState("");
 
     const handleSendEmail = async () => {
+        console.log(token)
         setLoading(true);
         setMessage("");
         console.log("Sending email...");

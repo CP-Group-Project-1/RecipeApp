@@ -7,6 +7,7 @@ export default function RecipePage({ base_url }) {
   const { idMeal } = useParams();
   const [recipe, setRecipe] = useState(null);
 
+
   useEffect(() => {
     const recipeUrl = `https://www.themealdb.com/api/json/v1/1/lookup.php?i=${idMeal}`;
     fetch(recipeUrl)
@@ -35,7 +36,7 @@ export default function RecipePage({ base_url }) {
         <SaveRecipeBtn recipe={recipe} base_url={base_url} />
         <ShopListBtn recipe={recipe} base_url={base_url} />
       </div>
-      <h2>{recipe.strMeal}</h2>
+      <h2 style={{backgroundColor:"whitesmoke", borderRadius:"8px", padding:"5px"}}>{recipe.strMeal}</h2>
       <div className="recipe-ingr-inst">
         <img className="recipe-page-img" src={recipe.strMealThumb} alt={recipe.strMeal} />
         <div className="ingredients-container">

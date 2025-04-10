@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../api/useAuth";
 import RandomRecipe from "../components/RandomRecipe";
 
+
 export default function Home() {
     const navigate = useNavigate();
     const { isAuthenticated } = useAuth();

@@ -55,13 +55,7 @@ export default function SavedRecipes({ base_url }) {
                 {savedRecipes.map((recipe) => (
                     <li className="recipe-container" key={recipe.id}>
                         <button 
-                            style={{
-                                alignSelf:"flex-end", 
-                                position:"absolute", 
-                                cursor:"pointer", 
-                                background:"#be0e0e",
-                                marginTop:"5px",
-                            }} 
+                            className="delete-button"
                             onClick={() => handleDeleteRecipe(recipe.idMeal, recipe.id)}>
                                 x
                         </button>
