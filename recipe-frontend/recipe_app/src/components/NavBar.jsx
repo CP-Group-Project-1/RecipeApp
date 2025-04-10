@@ -15,9 +15,11 @@ MenuItem,
 Typography,
 Divider,
 Switch,
-FormControlLabel
+FormControlLabel,
+InputAdornment
 } from '@mui/material';
-import { ExitToApp, Bookmark, ShoppingBasket, AccountCircle, Brightness4, Brightness7 } from '@mui/icons-material';
+import { ExitToApp, Bookmark, ShoppingBasket, AccountCircle, Brightness4, Brightness7} from '@mui/icons-material';
+import SearchIcon from '@mui/icons-material/Search';
 import Logo from '../assets/logo.png'
 
 export default function NavBar({ toggleColorMode, mode }) {
@@ -42,7 +44,10 @@ const handleProfileClick = () => {
 
 const handleSearch = () => {
     if (searchQuery.trim()) {
-    navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+    navigate(`/search`, {
+        state: { searchQuery: searchQuery.trim() }
+    });
+    setSearchQuery('');
     }
 };
 
@@ -141,11 +146,26 @@ return (
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
                 size="small"
+                slotProps={{
+                    input: {
+                        endAdornment: isMobile && (
+                            <InputAdornment position="end">
+                                <IconButton 
+                                    onClick={handleSearch}
+                                    edge="end"
+                                >
+                                    <SearchIcon />
+                                </IconButton>
+                            </InputAdornment>
+                        ),
+                    },
+                }}
                 sx={{
                 backgroundColor: 'background.paper',
                 borderRadius: 1,
                 '& .MuiOutlinedInput-root': {
-                    borderRadius: 1
+                    borderRadius: 1,
+                    pr: 1,
                 }
                 }}
             />
@@ -226,7 +246,7 @@ return (
             <Toolbar sx={{
                 display: 'grid',
                 gridTemplateColumns: 'auto 1fr auto auto',
-                gap: 2,
+                gap: 3,
                 alignItems: 'center',
                 padding: '8px 24px !important',
                 '& .MuiButton-root': {
@@ -251,18 +271,38 @@ return (
             />
 
             <TextField
+                fullWidth
                 variant="outlined"
                 placeholder="Search recipes..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
                 size="small"
+                slotProps={{
+                    root: {
+                      sx: {
+                        backgroundColor: 'background.paper',
+                        borderRadius: 1,
+                      }
+                    },
+                    input: {
+                      sx: {
+                        padding: '3px',
+                      },
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <SearchIcon color="action" />
+                        </InputAdornment>
+                      ),
+                    },
+                }}
                 sx={{
                 mx: 2,
                 backgroundColor: 'background.paper',
                 borderRadius: 1,
                 '& .MuiOutlinedInput-root': {
-                    borderRadius: 1
+                    borderRadius: 1,
+                    paddingLeft: '10px'
                 }
                 }}
             />

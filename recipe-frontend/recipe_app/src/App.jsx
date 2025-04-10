@@ -17,6 +17,7 @@ import Profile from './pages/Profile';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { CssBaseline } from '@mui/material';
 import { theme as customTheme } from './theme/theme';
+import SearchResults from './components/SearchResults';
 
 function App() {
 
@@ -82,6 +83,7 @@ function App() {
             <Route path="/saved" element={<SavedRecipes base_url={base_url}/>} />
             <Route path="/shoplist" element={<ShoppingList base_url={base_url}/>} />
             <Route path="/profile" element={<Profile base_url={base_url}/>} />
+            <Route path="/search" element={<SearchResults />} />
           </Route>
         </Routes>
 
