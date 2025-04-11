@@ -408,7 +408,9 @@ select:focus {
 
 /* Quantity Input */
 .qty-input {
-  width: 50px;
+  display: flex;
+  max-width: 100px;
+  /* width: 50px; */
   padding: 5px;
   border: 1px solid #ccc;
   color: #333;
