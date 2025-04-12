@@ -19,16 +19,35 @@ export default function RecipePage({ base_url }) {
     return <div>Loading...</div>;
   }
 
-  const cleanInstructions = recipe.strInstructions
-    .split(/\r\n+/)
-    .map((step, index) => {
-      const cleanedStep = step
-        .replace(/^\d+\.\s*/, "") 
-        .replace(/STEP \d+\s*-\s*/gi, "")
-        .trim();
-      return cleanedStep && { step: cleanedStep, stepNumber: index + 1 };
-    })
-    .filter(step => step !== undefined); 
+  const cleanInstructions = (instructions) => {
+    if (!instructions) return [];
+
+    let cleaned = instructions.replace(/\r\n/g, '\n').trim();
+    cleaned = cleaned.replace(/STEP\s*\d+\s*[-:\.]?\s*/gi, '');
+
+    const numberedStepRegex = /^\d+[\.\)]?\s+/;
+    const rawLines = cleaned.split('\n').map(line => line.trim()).filter(Boolean);
+
+    const numberedLines = rawLines.filter(line => numberedStepRegex.test(line));
+    const isNumbered = numberedLines.length >= rawLines.length / 2;
+
+    let steps;
+
+    if (isNumbered) {
+        steps = rawLines.map(line => line.replace(numberedStepRegex, '').trim());
+    } else if (cleaned.includes('\n\n')) {
+        steps = cleaned.split(/\n\s*\n/).map(p => p.trim()).filter(Boolean);
+    } else {
+        steps = cleaned.split(/(?<=[.!?])\s+(?=[A-Z])/).map(p => p.trim()).filter(Boolean);
+    }
+
+    return steps.map((step, index) => ({
+        step,
+        stepNumber: index + 1
+    }));
+};
+
+  const formattedInstructions = cleanInstructions(recipe.strInstructions);
 
   return (
     <div className="recipe-container">
@@ -58,12 +77,12 @@ export default function RecipePage({ base_url }) {
       </div>
       <div className="instructions-container">
         <h3>Instructions:</h3>
-        {cleanInstructions.map(({ step, stepNumber }) => (
+        {formattedInstructions.map(({ step, stepNumber }) => (
           <p key={stepNumber}>
-            <strong>STEP {stepNumber}: </strong>{step}
+            <strong>STEP {stepNumber}:</strong> {step}
           </p>
-        ))}
-      </div>
+    ))}
+  </div>
     </div>
   );
 }
