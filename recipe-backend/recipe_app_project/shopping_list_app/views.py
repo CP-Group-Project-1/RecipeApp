@@ -7,7 +7,8 @@ from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from .models import ShoppingListItem
 from .serializers import ShoppingListItemSerializer
-from .units import parse_measure, best_unit, Q_, skip_ingredient, is_spice, parse_custom_units, UNIT_DISPLAY_NAMES
+from pint import Quantity
+from .units import parse_measure, best_unit, Q_, skip_ingredient, is_spice,UNIT_DISPLAY_NAMES, clean_suffix, normalize_unit
 from django.core.mail import send_mail
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
@@ -51,11 +52,11 @@ class ShoppingListItems(APIView):
 
                 ingredient = ingredient.strip().lower()
 
-                # Do no include undesired ingredients
+                # Do not include undesired ingredients
                 if skip_ingredient(ingredient):
                     continue
                 
-                # Handle spices with default qty of 1
+                # Give spices a default qty of 1
                 if is_spice(ingredient):
                     if ShoppingListItem.objects.filter(user=user, item=ingredient).exists():
                         continue
@@ -64,82 +65,93 @@ class ShoppingListItems(APIView):
                     items.append(new)
                     continue
 
+                measure_str = measure_str.strip() if measure_str else ""
+                qty, cleaned_unit, suffix = parse_measure(measure_str)
 
-                qty = parse_measure(measure_str)
-
-                # Fallback to custom unit parsing
                 if qty is None:
-                    custom_qty, custom_unit = parse_custom_units(measure_str)
-                    if custom_qty is not None and custom_unit:
-                        existing = ShoppingListItem.objects.filter(
-                            user=user,
-                            item=ingredient,
-                            measure=custom_unit
-                        ).first()
+                    continue 
 
-                        if existing:
-                            existing.qty = float(existing.qty) + float(custom_qty)
-                            existing.save()
-                            items.append(existing)
-                        else:
-                            new = ShoppingListItem(user=user, item=ingredient, qty=custom_qty, measure=custom_unit)
-                            new.save()
-                            items.append(new)
-                        continue
-                    else:
-                        continue  # Skip if no valid quantity could be parsed
+                # Handle descriptors
+                if suffix and len(ingredient.split()) < 2:
+                    suffix_cleaned = clean_suffix(suffix)
+                    if suffix_cleaned:
+                        ingredient = f"{suffix} {ingredient}".strip()
 
-                # Pint-compatible quantity
-                unit = None if qty.dimensionless else f"{qty.units:~}"
-                display_unit = UNIT_DISPLAY_NAMES.get(unit, unit) if unit else None
+                # Try to use Pint to parse the quantity
+                if isinstance(qty, Quantity):
+                    unit = None if qty.dimensionless else f"{qty.units:~}"
+                    cleaned_unit = normalize_unit(unit) if unit else ""
 
-                # Attempt to combine with any matching item
-                existing_items = ShoppingListItem.objects.filter(user=user, item=ingredient)
-
-                matched = None
-                for entry in existing_items:
-                    try:
-                        if not entry.measure and unit is None:
-                            matched = entry
-                            break
-                        elif entry.measure and unit:
-                            existing_qty = Q_(float(entry.qty), entry.measure)
-                            if qty.check(existing_qty):
+                    matched = None
+                    existing_items = ShoppingListItem.objects.filter(user=user, item=ingredient)
+                    
+                    # check for existing items with the same ingredient
+                    for entry in existing_items:
+                        try:
+                            if not entry.measure and not cleaned_unit:
                                 matched = entry
                                 break
-                    except Exception:
-                        continue
+                            elif entry.measure and cleaned_unit:
+                                if normalize_unit(entry.measure) == cleaned_unit:
+                                    matched = entry
+                                    break
+                                existing_qty = Q_(float(entry.qty), entry.measure)
+                                if qty.check(existing_qty):
+                                    matched = entry
+                                    break
+                        except Exception:
+                            continue
 
-                if matched:
-                    try:
-                        if matched.measure and unit:
-                            base_qty = Q_(float(matched.qty), matched.measure)
-                            if qty.check(base_qty):
-                                total_qty = base_qty + qty.to(matched.measure)
-                                normalized = best_unit(total_qty)
+                    if matched:
+                        try:
+                            if matched.measure and cleaned_unit:
+                                base_qty = Q_(float(matched.qty), matched.measure)
+                                if qty.check(base_qty):
+                                    total_qty = base_qty + qty.to(matched.measure)
+                                    normalized = best_unit(total_qty)
 
-                                matched.qty = float(normalized.magnitude if hasattr(normalized, "magnitude") else normalized)
-                                raw_unit = f"{normalized.units:~}" if hasattr(normalized, "units") else matched.measure
-                                matched.measure = UNIT_DISPLAY_NAMES.get(raw_unit, raw_unit)
+                                    matched.qty = float(getattr(normalized, "magnitude", normalized))
+                                    raw_unit = f"{normalized.units:~}" if hasattr(normalized, "units") else matched.measure
+                                    matched.measure = UNIT_DISPLAY_NAMES.get(raw_unit, raw_unit)
+                                else:
+                                    continue
                             else:
-                                # Units are incompatible – skip this merge attempt
-                                continue
-                        else:
-                            matched.qty = float(matched.qty) + float(qty.magnitude if hasattr(qty, "magnitude") else qty)
+                                matched.qty = float(matched.qty) + float(getattr(qty, "magnitude", qty))
 
-                        matched.save()
-                        items.append(matched)
-                    except Exception:
-                        continue    
+                            matched.save()
+                            items.append(matched)
+                        except Exception:
+                            continue
+                    else:
+                        new = ShoppingListItem(
+                            user=user,
+                            item=ingredient,
+                            qty=qty.magnitude if hasattr(qty, "magnitude") else qty,
+                            measure=cleaned_unit,
+                        )
+                        new.save()
+                        items.append(new)
+                
+                # if not a Pint object, handle as a plain number
                 else:
-                    new = ShoppingListItem(user=user, item=ingredient, qty=qty.magnitude if hasattr(qty, "magnitude") else qty, measure=unit)
-                    new.save()
-                    items.append(new)
+                    
+                    existing = ShoppingListItem.objects.filter(
+                        user=user,
+                        item=ingredient,
+                    ).filter(measure__iexact=cleaned_unit).first()
+
+                    if existing:
+                        existing.qty = float(existing.qty) + qty
+                        existing.save()
+                        items.append(existing)
+                    else:
+                        new = ShoppingListItem(user=user, item=ingredient, qty=qty, measure=cleaned_unit)
+                        new.save()
+                        items.append(new)
 
         if items:
             return Response({"message": "Ingredients added to shopping list."}, status=status.HTTP_201_CREATED)
         return Response({"message": "No valid ingredients to add."}, status=status.HTTP_400_BAD_REQUEST)
-
         
     def delete(self, request):
         ShoppingListItem.objects.filter(user=request.user).delete()
@@ -191,7 +203,6 @@ class SendShoppingListEmailView(APIView):
 
         user = request.user
         items = ShoppingListItem.objects.filter(user=user)
-        #shopping_list_items = []
         shopping_list_dict = {}  # Stores item as key, value is the quantiy string
         ingredient_categories = [
             'Produce', 'Meat & Seafood', 'Dairy', 'Canned Goods', 'Baking', 'Dry Goods & Pasta',
