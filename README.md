@@ -202,7 +202,8 @@ Before running the deployment scripts, please review their contents and ensure t
     | `SENDGRID_API_KEY`    | API key used to send emails via Twilio SendGrid             |
     | `GEMINI_API_KEY`      | API key for Google Gemini AI, used to categorize ingredients|
 
-    > These can be stored in a `.env` file for local development or managed securely via AWS Secrets Manager in production.
+    > These can be stored in a `.env` file for local development or managed securely via 
+      AWS Secrets Manager in production.
 
 
 	•	build-and-push-images.sh
