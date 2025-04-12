@@ -68,7 +68,6 @@ class ShoppingListItems(APIView):
                 measure_str = measure_str.strip() if measure_str else ""
                 qty, cleaned_unit, suffix = parse_measure(measure_str)
 
-    
                 if qty is None:
                     continue 
 
