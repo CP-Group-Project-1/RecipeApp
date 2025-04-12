@@ -187,7 +187,24 @@ Once the application is running, users can:
 ## ⚠️ Important Notes About Deployment Scripts
 
 Before running the deployment scripts, please review their contents and ensure the following requirements are met:
+## 🔐 Required Environment Variables
 ```bash
+    
+    The following environment variables must be set before running the application:
+
+    | Variable Name         | Description                                                 |
+    |-----------------------|-------------------------------------------------------------| 
+    | `SECRET_KEY`          | Django secret key used for cryptographic signing            |
+    | `DEBUG`               | Set to `True` for local development, `False` for production |
+    | `DB_NAME`             | Name of the PostgreSQL database                             |
+    | `DB_USER`             | Username for the PostgreSQL database                        |
+    | `DB_PASS`             | Password for the PostgreSQL user                            |
+    | `SENDGRID_API_KEY`    | API key used to send emails via Twilio SendGrid             |
+    | `GEMINI_API_KEY`      | API key for Google Gemini AI, used to categorize ingredients|
+
+    > These can be stored in a `.env` file for local development or managed securely via AWS Secrets Manager in production.
+
+
 	•	build-and-push-images.sh
 	    - Requires DockerHub authentication
 	    - Uses Git tags or commit hashes for versioning
