@@ -61,14 +61,20 @@ button {
   border: none;
   padding: 10px 15px;
   font-size: 16px;
-  color: white;
+  color: #333;
   font-weight: bold;
   letter-spacing: .2px;
 }
 
 button :hover {
 background-color: #FFD23A;
+border-radius: 8px;
 } 
+
+button:hover {
+  background-color: #FFD23A;
+  color: #333;
+}
 
 
 hr {
@@ -181,6 +187,7 @@ select:focus {
   margin-bottom: 30px;
   margin-top: 20px;
 }
+
 
 .recipe-page-img {
   width: 100%;
