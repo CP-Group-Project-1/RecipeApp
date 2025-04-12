@@ -36,7 +36,7 @@ export default function ByIngredient() {
     return (
         <>
         <FormControl sx={{marginTop:"30px"}} fullWidth>
-            <InputLabel>Select a Category</InputLabel>
+            <InputLabel>Select a Ingredient</InputLabel>
             <Select
                 value={selectedIngredient}
                 onChange={(e) => setSelectedIngredient(e.target.value)}
