@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../api/useAuth";
 import RandomRecipe from "../components/RandomRecipe";
+import LogoComponent from "../components/Logo";
 
 
 export default function Home() {
@@ -12,6 +13,7 @@ export default function Home() {
             <h2 className="selected-title1" 
             style={{marginBottom:"-15px", marginTop:"5px"}}
             >Welcome to Cook n Cart</h2>
+            <LogoComponent className="home-logo" />
             {/* The following is needed for to see login/signup */}
             {!isAuthenticated ? (
                 <div style={{ textAlign: "center", marginTop: "40px" }}>
