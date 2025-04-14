@@ -1,4 +1,5 @@
 import { useState } from "react";
+import LogoComponent from "../components/Logo";
 import Login from "./Login";
 import Signup from "./Signup";
 
@@ -15,6 +16,7 @@ export default function LoginSignup({base_url}) {
             borderRadius: "8px",
             textAlign: 'center'
         }}>
+            <LogoComponent width={120} alt="App Logo" className="login-logo" />
             <div style={{ display: "flex", justifyContent: "center", marginBottom: "20px", gap: "10px"}}>
                 <button 
                     onClick={() => setIsLogin(true)} 
