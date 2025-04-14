@@ -42,8 +42,8 @@ export default function ByCuisine() {
                 onChange={(e) => setSelectedCuisine(e.target.value)}
                 label ="Select a Cuisine"
                 sx={{
-                    backgroundColor: "white",
-                    color: "#333",
+                    // backgroundColor: "white",
+                    // color: "#333",
                     fontSize: "16px",
                     borderRadius: "8px",
                     paddingBottom: "10px",

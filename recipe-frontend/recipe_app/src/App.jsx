@@ -62,6 +62,10 @@ function App() {
             default: mode === 'light' ? '#f5f5f5' : '#121212',
             paper: mode === 'light' ? '#ffffff' : '#1e1e1e',
           },
+          text: {
+            primary: mode === 'light' ? '#333' : '#d3d3d3',
+            secondary: mode === 'light' ? '#333333' : '#aaaaaa',
+        },
         },
       }),
     [mode],

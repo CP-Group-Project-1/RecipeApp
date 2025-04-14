@@ -41,7 +41,6 @@ export default function Home() {
                         fontSize:"35px", 
                         marginTop:"-10px", 
                         textAlign:"left",
-                        color:"#333",
                         marginLeft: "10px"
                     }}
                     >
