@@ -81,8 +81,9 @@ To get a local copy of the project up and running, follow these steps:
 
 1. **Clone the repository**
 
-   git clone https://github.com/your-username/recipe-app.git
-   cd recipe-app
+   git clone https://github.com/Team-CookNCart/CookNCartApp.git
+   
+   cd CookNCartApp
 
 2.	Run the production build locally
 
