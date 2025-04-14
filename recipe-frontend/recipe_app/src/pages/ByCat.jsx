@@ -45,8 +45,8 @@ export default function ByCat() {
                 onChange={(e) => setSelectedCategory(e.target.value)}
                 label ="Select a Category"
                 sx={{
-                    backgroundColor: "white",
-                    color: "#333",
+                    // backgroundColor: "white",
+                    // color: "#333",
                     fontSize: "16px",
                     borderRadius: "8px",
                     paddingBottom: "10px",
