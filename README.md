@@ -1,9 +1,9 @@
 
-# 🧑‍🍳 RecipeApp
+# 🧑‍🍳 Cook N Cart
 
 ### Elevating Meal Planning for Busy Professionals
 
-**RecipeApp** is a full-stack web application designed to simplify the cooking journey for busy professionals who want to eat better without the stress. It allows users to browse delicious, curated meals, save their favorites, and receive categorized shopping lists — making meal prep efficient and approachable.
+**Cook N Cart** is a full-stack web application designed to simplify the cooking journey for busy professionals who want to eat better without the stress. It allows users to browse delicious, curated meals, save their favorites, and receive categorized shopping lists — making meal prep efficient and approachable.
 
 Whether you're a beginner in the kitchen or just short on time, RecipeApp helps streamline your weekly planning by combining intuitive design, smart features, and modern web technologies.
 
