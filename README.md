@@ -1,6 +1,5 @@
 
-# ![Photoroom_20250329_143531](https://github.com/user-attachments/assets/285258c3-a207-41bd-83a0-5ecd1564a79d)
-🧑‍🍳 Cook N Cart
+# 🧑‍🍳 Cook N Cart
 
 ### Elevating Meal Planning for Busy Professionals
 
