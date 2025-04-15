@@ -5,7 +5,7 @@
 
 **Cook N Cart** is a full-stack web application designed to simplify the cooking journey for busy professionals who want to eat better without the stress. It allows users to browse delicious, curated meals, save their favorites, and receive categorized shopping lists — making meal prep efficient and approachable.
 
-Whether you're a beginner in the kitchen or just short on time, RecipeApp helps streamline your weekly planning by combining intuitive design, smart features, and modern web technologies.
+Whether you're a beginner in the kitchen or just short on time, Cook N Cart helps streamline your weekly planning by combining intuitive design, smart features, and modern web technologies.
 
 
 
@@ -178,7 +178,7 @@ Once the application is running, users can:
 	5.	Email the Shopping List
         - Click to receive your shopping list by email. The ingredients will be:
 	        •	Organized into categories (e.g., Produce, Spices, Dairy)
-	        •	Styled and branded with the RecipeApp logo
+	        •	Styled and branded with the Cook N Cart logo
         Important Note:
             - Due to Webmail spam identifiers, user may need to send the email twice initially so the 
              email receiver knows that its not spam. Else it may take sometime for the email to be received
